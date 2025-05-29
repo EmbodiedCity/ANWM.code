@@ -1,0 +1,94 @@
+Using port 37124
+Starting rank=0, seed=0, world_size=1.
+CDiT(
+  (x_embedder): PatchEmbed(
+    (proj): Conv2d(4, 1152, kernel_size=(2, 2), stride=(2, 2))
+    (norm): Identity()
+  )
+  (t_embedder): TimestepEmbedder(
+    (mlp): Sequential(
+      (0): Linear(in_features=256, out_features=1152, bias=True)
+      (1): SiLU()
+      (2): Linear(in_features=1152, out_features=1152, bias=True)
+    )
+  )
+  (y_embedder): ActionEmbedder(
+    (x_emb): TimestepEmbedder(
+      (mlp): Sequential(
+        (0): Linear(in_features=256, out_features=384, bias=True)
+        (1): SiLU()
+        (2): Linear(in_features=384, out_features=384, bias=True)
+      )
+    )
+    (y_emb): TimestepEmbedder(
+      (mlp): Sequential(
+        (0): Linear(in_features=256, out_features=384, bias=True)
+        (1): SiLU()
+        (2): Linear(in_features=384, out_features=384, bias=True)
+      )
+    )
+    (angle_emb): TimestepEmbedder(
+      (mlp): Sequential(
+        (0): Linear(in_features=256, out_features=384, bias=True)
+        (1): SiLU()
+        (2): Linear(in_features=384, out_features=384, bias=True)
+      )
+    )
+  )
+  (blocks): ModuleList(
+    (0-27): 28 x CDiTBlock(
+      (norm1): LayerNorm((1152,), eps=1e-06, elementwise_affine=False)
+      (attn): Attention(
+        (qkv): Linear(in_features=1152, out_features=3456, bias=True)
+        (q_norm): Identity()
+        (k_norm): Identity()
+        (attn_drop): Dropout(p=0.0, inplace=False)
+        (proj): Linear(in_features=1152, out_features=1152, bias=True)
+        (proj_drop): Dropout(p=0.0, inplace=False)
+      )
+      (norm2): LayerNorm((1152,), eps=1e-06, elementwise_affine=False)
+      (norm_cond): LayerNorm((1152,), eps=1e-06, elementwise_affine=False)
+      (cttn): MultiheadAttention(
+        (out_proj): NonDynamicallyQuantizableLinear(in_features=1152, out_features=1152, bias=True)
+      )
+      (adaLN_modulation): Sequential(
+        (0): SiLU()
+        (1): Linear(in_features=1152, out_features=12672, bias=True)
+      )
+      (norm3): LayerNorm((1152,), eps=1e-06, elementwise_affine=False)
+      (mlp): Mlp(
+        (fc1): Linear(in_features=1152, out_features=4608, bias=True)
+        (act): GELU(approximate='tanh')
+        (drop1): Dropout(p=0, inplace=False)
+        (norm): Identity()
+        (fc2): Linear(in_features=4608, out_features=1152, bias=True)
+        (drop2): Dropout(p=0, inplace=False)
+      )
+    )
+  )
+  (final_layer): FinalLayer(
+    (norm_final): LayerNorm((1152,), eps=1e-06, elementwise_affine=False)
+    (linear): Linear(in_features=1152, out_features=32, bias=True)
+    (adaLN_modulation): Sequential(
+      (0): SiLU()
+      (1): Linear(in_features=1152, out_features=2304, bias=True)
+    )
+  )
+  (time_embedder): TimestepEmbedder(
+    (mlp): Sequential(
+      (0): Linear(in_features=256, out_features=1152, bias=True)
+      (1): SiLU()
+      (2): Linear(in_features=1152, out_features=1152, bias=True)
+    )
+  )
+)
+Searching for model from  logs/cdit_debug/checkpoints
+****** Evaluating from NON PREDEFINED index... ******
+Dataset: wuhan (train), size: 18652
+****** Evaluating from NON PREDEFINED index... ******
+Dataset: wuhan (test), size: 4502
+****** Evaluating from NON PREDEFINED index... ******
+Dataset: wuhan_auto (train), size: 17706
+****** Evaluating from NON PREDEFINED index... ******
+Dataset: wuhan_auto (test), size: 4235
+Combining 2 datasets.
