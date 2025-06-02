@@ -1,0 +1,286 @@
+[2025-06-01 00:22:24,933] torch.distributed.run: [WARNING] 
+[2025-06-01 00:22:24,933] torch.distributed.run: [WARNING] *****************************************
+[2025-06-01 00:22:24,933] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2025-06-01 00:22:24,933] torch.distributed.run: [WARNING] *****************************************
+[[34m2025-06-01 00:22:27[0m] Experiment directory created at logs/nwm_cdit_wuhan_union
+[[34m2025-06-01 00:22:40[0m] CDiT Parameters: 1,014,614,816
+[[34m2025-06-01 00:22:40[0m] Dataset contains 36,358 images
+[[34m2025-06-01 00:22:40[0m] Training for 300 epochs...
+[[34m2025-06-01 00:22:40[0m] Beginning epoch 0...
+[[34m2025-06-01 00:23:28[0m] (step=0000100) Train Loss: 0.3059, Train Steps/Sec: 2.08, Samples/Sec: 99.83
+[[34m2025-06-01 00:24:15[0m] (step=0000200) Train Loss: 0.1649, Train Steps/Sec: 2.14, Samples/Sec: 102.82
+[[34m2025-06-01 00:25:01[0m] (step=0000300) Train Loss: 0.1545, Train Steps/Sec: 2.15, Samples/Sec: 103.02
+[[34m2025-06-01 00:25:48[0m] (step=0000400) Train Loss: 0.1550, Train Steps/Sec: 2.14, Samples/Sec: 102.93
+[[34m2025-06-01 00:26:35[0m] (step=0000500) Train Loss: 0.1399, Train Steps/Sec: 2.15, Samples/Sec: 102.97
+[[34m2025-06-01 00:27:21[0m] (step=0000600) Train Loss: 0.1378, Train Steps/Sec: 2.15, Samples/Sec: 102.99
+[[34m2025-06-01 00:28:08[0m] (step=0000700) Train Loss: 0.1389, Train Steps/Sec: 2.14, Samples/Sec: 102.95
+[[34m2025-06-01 00:28:55[0m] (step=0000800) Train Loss: 0.1306, Train Steps/Sec: 2.15, Samples/Sec: 102.96
+[[34m2025-06-01 00:29:41[0m] (step=0000900) Train Loss: 0.1375, Train Steps/Sec: 2.14, Samples/Sec: 102.73
+[[34m2025-06-01 00:30:28[0m] (step=0001000) Train Loss: 0.1318, Train Steps/Sec: 2.14, Samples/Sec: 102.91
+[[34m2025-06-01 00:31:14[0m] (step=0001100) Train Loss: 0.1252, Train Steps/Sec: 2.15, Samples/Sec: 103.00
+[[34m2025-06-01 00:32:01[0m] (step=0001200) Train Loss: 0.1326, Train Steps/Sec: 2.15, Samples/Sec: 103.01
+[[34m2025-06-01 00:32:48[0m] (step=0001300) Train Loss: 0.1331, Train Steps/Sec: 2.15, Samples/Sec: 102.99
+[[34m2025-06-01 00:33:34[0m] (step=0001400) Train Loss: 0.1259, Train Steps/Sec: 2.15, Samples/Sec: 103.04
+[[34m2025-06-01 00:34:21[0m] (step=0001500) Train Loss: 0.1301, Train Steps/Sec: 2.14, Samples/Sec: 102.69
+[[34m2025-06-01 00:35:08[0m] (step=0001600) Train Loss: 0.1295, Train Steps/Sec: 2.15, Samples/Sec: 102.99
+[[34m2025-06-01 00:35:54[0m] (step=0001700) Train Loss: 0.1265, Train Steps/Sec: 2.14, Samples/Sec: 102.88
+[[34m2025-06-01 00:36:41[0m] (step=0001800) Train Loss: 0.1201, Train Steps/Sec: 2.14, Samples/Sec: 102.81
+[[34m2025-06-01 00:37:28[0m] (step=0001900) Train Loss: 0.1251, Train Steps/Sec: 2.14, Samples/Sec: 102.69
+[[34m2025-06-01 00:38:15[0m] (step=0002000) Train Loss: 0.1316, Train Steps/Sec: 2.14, Samples/Sec: 102.54
+[[34m2025-06-01 00:38:31[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-01 00:39:17[0m] (step=0002100) Train Loss: 0.1191, Train Steps/Sec: 1.59, Samples/Sec: 76.42
+[[34m2025-06-01 00:40:04[0m] (step=0002200) Train Loss: 0.1287, Train Steps/Sec: 2.14, Samples/Sec: 102.53
+[[34m2025-06-01 00:40:51[0m] (step=0002300) Train Loss: 0.1271, Train Steps/Sec: 2.14, Samples/Sec: 102.76
+[[34m2025-06-01 00:41:38[0m] (step=0002400) Train Loss: 0.1254, Train Steps/Sec: 2.14, Samples/Sec: 102.74
+[[34m2025-06-01 00:42:24[0m] (step=0002500) Train Loss: 0.1187, Train Steps/Sec: 2.14, Samples/Sec: 102.75
+[[34m2025-06-01 00:43:11[0m] (step=0002600) Train Loss: 0.1274, Train Steps/Sec: 2.14, Samples/Sec: 102.75
+[[34m2025-06-01 00:43:58[0m] (step=0002700) Train Loss: 0.1242, Train Steps/Sec: 2.14, Samples/Sec: 102.63
+[[34m2025-06-01 00:44:45[0m] (step=0002800) Train Loss: 0.1179, Train Steps/Sec: 2.13, Samples/Sec: 102.46
+[[34m2025-06-01 00:45:31[0m] (step=0002900) Train Loss: 0.1210, Train Steps/Sec: 2.14, Samples/Sec: 102.76
+[[34m2025-06-01 00:46:18[0m] (step=0003000) Train Loss: 0.1141, Train Steps/Sec: 2.14, Samples/Sec: 102.81
+[[34m2025-06-01 00:46:32[0m] Beginning epoch 1...
+[[34m2025-06-01 00:47:05[0m] (step=0003100) Train Loss: 0.1202, Train Steps/Sec: 2.13, Samples/Sec: 102.26
+[[34m2025-06-01 00:47:52[0m] (step=0003200) Train Loss: 0.1170, Train Steps/Sec: 2.14, Samples/Sec: 102.95
+[[34m2025-06-01 00:48:38[0m] (step=0003300) Train Loss: 0.1185, Train Steps/Sec: 2.14, Samples/Sec: 102.93
+[[34m2025-06-01 00:49:25[0m] (step=0003400) Train Loss: 0.1097, Train Steps/Sec: 2.14, Samples/Sec: 102.78
+[[34m2025-06-01 00:50:12[0m] (step=0003500) Train Loss: 0.1174, Train Steps/Sec: 2.14, Samples/Sec: 102.64
+[[34m2025-06-01 00:50:58[0m] (step=0003600) Train Loss: 0.1143, Train Steps/Sec: 2.14, Samples/Sec: 102.95
+[[34m2025-06-01 00:51:45[0m] (step=0003700) Train Loss: 0.1191, Train Steps/Sec: 2.14, Samples/Sec: 102.87
+[[34m2025-06-01 00:52:32[0m] (step=0003800) Train Loss: 0.1135, Train Steps/Sec: 2.14, Samples/Sec: 102.78
+[[34m2025-06-01 00:53:18[0m] (step=0003900) Train Loss: 0.1148, Train Steps/Sec: 2.14, Samples/Sec: 102.80
+[[34m2025-06-01 00:54:05[0m] (step=0004000) Train Loss: 0.1132, Train Steps/Sec: 2.14, Samples/Sec: 102.75
+[[34m2025-06-01 00:54:22[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-01 00:55:09[0m] (step=0004100) Train Loss: 0.1104, Train Steps/Sec: 1.58, Samples/Sec: 75.70
+[[34m2025-06-01 00:55:55[0m] (step=0004200) Train Loss: 0.1103, Train Steps/Sec: 2.14, Samples/Sec: 102.64
+[[34m2025-06-01 00:56:42[0m] (step=0004300) Train Loss: 0.1144, Train Steps/Sec: 2.14, Samples/Sec: 102.66
+[[34m2025-06-01 00:57:29[0m] (step=0004400) Train Loss: 0.1152, Train Steps/Sec: 2.14, Samples/Sec: 102.74
+[[34m2025-06-01 00:58:16[0m] (step=0004500) Train Loss: 0.1104, Train Steps/Sec: 2.14, Samples/Sec: 102.82
+[[34m2025-06-01 00:59:02[0m] (step=0004600) Train Loss: 0.1158, Train Steps/Sec: 2.14, Samples/Sec: 102.84
+[[34m2025-06-01 00:59:49[0m] (step=0004700) Train Loss: 0.1108, Train Steps/Sec: 2.14, Samples/Sec: 102.59
+[[34m2025-06-01 01:00:36[0m] (step=0004800) Train Loss: 0.1179, Train Steps/Sec: 2.13, Samples/Sec: 102.28
+[[34m2025-06-01 01:01:23[0m] (step=0004900) Train Loss: 0.1110, Train Steps/Sec: 2.14, Samples/Sec: 102.74
+[[34m2025-06-01 01:02:09[0m] (step=0005000) Train Loss: 0.1116, Train Steps/Sec: 2.14, Samples/Sec: 102.79
+[[34m2025-06-01 01:02:56[0m] (step=0005100) Train Loss: 0.1095, Train Steps/Sec: 2.14, Samples/Sec: 102.80
+[[34m2025-06-01 01:03:43[0m] (step=0005200) Train Loss: 0.1067, Train Steps/Sec: 2.14, Samples/Sec: 102.83
+[[34m2025-06-01 01:04:30[0m] (step=0005300) Train Loss: 0.1066, Train Steps/Sec: 2.14, Samples/Sec: 102.59
+[[34m2025-06-01 01:05:16[0m] (step=0005400) Train Loss: 0.1141, Train Steps/Sec: 2.14, Samples/Sec: 102.56
+[[34m2025-06-01 01:06:03[0m] (step=0005500) Train Loss: 0.1083, Train Steps/Sec: 2.13, Samples/Sec: 102.24
+[[34m2025-06-01 01:06:50[0m] (step=0005600) Train Loss: 0.1125, Train Steps/Sec: 2.14, Samples/Sec: 102.73
+[[34m2025-06-01 01:07:37[0m] (step=0005700) Train Loss: 0.1082, Train Steps/Sec: 2.14, Samples/Sec: 102.83
+[[34m2025-06-01 01:08:23[0m] (step=0005800) Train Loss: 0.1109, Train Steps/Sec: 2.14, Samples/Sec: 102.82
+[[34m2025-06-01 01:09:10[0m] (step=0005900) Train Loss: 0.1042, Train Steps/Sec: 2.14, Samples/Sec: 102.72
+[[34m2025-06-01 01:09:57[0m] (step=0006000) Train Loss: 0.1072, Train Steps/Sec: 2.13, Samples/Sec: 102.37
+[[34m2025-06-01 01:10:15[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-01 01:10:43[0m] Beginning epoch 2...
+[[34m2025-06-01 01:11:02[0m] (step=0006100) Train Loss: 0.1071, Train Steps/Sec: 1.54, Samples/Sec: 74.12
+[[34m2025-06-01 01:11:49[0m] (step=0006200) Train Loss: 0.1142, Train Steps/Sec: 2.14, Samples/Sec: 102.55
+[[34m2025-06-01 01:12:35[0m] (step=0006300) Train Loss: 0.1100, Train Steps/Sec: 2.14, Samples/Sec: 102.85
+[[34m2025-06-01 01:13:22[0m] (step=0006400) Train Loss: 0.1042, Train Steps/Sec: 2.14, Samples/Sec: 102.91
+[[34m2025-06-01 01:14:09[0m] (step=0006500) Train Loss: 0.1071, Train Steps/Sec: 2.14, Samples/Sec: 102.91
+[[34m2025-06-01 01:14:55[0m] (step=0006600) Train Loss: 0.1106, Train Steps/Sec: 2.14, Samples/Sec: 102.66
+[[34m2025-06-01 01:15:42[0m] (step=0006700) Train Loss: 0.1075, Train Steps/Sec: 2.14, Samples/Sec: 102.74
+[[34m2025-06-01 01:16:29[0m] (step=0006800) Train Loss: 0.1072, Train Steps/Sec: 2.13, Samples/Sec: 102.48
+[[34m2025-06-01 01:17:16[0m] (step=0006900) Train Loss: 0.1065, Train Steps/Sec: 2.14, Samples/Sec: 102.75
+[[34m2025-06-01 01:18:02[0m] (step=0007000) Train Loss: 0.1049, Train Steps/Sec: 2.14, Samples/Sec: 102.79
+[[34m2025-06-01 01:18:49[0m] (step=0007100) Train Loss: 0.1113, Train Steps/Sec: 2.14, Samples/Sec: 102.90
+[[34m2025-06-01 01:19:36[0m] (step=0007200) Train Loss: 0.1059, Train Steps/Sec: 2.14, Samples/Sec: 102.74
+[[34m2025-06-01 01:20:22[0m] (step=0007300) Train Loss: 0.1055, Train Steps/Sec: 2.14, Samples/Sec: 102.88
+[[34m2025-06-01 01:21:09[0m] (step=0007400) Train Loss: 0.1058, Train Steps/Sec: 2.14, Samples/Sec: 102.94
+[[34m2025-06-01 01:21:56[0m] (step=0007500) Train Loss: 0.1084, Train Steps/Sec: 2.14, Samples/Sec: 102.60
+[[34m2025-06-01 01:22:42[0m] (step=0007600) Train Loss: 0.1064, Train Steps/Sec: 2.14, Samples/Sec: 102.92
+[[34m2025-06-01 01:23:29[0m] (step=0007700) Train Loss: 0.1078, Train Steps/Sec: 2.14, Samples/Sec: 102.90
+[[34m2025-06-01 01:24:16[0m] (step=0007800) Train Loss: 0.1084, Train Steps/Sec: 2.14, Samples/Sec: 102.90
+[[34m2025-06-01 01:25:02[0m] (step=0007900) Train Loss: 0.1004, Train Steps/Sec: 2.14, Samples/Sec: 102.84
+[[34m2025-06-01 01:25:49[0m] (step=0008000) Train Loss: 0.1058, Train Steps/Sec: 2.15, Samples/Sec: 103.00
+[[34m2025-06-01 01:26:05[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-01 01:26:52[0m] (step=0008100) Train Loss: 0.1067, Train Steps/Sec: 1.58, Samples/Sec: 76.05
+[[34m2025-06-01 01:27:39[0m] (step=0008200) Train Loss: 0.0997, Train Steps/Sec: 2.14, Samples/Sec: 102.95
+[[34m2025-06-01 01:28:25[0m] (step=0008300) Train Loss: 0.1031, Train Steps/Sec: 2.15, Samples/Sec: 103.01
+[[34m2025-06-01 01:29:12[0m] (step=0008400) Train Loss: 0.1060, Train Steps/Sec: 2.15, Samples/Sec: 103.01
+[[34m2025-06-01 01:29:59[0m] (step=0008500) Train Loss: 0.1069, Train Steps/Sec: 2.14, Samples/Sec: 102.85
+[[34m2025-06-01 01:30:45[0m] (step=0008600) Train Loss: 0.1072, Train Steps/Sec: 2.15, Samples/Sec: 103.03
+[[34m2025-06-01 01:31:32[0m] (step=0008700) Train Loss: 0.1031, Train Steps/Sec: 2.15, Samples/Sec: 103.01
+[[34m2025-06-01 01:32:18[0m] (step=0008800) Train Loss: 0.1014, Train Steps/Sec: 2.14, Samples/Sec: 102.69
+[[34m2025-06-01 01:33:05[0m] (step=0008900) Train Loss: 0.1054, Train Steps/Sec: 2.15, Samples/Sec: 102.99
+[[34m2025-06-01 01:33:52[0m] (step=0009000) Train Loss: 0.1016, Train Steps/Sec: 2.15, Samples/Sec: 102.98
+[[34m2025-06-01 01:34:34[0m] Beginning epoch 3...
+[[34m2025-06-01 01:34:39[0m] (step=0009100) Train Loss: 0.1011, Train Steps/Sec: 2.13, Samples/Sec: 102.13
+[[34m2025-06-01 01:35:25[0m] (step=0009200) Train Loss: 0.1023, Train Steps/Sec: 2.15, Samples/Sec: 103.00
+[[34m2025-06-01 01:36:12[0m] (step=0009300) Train Loss: 0.1014, Train Steps/Sec: 2.15, Samples/Sec: 103.02
+[[34m2025-06-01 01:36:59[0m] (step=0009400) Train Loss: 0.1033, Train Steps/Sec: 2.14, Samples/Sec: 102.83
+[[34m2025-06-01 01:37:45[0m] (step=0009500) Train Loss: 0.1023, Train Steps/Sec: 2.14, Samples/Sec: 102.83
+[[34m2025-06-01 01:38:32[0m] (step=0009600) Train Loss: 0.1057, Train Steps/Sec: 2.14, Samples/Sec: 102.93
+[[34m2025-06-01 01:39:18[0m] (step=0009700) Train Loss: 0.1024, Train Steps/Sec: 2.14, Samples/Sec: 102.94
+[[34m2025-06-01 01:40:05[0m] (step=0009800) Train Loss: 0.1027, Train Steps/Sec: 2.14, Samples/Sec: 102.73
+[[34m2025-06-01 01:40:52[0m] (step=0009900) Train Loss: 0.1022, Train Steps/Sec: 2.14, Samples/Sec: 102.89
+[[34m2025-06-01 01:41:38[0m] (step=0010000) Train Loss: 0.1030, Train Steps/Sec: 2.15, Samples/Sec: 103.03
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+Traceback (most recent call last):
+  File "train_v0.py", line 437, in <module>
+    main(args)
+  File "train_v0.py", line 352, in main
+    sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "train_v0.py", line 396, in evaluate
+    samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/data1/tpz/nwm-main/isolated_nwm_infer.py", line 84, in model_forward_wrapper
+    samples = diffusion.p_sample_loop(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 456, in p_sample_loop
+    for sample in self.p_sample_loop_progressive(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 507, in p_sample_loop_progressive
+    out = self.p_sample(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 408, in p_sample
+    out = self.p_mean_variance(
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 98, in p_mean_variance
+    return super().p_mean_variance(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 285, in p_mean_variance
+    model_output = model(x, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+TypeError: forward() missing 1 required positional argument: 'x_supervised'
+Traceback (most recent call last):
+  File "train_v0.py", line 437, in <module>
+    main(args)
+  File "train_v0.py", line 352, in main
+    sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "train_v0.py", line 396, in evaluate
+    samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/data1/tpz/nwm-main/isolated_nwm_infer.py", line 84, in model_forward_wrapper
+    samples = diffusion.p_sample_loop(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 456, in p_sample_loop
+    for sample in self.p_sample_loop_progressive(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 507, in p_sample_loop_progressive
+    out = self.p_sample(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 408, in p_sample
+    out = self.p_mean_variance(
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 98, in p_mean_variance
+    return super().p_mean_variance(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 285, in p_mean_variance
+    model_output = model(x, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+TypeError: forward() missing 1 required positional argument: 'x_supervised'
+Traceback (most recent call last):
+  File "train_v0.py", line 437, in <module>
+    main(args)
+  File "train_v0.py", line 352, in main
+    sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "train_v0.py", line 396, in evaluate
+    samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/data1/tpz/nwm-main/isolated_nwm_infer.py", line 84, in model_forward_wrapper
+    samples = diffusion.p_sample_loop(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 456, in p_sample_loop
+    for sample in self.p_sample_loop_progressive(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 507, in p_sample_loop_progressive
+    out = self.p_sample(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 408, in p_sample
+    out = self.p_mean_variance(
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 98, in p_mean_variance
+    return super().p_mean_variance(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 285, in p_mean_variance
+    model_output = model(x, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+TypeError: forward() missing 1 required positional argument: 'x_supervised'
+[[34m2025-06-01 01:41:56[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+[[34m2025-06-01 01:41:58[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+Traceback (most recent call last):
+  File "train_v0.py", line 437, in <module>
+    main(args)
+  File "train_v0.py", line 352, in main
+    sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "train_v0.py", line 396, in evaluate
+    samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/data1/tpz/nwm-main/isolated_nwm_infer.py", line 84, in model_forward_wrapper
+    samples = diffusion.p_sample_loop(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 456, in p_sample_loop
+    for sample in self.p_sample_loop_progressive(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 507, in p_sample_loop_progressive
+    out = self.p_sample(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 408, in p_sample
+    out = self.p_mean_variance(
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 98, in p_mean_variance
+    return super().p_mean_variance(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 285, in p_mean_variance
+    model_output = model(x, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+TypeError: forward() missing 1 required positional argument: 'x_supervised'
+[2025-06-01 01:42:49,554] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 160688 closing signal SIGTERM
+[2025-06-01 01:42:49,768] torch.distributed.elastic.multiprocessing.api: [ERROR] failed (exitcode: 1) local_rank: 1 (pid: 160689) of binary: /data1/zwc/miniconda3/envs/nwm2/bin/python
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm2/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 346, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 806, in main
+    run(args)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 797, in run
+    elastic_launch(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 134, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+train_v0.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2025-06-01_01:42:49
+  host      : localhost
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 160690)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2025-06-01_01:42:49
+  host      : localhost
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 160691)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-06-01_01:42:49
+  host      : localhost
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 160689)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
