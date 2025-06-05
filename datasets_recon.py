@@ -150,28 +150,39 @@ class BaseDataset(Dataset):
             goal_pos[:, :2] /= self.data_config["metric_waypoint_spacing"]
         
         goal_pos = np.concatenate([goal_pos, goal_yaw.reshape(-1, 1)], axis=-1)
-        return actions, goal_pos    
+        return actions, goal_pos
     
-    def _compute_projected_image(self, traj_data, curr_time, goal_time, rgb_img):
-        start_index = curr_time
-        end_index = curr_time + self.len_traj_pred + 1
-        pose_src = traj_data["pose"][start_index:end_index][-1]
-        pose_dst = traj_data["pose"][goal_time]
-        depth_map = traj_data["depth"][start_index:end_index][-1]
-        K = traj_data["K"]
-        
-        projected_images = self.generate_augmented_image(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
+    def _compute_projected_image(self, traj_data, curr_time, goal_time, goal_imgs):
+        curr_yaw = traj_data["yaw"][curr_time]
+        goal_yaw = traj_data["yaw"][goal_time]
+        goal_yaw = angle_difference(curr_yaw, goal_yaw)
+
+        projected_images = self.generate_augmented_images(goal_imgs=goal_imgs, goal_yaw=goal_yaw)
         return projected_images
-        
-    def generate_augmented_image(self, K, depth_map, rgb_img, pose_src, pose_dst) -> np.ndarray:
+
+
+    def generate_augmented_images(self, goal_imgs: np.ndarray, goal_yaw: float) -> np.ndarray:
         """
-        基于深度图 + pose 生成从另一个相机视角观察到的图像。
+        Apply augmentation:
+        - If goal_yaw > threshold: mask left 15% (right turn)
+        - If goal_yaw < -threshold: mask right 15% (left turn)
         """
-        image_size = depth_map.shape  # (H, W)
-        # pose_dst = create_relative_pose(pose_src, delta_translation, delta_angle_deg)
-        points_3d, colors = reproject_depth_to_other_pose_2seq(K, depth_map, rgb_img, pose_src, pose_dst) 
-        images = project_to_2d_image_2seq(K, points_3d, colors, image_size) # (H, W, 3, goal_time)
-        return images
+        imgs = goal_imgs.clone()
+        height, width = imgs[-1].shape[:2]
+        threshold = 0  # radians
+
+        mask_width = int(width * 0.4)
+        for i, yaw in enumerate(goal_yaw):
+            if yaw > threshold:
+                # 遮挡左边15%
+                imgs[i, :, :, :mask_width] = 0
+            elif yaw < -threshold:
+                # 遮挡右边15%
+                imgs[i, :, :, -mask_width:] = 0
+
+        return imgs
+
+
 
 
 class TrainingDataset(BaseDataset):
@@ -207,6 +218,7 @@ class TrainingDataset(BaseDataset):
             context = [(f_curr, t) for t in context_times] + [(f_curr, t) for t in goal_time]
 
             obs_image = torch.stack([self.transform(Image.open(get_data_path(self.data_folder, f, t))) for f, t in context])
+            goal_imgs = obs_image[-self.goals_per_obs:]
 
             # Load other trajectory data
             curr_traj_data = self._get_trajectory(f_curr)
@@ -215,15 +227,20 @@ class TrainingDataset(BaseDataset):
             _, goal_pos = self._compute_actions(curr_traj_data, curr_time, goal_time)
             goal_pos[:, :2] = normalize_data(goal_pos[:, :2], self.ACTION_STATS)
             # Compute projected images
-            f_img, t_img = context[-1]    # curr_time img
-            rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
-            rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
-            original_height, original_width = rgb_img.shape[:2]
-            resized_width = original_width // 2
-            resized_height = original_height // 2
-            rgb_img = cv2.resize(rgb_img, (resized_width, resized_height))
-            projected_images = self._compute_projected_image(curr_traj_data, curr_time, goal_time, rgb_img)
-            projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
+            projected_images = self._compute_projected_image(curr_traj_data, curr_time, goal_time, goal_imgs)
+            # print("Shape:", projected_images.shape)
+            projected_tensor_list = []
+            for img in projected_images:
+                # 转置通道顺序 CxHxW -> HxWxC
+                np_img = img.permute(1, 2, 0).cpu().numpy()
+                # 乘255转换为0-255整数，转uint8
+                np_img_uint8 = (np_img * 255).astype(np.uint8)
+                # 转为PIL Image
+                pil_img = Image.fromarray(np_img_uint8)
+                # 应用transform
+                tensor_img = self.transform(pil_img)
+                projected_tensor_list.append(tensor_img)
+
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
             return (
