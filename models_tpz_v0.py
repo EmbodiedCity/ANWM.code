@@ -114,6 +114,7 @@ class FinalLayer(nn.Module):
             nn.Linear(hidden_size, 2 * hidden_size, bias=True)
         )
         self.fuse_supervised = nn.Linear(hidden_size * 2, hidden_size)
+        self.attn = nn.MultiheadAttention(embed_dim=hidden_size, num_heads=8, batch_first=True)
 
     def forward(self, x, c, x_supervised_token):
         shift, scale = self.adaLN_modulation(c).chunk(2, dim=1)
@@ -122,7 +123,14 @@ class FinalLayer(nn.Module):
         print(x.shape)
         print("supervisedshape")
         print(x_supervised_token.shape)
-        x = self.fuse_supervised(torch.cat([x, x_supervised_token], dim=-1))
+        # x: [B, T, D]
+        # x_supervised_token: [N, T, D]
+        # 用一个 attention 层从 x 查询 x_supervised_token
+        # 让 x 去 attend（注意）x_supervised_token，提取相关信息以加强 x 的表示。
+        attn_output, _ = self.attn(query=x, key=x_supervised_token, value=x_supervised_token)
+        print("attn_outputshape")
+        print(attn_output.shape)
+        x = self.fuse_supervised(torch.cat([x, attn_output], dim=-1))
         x = self.linear(x)
         return x
 

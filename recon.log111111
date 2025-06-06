@@ -1,0 +1,200 @@
+[2025-06-06 23:00:14,888] torch.distributed.run: [WARNING] 
+[2025-06-06 23:00:14,888] torch.distributed.run: [WARNING] *****************************************
+[2025-06-06 23:00:14,888] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2025-06-06 23:00:14,888] torch.distributed.run: [WARNING] *****************************************
+[[34m2025-06-06 23:00:17[0m] Experiment directory created at logs/nwm_cdit_recon
+[[34m2025-06-06 23:00:33[0m] CDiT Parameters: 1,014,614,816
+[[34m2025-06-06 23:00:34[0m] Dataset contains 132,929 images
+[[34m2025-06-06 23:00:34[0m] Training for 300 epochs...
+[[34m2025-06-06 23:00:34[0m] Beginning epoch 0...
+[[34m2025-06-06 23:01:37[0m] (step=0000100) Train Loss: 0.3123, Train Steps/Sec: 1.58, Samples/Sec: 75.76
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+[[34m2025-06-06 23:01:40[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 23:04:00[0m] (step=0000100) Perceptual Loss: 0.8389, Eval Time: 143.03
+[[34m2025-06-06 23:05:02[0m] (step=0000200) Train Loss: 0.1973, Train Steps/Sec: 0.49, Samples/Sec: 23.46
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 23:05:04[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 23:07:24[0m] (step=0000200) Perceptual Loss: 0.8313, Eval Time: 142.08
+[[34m2025-06-06 23:08:25[0m] (step=0000300) Train Loss: 0.1899, Train Steps/Sec: 0.49, Samples/Sec: 23.65
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 23:08:27[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[2025-06-06 23:08:36,168] torch.distributed.elastic.agent.server.api: [WARNING] Received Signals.SIGINT death signal, shutting down workers
+[2025-06-06 23:08:36,170] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1908120 closing signal SIGINT
+[2025-06-06 23:08:36,171] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1908121 closing signal SIGINT
+[2025-06-06 23:08:36,172] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1908122 closing signal SIGINT
+Exception ignored in: <function _MultiProcessingDataLoaderIter.__del__ at 0x7fc635836c10>
+Traceback (most recent call last):
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1478, in __del__
+Exception ignored in: <function _MultiProcessingDataLoaderIter.__del__ at 0x7f0f025cec10>
+Traceback (most recent call last):
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1478, in __del__
+    self._shutdown_workers()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1424, in _shutdown_workers
+    self._shutdown_workers()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1426, in _shutdown_workers
+    self._pin_memory_thread.join()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/threading.py", line 1011, in join
+    self._worker_result_queue.close()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 142, in close
+    close()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/multiprocessing/util.py", line 214, in __call__
+    del _finalizer_registry[self._key]
+KeyboardInterrupt: 
+    self._wait_for_tstate_lock()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/threading.py", line 1027, in _wait_for_tstate_lock
+    elif lock.acquire(block, timeout):
+KeyboardInterrupt: 
+Traceback (most recent call last):
+  File "train_recon.py", line 446, in <module>
+    main(args)
+  File "train_recon.py", line 359, in main
+    sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+Traceback (most recent call last):
+  File "train_recon.py", line 446, in <module>
+    return func(*args, **kwargs)
+  File "train_recon.py", line 404, in evaluate
+    samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t, x_supervised=aug)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/data1/tpz/nwm-main/isolated_nwm_infer_v0.py", line 91, in model_forward_wrapper
+    samples = diffusion.p_sample_loop(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 456, in p_sample_loop
+    main(args)
+  File "train_recon.py", line 359, in main
+    for sample in self.p_sample_loop_progressive(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 507, in p_sample_loop_progressive
+    sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    out = self.p_sample(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 408, in p_sample
+    return func(*args, **kwargs)
+  File "train_recon.py", line 404, in evaluate
+    out = self.p_mean_variance(
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 98, in p_mean_variance
+    return super().p_mean_variance(self._wrap_model(model), *args, **kwargs)    
+samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t, x_supervised=aug)  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 285, in p_mean_variance
+
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)    
+model_output = model(x, t, **model_kwargs)  File "/data1/tpz/nwm-main/isolated_nwm_infer_v0.py", line 91, in model_forward_wrapper
+
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+      File "/data1/tpz/nwm-main/models_tpz_v0.py", line 240, in forward
+samples = diffusion.p_sample_loop(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 456, in p_sample_loop
+        x = block(x, c, x_cond)for sample in self.p_sample_loop_progressive(
+
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 507, in p_sample_loop_progressive
+    out = self.p_sample(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 408, in p_sample
+    out = self.p_mean_variance(
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 98, in p_mean_variance
+    return super().p_mean_variance(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 285, in p_mean_variance
+    model_output = model(x, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v0.py", line 240, in forward
+    x = block(x, c, x_cond)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v0.py", line 101, in forward
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v0.py", line 101, in forward
+    x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/normalization.py", line 196, in forward
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return F.layer_norm(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/functional.py", line 2543, in layer_norm
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/timm/layers/mlp.py", line 48, in forward
+    return torch.layer_norm(input, normalized_shape, weight, bias, eps, torch.backends.cudnn.enabled)
+KeyboardInterrupt
+    x = self.fc2(x)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "train_recon.py", line 446, in <module>
+    main(args)
+  File "train_recon.py", line 359, in main
+    sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "train_recon.py", line 404, in evaluate
+    samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t, x_supervised=aug)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/data1/tpz/nwm-main/isolated_nwm_infer_v0.py", line 91, in model_forward_wrapper
+    samples = diffusion.p_sample_loop(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 456, in p_sample_loop
+    for sample in self.p_sample_loop_progressive(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 507, in p_sample_loop_progressive
+    out = self.p_sample(
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 408, in p_sample
+    out = self.p_mean_variance(
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 98, in p_mean_variance
+    return super().p_mean_variance(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 294, in p_mean_variance
+    min_log = _extract_into_tensor(self.posterior_log_variance_clipped, t, x.shape)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
+    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm2/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 346, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 806, in main
+    run(args)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 797, in run
+    elastic_launch(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 134, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
+    result = agent.run()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
+    result = f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 736, in run
+    result = self._invoke_run(role)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 877, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 62, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 1908051 got signal: 2

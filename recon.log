@@ -2667,3 +2667,87 @@ Using cache found in ./models/facebookresearch_dino_main
 [[34m2025-06-06 22:41:46[0m] (step=0239100) Train Loss: 0.1041, Train Steps/Sec: 1.82, Samples/Sec: 87.18
 [[34m2025-06-06 22:42:41[0m] (step=0239200) Train Loss: 0.1091, Train Steps/Sec: 1.82, Samples/Sec: 87.21
 [[34m2025-06-06 22:43:36[0m] (step=0239300) Train Loss: 0.1084, Train Steps/Sec: 1.82, Samples/Sec: 87.21
+[[34m2025-06-06 22:44:31[0m] (step=0239400) Train Loss: 0.1029, Train Steps/Sec: 1.81, Samples/Sec: 87.08
+[[34m2025-06-06 22:45:26[0m] (step=0239500) Train Loss: 0.1096, Train Steps/Sec: 1.81, Samples/Sec: 87.08
+[[34m2025-06-06 22:46:21[0m] (step=0239600) Train Loss: 0.1077, Train Steps/Sec: 1.81, Samples/Sec: 86.99
+[[34m2025-06-06 22:47:16[0m] (step=0239700) Train Loss: 0.1030, Train Steps/Sec: 1.82, Samples/Sec: 87.14
+[[34m2025-06-06 22:48:11[0m] (step=0239800) Train Loss: 0.1090, Train Steps/Sec: 1.82, Samples/Sec: 87.16
+[[34m2025-06-06 22:49:06[0m] (step=0239900) Train Loss: 0.1041, Train Steps/Sec: 1.82, Samples/Sec: 87.16
+[[34m2025-06-06 22:50:02[0m] (step=0240000) Train Loss: 0.1095, Train Steps/Sec: 1.81, Samples/Sec: 87.08
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 22:50:25[0m] Saved checkpoint to logs/nwm_cdit_recon/checkpoints/0240000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 22:50:28[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 22:52:47[0m] (step=0240000) Perceptual Loss: 0.1556, Eval Time: 141.76
+[[34m2025-06-06 22:53:42[0m] (step=0240100) Train Loss: 0.1064, Train Steps/Sec: 0.45, Samples/Sec: 21.72
+[[34m2025-06-06 22:54:38[0m] (step=0240200) Train Loss: 0.1100, Train Steps/Sec: 1.82, Samples/Sec: 87.18
+[[34m2025-06-06 22:55:33[0m] (step=0240300) Train Loss: 0.1080, Train Steps/Sec: 1.82, Samples/Sec: 87.18
+[2025-06-06 22:56:11,723] torch.distributed.elastic.agent.server.api: [WARNING] Received Signals.SIGINT death signal, shutting down workers
+[2025-06-06 22:56:11,726] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1690786 closing signal SIGINT
+[2025-06-06 22:56:11,726] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1690787 closing signal SIGINT
+[2025-06-06 22:56:11,726] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1690788 closing signal SIGINT
+Traceback (most recent call last):
+  File "train_recon.py", line 446, in <module>
+    main(args)
+  File "train_recon.py", line 299, in main
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 737, in training_losses
+    x_t = self.q_sample(x_start, t, noise=noise)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 234, in q_sample
+    _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
+    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "train_recon.py", line 446, in <module>
+    main(args)
+  File "train_recon.py", line 299, in main
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 737, in training_losses
+    x_t = self.q_sample(x_start, t, noise=noise)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 234, in q_sample
+    _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
+    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "train_recon.py", line 446, in <module>
+    main(args)
+  File "train_recon.py", line 299, in main
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 737, in training_losses
+    x_t = self.q_sample(x_start, t, noise=noise)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 234, in q_sample
+    _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
+    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm2/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 346, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 806, in main
+    run(args)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 797, in run
+    elastic_launch(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 134, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
+    result = agent.run()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
+    result = f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 736, in run
+    result = self._invoke_run(role)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 877, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 62, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 1690717 got signal: 2
