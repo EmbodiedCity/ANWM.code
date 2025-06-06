@@ -19,7 +19,7 @@ from diffusers.models import AutoencoderKL
 import misc
 import distributed as dist
 from models_tpz_v0 import CDiT_models
-from datasets_v0 import EvalDataset
+from datasets_recon import EvalDataset
 from PIL import Image
 
 
@@ -67,6 +67,7 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
     model, diffusion, vae = all_models
     x = curr_obs.to(device)
     y = curr_delta.to(device)
+    x_supervised = x_supervised.to(device)
 
     with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
         B, T = x.shape[:2]
@@ -76,16 +77,21 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
             rel_t *= num_timesteps
 
         x = x.flatten(0,1)
+        print("x shape:", x.shape)
+        print(x.shape)
         x = vae.encode(x).latent_dist.sample().mul_(0.18215).unflatten(0, (B, T))
         x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)
+        print("x_cond shape:", x_cond.shape)
         z = torch.randn(B*num_goals, 4, latent_size, latent_size, device=device)
         y = y.flatten(0, 1)
         # aug
         B_aug, T_aug = x_supervised.shape[:2]
         aug = x_supervised.flatten(0,1)
+        print("aug shape:", aug.shape)
+        print(aug.shape)
         aug = vae.encode(aug).latent_dist.sample().mul_(0.18215).unflatten(0, (B_aug, T_aug))
         aug = aug.flatten(0, 1)
-        # print(aug.shape)
+        print(aug.shape)
                     
         model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_supervised=aug)      
         samples = diffusion.p_sample_loop(
@@ -95,7 +101,7 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
 
         return torch.clip(samples, -1., 1.)
 
-def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image, gt_image, delta, num_cond, device):
+def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image, gt_image, delta, num_cond, device, aug_image):
     rollout_stride = args.input_fps // rollout_fps
     gt_image = gt_image[:, rollout_stride-1::rollout_stride]
     delta = delta.unflatten(1, (-1, rollout_stride)).sum(2)
@@ -106,20 +112,20 @@ def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image,
         if args.gt:
             x_pred_pixels = gt_image[:, i].clone().to(device)
         else:
-            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, rollout_stride, args.latent_size, num_cond=num_cond, num_goals=1, device=device)
+            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, rollout_stride, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=aug_image)
 
         curr_obs = torch.cat((curr_obs, x_pred_pixels.unsqueeze(1)), dim=1) # append current prediction
         curr_obs = curr_obs[:, 1:] # remove first observation
         visualize_preds(output_dir, idxs, i, x_pred_pixels)
 
-def generate_time(args, output_dir, idxs, all_models, obs_image, gt_output, delta, secs, num_cond, device):
+def generate_time(args, output_dir, idxs, all_models, obs_image, gt_output, delta, secs, num_cond, device, aug_image):
     eval_timesteps = [sec*args.input_fps for sec in secs]
     for sec, timestep in zip(secs, eval_timesteps):
         curr_delta = delta[:, :timestep].sum(dim=1, keepdim=True)
         if args.gt:
             x_pred_pixels = gt_output[:, timestep-1].clone().to(device)
         else:
-            x_pred_pixels = model_forward_wrapper(all_models, obs_image, curr_delta, timestep, args.latent_size, num_cond=num_cond, num_goals=1, device=device)
+            x_pred_pixels = model_forward_wrapper(all_models, obs_image, curr_delta, timestep, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=aug_image)
         visualize_preds(output_dir, idxs, sec, x_pred_pixels)
 
 def visualize_preds(output_dir, idxs, sec, x_pred_pixels):
@@ -209,7 +215,7 @@ def main(args):
         os.makedirs(dataset_save_output_dir, exist_ok=True)
         curr_data_loader = datasets[dataset_name]
         
-        for data_iter_step, (idxs, obs_image, gt_image, delta) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
+        for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
             with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
                 obs_image = obs_image[:, -num_cond:].to(device)
                 gt_image = gt_image.to(device)
@@ -218,12 +224,12 @@ def main(args):
                     for rollout_fps in args.rollout_fps_values:
                         curr_rollout_output_dir = os.path.join(dataset_save_output_dir, f'rollout_{rollout_fps}fps')
                         os.makedirs(curr_rollout_output_dir, exist_ok=True)
-                        generate_rollout(args, curr_rollout_output_dir, rollout_fps, idxs, model_lst, obs_image, gt_image, delta, num_cond, device)
+                        generate_rollout(args, curr_rollout_output_dir, rollout_fps, idxs, model_lst, obs_image, gt_image, delta, num_cond, device, aug_image)
                 elif args.eval_type == 'time':
                     secs = np.array([2**i for i in range(0, args.num_sec_eval)])
                     curr_time_output_dir = os.path.join(dataset_save_output_dir, 'time')
                     os.makedirs(curr_time_output_dir, exist_ok=True)
-                    generate_time(args, curr_time_output_dir, idxs, model_lst, obs_image, gt_image, delta, secs, num_cond, device)
+                    generate_time(args, curr_time_output_dir, idxs, model_lst, obs_image, gt_image, delta, secs, num_cond, device, aug_image)
     
 
 if __name__ == "__main__":

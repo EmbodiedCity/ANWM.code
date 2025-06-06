@@ -13,10 +13,10 @@ eval_len_traj_pred: 64
 eval_context_size: 4
 
 eval_datasets:
-  # recon:
-  #   data_folder: data/recon
-  #   test: data_splits/recon/test/
-  #   goals_per_obs: 4
+  recon:
+    data_folder: data/recon
+    test: data_splits/recon/test/
+    goals_per_obs: 4
   wuhan:
     data_folder: data/wuhan
     test: data_splits/wuhan/test/ 

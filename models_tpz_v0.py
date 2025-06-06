@@ -118,6 +118,10 @@ class FinalLayer(nn.Module):
     def forward(self, x, c, x_supervised_token):
         shift, scale = self.adaLN_modulation(c).chunk(2, dim=1)
         x = modulate(self.norm_final(x), shift, scale)
+        print("xshape")
+        print(x.shape)
+        print("supervisedshape")
+        print(x_supervised_token.shape)
         x = self.fuse_supervised(torch.cat([x, x_supervised_token], dim=-1))
         x = self.linear(x)
         return x

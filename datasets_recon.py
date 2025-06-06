@@ -292,12 +292,27 @@ class EvalDataset(BaseDataset):
             actions, _ = self._compute_actions(curr_traj_data, curr_time, np.array([curr_time+1])) # last argument is dummy goal
             actions[:, :2] = normalize_data(actions[:, :2], self.ACTION_STATS)
             delta = get_delta_np(actions)
+            # ============ Compute projected image ============
+            print(f"pred_times{len(pred_times)}")
+            projected_images = self._compute_projected_image(curr_traj_data, curr_time, pred_times, pred_image)
+
+            projected_tensor_list = []
+            for img in projected_images:
+                np_img = img.permute(1, 2, 0).cpu().numpy()
+                np_img_uint8 = (np_img * 255).astype(np.uint8)
+                pil_img = Image.fromarray(np_img_uint8)
+                tensor_img = self.transform(pil_img)
+                projected_tensor_list.append(tensor_img)
+
+            projected_tensor = torch.stack(projected_tensor_list, dim=0)
+            # ===============================================
 
             return (
                 torch.tensor([i], dtype=torch.float32), # for logging purposes
                 torch.as_tensor(obs_image, dtype=torch.float32),
                 torch.as_tensor(pred_image, dtype=torch.float32),
                 torch.as_tensor(delta, dtype=torch.float32),
+                torch.as_tensor(projected_tensor, dtype=torch.float32), 
             )
         except Exception as e:
             print(f"Exception in {self.dataset_name}", e)
@@ -347,6 +362,20 @@ class TrajectoryEvalDataset(BaseDataset):
             curr_traj_data = self._get_trajectory(f_curr)
 
             actions, goal_pos = self._compute_actions(curr_traj_data, curr_time, np.array([goal_time]))
+            
+            # ============ Compute projected image ============
+            projected_images = self._compute_projected_image(curr_traj_data, curr_time, goal_time, goal_image)
+
+            projected_tensor_list = []
+            for img in projected_images:
+                np_img = img.permute(1, 2, 0).cpu().numpy()
+                np_img_uint8 = (np_img * 255).astype(np.uint8)
+                pil_img = Image.fromarray(np_img_uint8)
+                tensor_img = self.transform(pil_img)
+                projected_tensor_list.append(tensor_img)
+
+            projected_tensor = torch.stack(projected_tensor_list, dim=0)
+            # ===============================================
 
             return (
                 torch.tensor([i], dtype=torch.float32), # for logging purposes
@@ -354,6 +383,7 @@ class TrajectoryEvalDataset(BaseDataset):
                 torch.as_tensor(goal_image, dtype=torch.float32),
                 torch.as_tensor(actions, dtype=torch.float32),
                 torch.as_tensor(goal_pos, dtype=torch.float32),
+                torch.as_tensor(projected_tensor, dtype=torch.float32),
             )
         except Exception as e:
             print(f"Exception in {self.dataset_name}", e)

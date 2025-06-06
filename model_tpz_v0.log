@@ -1521,3 +1521,1609 @@ Using cache found in ./models/facebookresearch_dino_main
 [[34m2025-06-05 22:23:43[0m] (step=0131000) Train Loss: 0.0780, Train Steps/Sec: 1.98, Samples/Sec: 95.02
 [[34m2025-06-05 22:24:34[0m] (step=0131100) Train Loss: 0.0732, Train Steps/Sec: 1.97, Samples/Sec: 94.77
 [[34m2025-06-05 22:25:24[0m] (step=0131200) Train Loss: 0.0785, Train Steps/Sec: 1.98, Samples/Sec: 94.91
+[[34m2025-06-05 22:26:15[0m] (step=0131300) Train Loss: 0.0726, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-05 22:27:05[0m] (step=0131400) Train Loss: 0.0729, Train Steps/Sec: 1.98, Samples/Sec: 94.83
+[[34m2025-06-05 22:27:56[0m] (step=0131500) Train Loss: 0.0717, Train Steps/Sec: 1.98, Samples/Sec: 95.10
+[[34m2025-06-05 22:28:46[0m] (step=0131600) Train Loss: 0.0759, Train Steps/Sec: 1.98, Samples/Sec: 95.05
+[[34m2025-06-05 22:29:37[0m] (step=0131700) Train Loss: 0.0756, Train Steps/Sec: 1.98, Samples/Sec: 95.05
+[[34m2025-06-05 22:30:28[0m] (step=0131800) Train Loss: 0.0792, Train Steps/Sec: 1.97, Samples/Sec: 94.54
+[[34m2025-06-05 22:31:18[0m] (step=0131900) Train Loss: 0.0742, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-05 22:32:09[0m] (step=0132000) Train Loss: 0.0704, Train Steps/Sec: 1.98, Samples/Sec: 95.04
+[[34m2025-06-05 22:32:21[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-05 22:33:12[0m] (step=0132100) Train Loss: 0.0726, Train Steps/Sec: 1.58, Samples/Sec: 75.81
+[[34m2025-06-05 22:34:02[0m] (step=0132200) Train Loss: 0.0803, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-05 22:34:53[0m] (step=0132300) Train Loss: 0.0708, Train Steps/Sec: 1.98, Samples/Sec: 94.96
+[[34m2025-06-05 22:35:44[0m] (step=0132400) Train Loss: 0.0745, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-05 22:36:34[0m] (step=0132500) Train Loss: 0.0707, Train Steps/Sec: 1.97, Samples/Sec: 94.53
+[[34m2025-06-05 22:37:25[0m] (step=0132600) Train Loss: 0.0776, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-05 22:38:15[0m] (step=0132700) Train Loss: 0.0769, Train Steps/Sec: 1.98, Samples/Sec: 95.00
+[[34m2025-06-05 22:39:06[0m] (step=0132800) Train Loss: 0.0790, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-05 22:39:56[0m] (step=0132900) Train Loss: 0.0738, Train Steps/Sec: 1.98, Samples/Sec: 95.01
+[[34m2025-06-05 22:40:47[0m] (step=0133000) Train Loss: 0.0754, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-05 22:41:37[0m] (step=0133100) Train Loss: 0.0783, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-05 22:42:28[0m] (step=0133200) Train Loss: 0.0743, Train Steps/Sec: 1.97, Samples/Sec: 94.42
+[[34m2025-06-05 22:43:19[0m] (step=0133300) Train Loss: 0.0786, Train Steps/Sec: 1.98, Samples/Sec: 95.00
+[[34m2025-06-05 22:43:29[0m] Beginning epoch 44...
+[[34m2025-06-05 22:44:10[0m] (step=0133400) Train Loss: 0.0735, Train Steps/Sec: 1.94, Samples/Sec: 93.05
+[[34m2025-06-05 22:45:01[0m] (step=0133500) Train Loss: 0.0748, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-05 22:45:51[0m] (step=0133600) Train Loss: 0.0802, Train Steps/Sec: 1.98, Samples/Sec: 94.97
+[[34m2025-06-05 22:46:42[0m] (step=0133700) Train Loss: 0.0760, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-05 22:47:32[0m] (step=0133800) Train Loss: 0.0740, Train Steps/Sec: 1.97, Samples/Sec: 94.65
+[[34m2025-06-05 22:48:23[0m] (step=0133900) Train Loss: 0.0739, Train Steps/Sec: 1.98, Samples/Sec: 94.87
+[[34m2025-06-05 22:49:13[0m] (step=0134000) Train Loss: 0.0795, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-05 22:49:27[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-05 22:50:18[0m] (step=0134100) Train Loss: 0.0760, Train Steps/Sec: 1.55, Samples/Sec: 74.57
+[[34m2025-06-05 22:51:08[0m] (step=0134200) Train Loss: 0.0697, Train Steps/Sec: 1.98, Samples/Sec: 94.99
+[[34m2025-06-05 22:51:59[0m] (step=0134300) Train Loss: 0.0739, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-05 22:52:49[0m] (step=0134400) Train Loss: 0.0750, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-05 22:53:40[0m] (step=0134500) Train Loss: 0.0746, Train Steps/Sec: 1.97, Samples/Sec: 94.62
+[[34m2025-06-05 22:54:31[0m] (step=0134600) Train Loss: 0.0682, Train Steps/Sec: 1.98, Samples/Sec: 95.00
+[[34m2025-06-05 22:55:21[0m] (step=0134700) Train Loss: 0.0764, Train Steps/Sec: 1.98, Samples/Sec: 94.96
+[[34m2025-06-05 22:56:12[0m] (step=0134800) Train Loss: 0.0779, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-05 22:57:02[0m] (step=0134900) Train Loss: 0.0804, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-05 22:57:52[0m] (step=0135000) Train Loss: 0.0733, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-05 22:58:43[0m] (step=0135100) Train Loss: 0.0756, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-05 22:59:34[0m] (step=0135200) Train Loss: 0.0765, Train Steps/Sec: 1.97, Samples/Sec: 94.38
+[[34m2025-06-05 23:00:24[0m] (step=0135300) Train Loss: 0.0724, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-05 23:01:15[0m] (step=0135400) Train Loss: 0.0737, Train Steps/Sec: 1.98, Samples/Sec: 94.96
+[[34m2025-06-05 23:02:05[0m] (step=0135500) Train Loss: 0.0756, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-05 23:02:56[0m] (step=0135600) Train Loss: 0.0777, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-05 23:03:46[0m] (step=0135700) Train Loss: 0.0746, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-05 23:04:36[0m] (step=0135800) Train Loss: 0.0730, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-05 23:05:27[0m] (step=0135900) Train Loss: 0.0738, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-05 23:06:18[0m] (step=0136000) Train Loss: 0.0746, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-05 23:06:32[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-05 23:07:22[0m] (step=0136100) Train Loss: 0.0717, Train Steps/Sec: 1.55, Samples/Sec: 74.38
+[[34m2025-06-05 23:08:13[0m] (step=0136200) Train Loss: 0.0762, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-05 23:09:03[0m] (step=0136300) Train Loss: 0.0776, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-05 23:09:28[0m] Beginning epoch 45...
+[[34m2025-06-05 23:09:55[0m] (step=0136400) Train Loss: 0.0732, Train Steps/Sec: 1.93, Samples/Sec: 92.64
+[[34m2025-06-05 23:10:45[0m] (step=0136500) Train Loss: 0.0788, Train Steps/Sec: 1.98, Samples/Sec: 94.84
+[[34m2025-06-05 23:11:36[0m] (step=0136600) Train Loss: 0.0735, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-05 23:12:26[0m] (step=0136700) Train Loss: 0.0724, Train Steps/Sec: 1.98, Samples/Sec: 95.04
+[[34m2025-06-05 23:13:17[0m] (step=0136800) Train Loss: 0.0719, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-05 23:14:07[0m] (step=0136900) Train Loss: 0.0736, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-05 23:14:58[0m] (step=0137000) Train Loss: 0.0722, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-05 23:15:48[0m] (step=0137100) Train Loss: 0.0767, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-05 23:16:39[0m] (step=0137200) Train Loss: 0.0753, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+[[34m2025-06-05 23:17:29[0m] (step=0137300) Train Loss: 0.0737, Train Steps/Sec: 1.98, Samples/Sec: 95.01
+[[34m2025-06-05 23:18:20[0m] (step=0137400) Train Loss: 0.0718, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-05 23:19:10[0m] (step=0137500) Train Loss: 0.0700, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-05 23:20:01[0m] (step=0137600) Train Loss: 0.0754, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-05 23:20:51[0m] (step=0137700) Train Loss: 0.0739, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-05 23:21:42[0m] (step=0137800) Train Loss: 0.0734, Train Steps/Sec: 1.98, Samples/Sec: 95.04
+[[34m2025-06-05 23:22:32[0m] (step=0137900) Train Loss: 0.0733, Train Steps/Sec: 1.97, Samples/Sec: 94.67
+[[34m2025-06-05 23:23:23[0m] (step=0138000) Train Loss: 0.0718, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-05 23:23:35[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-05 23:24:26[0m] (step=0138100) Train Loss: 0.0720, Train Steps/Sec: 1.59, Samples/Sec: 76.11
+[[34m2025-06-05 23:25:16[0m] (step=0138200) Train Loss: 0.0735, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-05 23:26:07[0m] (step=0138300) Train Loss: 0.0734, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-05 23:26:57[0m] (step=0138400) Train Loss: 0.0674, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-05 23:27:48[0m] (step=0138500) Train Loss: 0.0717, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-05 23:28:38[0m] (step=0138600) Train Loss: 0.0749, Train Steps/Sec: 1.97, Samples/Sec: 94.57
+[[34m2025-06-05 23:29:29[0m] (step=0138700) Train Loss: 0.0751, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-05 23:30:19[0m] (step=0138800) Train Loss: 0.0740, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-05 23:31:10[0m] (step=0138900) Train Loss: 0.0704, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-05 23:32:00[0m] (step=0139000) Train Loss: 0.0704, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-05 23:32:50[0m] (step=0139100) Train Loss: 0.0758, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-05 23:33:41[0m] (step=0139200) Train Loss: 0.0781, Train Steps/Sec: 1.98, Samples/Sec: 94.89
+[[34m2025-06-05 23:34:32[0m] (step=0139300) Train Loss: 0.0708, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-05 23:35:12[0m] Beginning epoch 46...
+[[34m2025-06-05 23:35:23[0m] (step=0139400) Train Loss: 0.0700, Train Steps/Sec: 1.94, Samples/Sec: 93.24
+[[34m2025-06-05 23:36:14[0m] (step=0139500) Train Loss: 0.0680, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-05 23:37:04[0m] (step=0139600) Train Loss: 0.0752, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-05 23:37:54[0m] (step=0139700) Train Loss: 0.0703, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-05 23:38:45[0m] (step=0139800) Train Loss: 0.0740, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-05 23:39:36[0m] (step=0139900) Train Loss: 0.0759, Train Steps/Sec: 1.97, Samples/Sec: 94.62
+[[34m2025-06-05 23:40:26[0m] (step=0140000) Train Loss: 0.0757, Train Steps/Sec: 1.98, Samples/Sec: 94.82
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-05 23:40:52[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/0140000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-05 23:40:55[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-05 23:42:56[0m] (step=0140000) Perceptual Loss: 0.3039, Eval Time: 123.23
+[[34m2025-06-05 23:43:46[0m] (step=0140100) Train Loss: 0.0770, Train Steps/Sec: 0.50, Samples/Sec: 24.01
+[[34m2025-06-05 23:44:37[0m] (step=0140200) Train Loss: 0.0754, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-05 23:45:27[0m] (step=0140300) Train Loss: 0.0709, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-05 23:46:17[0m] (step=0140400) Train Loss: 0.0746, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-05 23:47:08[0m] (step=0140500) Train Loss: 0.0722, Train Steps/Sec: 1.97, Samples/Sec: 94.45
+[[34m2025-06-05 23:47:59[0m] (step=0140600) Train Loss: 0.0740, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-05 23:48:49[0m] (step=0140700) Train Loss: 0.0712, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-05 23:49:39[0m] (step=0140800) Train Loss: 0.0727, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-05 23:50:30[0m] (step=0140900) Train Loss: 0.0739, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-05 23:51:20[0m] (step=0141000) Train Loss: 0.0711, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-05 23:52:11[0m] (step=0141100) Train Loss: 0.0723, Train Steps/Sec: 1.98, Samples/Sec: 94.84
+[[34m2025-06-05 23:53:02[0m] (step=0141200) Train Loss: 0.0704, Train Steps/Sec: 1.96, Samples/Sec: 94.28
+[[34m2025-06-05 23:53:52[0m] (step=0141300) Train Loss: 0.0684, Train Steps/Sec: 1.98, Samples/Sec: 94.99
+[[34m2025-06-05 23:54:43[0m] (step=0141400) Train Loss: 0.0690, Train Steps/Sec: 1.98, Samples/Sec: 94.98
+[[34m2025-06-05 23:55:33[0m] (step=0141500) Train Loss: 0.0733, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-05 23:56:24[0m] (step=0141600) Train Loss: 0.0717, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-05 23:57:14[0m] (step=0141700) Train Loss: 0.0714, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-05 23:58:05[0m] (step=0141800) Train Loss: 0.0727, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-05 23:58:55[0m] (step=0141900) Train Loss: 0.0685, Train Steps/Sec: 1.98, Samples/Sec: 95.10
+[[34m2025-06-05 23:59:46[0m] (step=0142000) Train Loss: 0.0752, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-05 23:59:58[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 00:00:49[0m] (step=0142100) Train Loss: 0.0730, Train Steps/Sec: 1.58, Samples/Sec: 75.93
+[[34m2025-06-06 00:01:39[0m] (step=0142200) Train Loss: 0.0685, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-06 00:02:30[0m] (step=0142300) Train Loss: 0.0729, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 00:03:20[0m] (step=0142400) Train Loss: 0.0735, Train Steps/Sec: 1.99, Samples/Sec: 95.30
+[[34m2025-06-06 00:03:25[0m] Beginning epoch 47...
+[[34m2025-06-06 00:04:11[0m] (step=0142500) Train Loss: 0.0709, Train Steps/Sec: 1.94, Samples/Sec: 93.27
+[[34m2025-06-06 00:05:02[0m] (step=0142600) Train Loss: 0.0734, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 00:05:52[0m] (step=0142700) Train Loss: 0.0786, Train Steps/Sec: 1.98, Samples/Sec: 95.02
+[[34m2025-06-06 00:06:43[0m] (step=0142800) Train Loss: 0.0682, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+[[34m2025-06-06 00:07:33[0m] (step=0142900) Train Loss: 0.0735, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 00:08:24[0m] (step=0143000) Train Loss: 0.0703, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 00:09:14[0m] (step=0143100) Train Loss: 0.0695, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 00:10:05[0m] (step=0143200) Train Loss: 0.0739, Train Steps/Sec: 1.97, Samples/Sec: 94.59
+[[34m2025-06-06 00:10:55[0m] (step=0143300) Train Loss: 0.0714, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 00:11:46[0m] (step=0143400) Train Loss: 0.0745, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 00:12:36[0m] (step=0143500) Train Loss: 0.0741, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 00:13:27[0m] (step=0143600) Train Loss: 0.0691, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 00:14:17[0m] (step=0143700) Train Loss: 0.0708, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 00:15:08[0m] (step=0143800) Train Loss: 0.0709, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 00:15:58[0m] (step=0143900) Train Loss: 0.0663, Train Steps/Sec: 1.98, Samples/Sec: 94.86
+[[34m2025-06-06 00:16:49[0m] (step=0144000) Train Loss: 0.0731, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 00:17:02[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 00:17:53[0m] (step=0144100) Train Loss: 0.0722, Train Steps/Sec: 1.56, Samples/Sec: 74.98
+[[34m2025-06-06 00:18:43[0m] (step=0144200) Train Loss: 0.0733, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 00:19:34[0m] (step=0144300) Train Loss: 0.0724, Train Steps/Sec: 1.98, Samples/Sec: 94.95
+[[34m2025-06-06 00:20:24[0m] (step=0144400) Train Loss: 0.0747, Train Steps/Sec: 1.98, Samples/Sec: 94.98
+[[34m2025-06-06 00:21:15[0m] (step=0144500) Train Loss: 0.0717, Train Steps/Sec: 1.97, Samples/Sec: 94.68
+[[34m2025-06-06 00:22:05[0m] (step=0144600) Train Loss: 0.0753, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 00:22:56[0m] (step=0144700) Train Loss: 0.0710, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 00:23:46[0m] (step=0144800) Train Loss: 0.0712, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 00:24:36[0m] (step=0144900) Train Loss: 0.0707, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 00:25:27[0m] (step=0145000) Train Loss: 0.0721, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 00:26:17[0m] (step=0145100) Train Loss: 0.0698, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 00:27:08[0m] (step=0145200) Train Loss: 0.0670, Train Steps/Sec: 1.97, Samples/Sec: 94.72
+[[34m2025-06-06 00:27:58[0m] (step=0145300) Train Loss: 0.0736, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 00:28:49[0m] (step=0145400) Train Loss: 0.0698, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 00:29:09[0m] Beginning epoch 48...
+[[34m2025-06-06 00:29:40[0m] (step=0145500) Train Loss: 0.0681, Train Steps/Sec: 1.95, Samples/Sec: 93.50
+[[34m2025-06-06 00:30:31[0m] (step=0145600) Train Loss: 0.0745, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-06 00:31:21[0m] (step=0145700) Train Loss: 0.0682, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 00:32:12[0m] (step=0145800) Train Loss: 0.0742, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 00:33:02[0m] (step=0145900) Train Loss: 0.0731, Train Steps/Sec: 1.97, Samples/Sec: 94.72
+[[34m2025-06-06 00:33:53[0m] (step=0146000) Train Loss: 0.0690, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 00:34:06[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 00:34:56[0m] (step=0146100) Train Loss: 0.0725, Train Steps/Sec: 1.58, Samples/Sec: 75.79
+[[34m2025-06-06 00:35:46[0m] (step=0146200) Train Loss: 0.0704, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 00:36:37[0m] (step=0146300) Train Loss: 0.0679, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 00:37:27[0m] (step=0146400) Train Loss: 0.0720, Train Steps/Sec: 1.98, Samples/Sec: 95.01
+[[34m2025-06-06 00:38:18[0m] (step=0146500) Train Loss: 0.0734, Train Steps/Sec: 1.98, Samples/Sec: 94.97
+[[34m2025-06-06 00:39:09[0m] (step=0146600) Train Loss: 0.0716, Train Steps/Sec: 1.98, Samples/Sec: 94.80
+[[34m2025-06-06 00:39:59[0m] (step=0146700) Train Loss: 0.0773, Train Steps/Sec: 1.98, Samples/Sec: 95.00
+[[34m2025-06-06 00:40:49[0m] (step=0146800) Train Loss: 0.0713, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 00:41:40[0m] (step=0146900) Train Loss: 0.0722, Train Steps/Sec: 1.98, Samples/Sec: 94.94
+[[34m2025-06-06 00:42:31[0m] (step=0147000) Train Loss: 0.0701, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-06 00:43:21[0m] (step=0147100) Train Loss: 0.0735, Train Steps/Sec: 1.98, Samples/Sec: 94.99
+[[34m2025-06-06 00:44:12[0m] (step=0147200) Train Loss: 0.0719, Train Steps/Sec: 1.97, Samples/Sec: 94.75
+[[34m2025-06-06 00:45:02[0m] (step=0147300) Train Loss: 0.0749, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 00:45:52[0m] (step=0147400) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 00:46:43[0m] (step=0147500) Train Loss: 0.0737, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 00:47:33[0m] (step=0147600) Train Loss: 0.0728, Train Steps/Sec: 1.99, Samples/Sec: 95.29
+[[34m2025-06-06 00:48:24[0m] (step=0147700) Train Loss: 0.0674, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 00:49:14[0m] (step=0147800) Train Loss: 0.0743, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 00:50:05[0m] (step=0147900) Train Loss: 0.0701, Train Steps/Sec: 1.97, Samples/Sec: 94.74
+[[34m2025-06-06 00:50:55[0m] (step=0148000) Train Loss: 0.0711, Train Steps/Sec: 1.98, Samples/Sec: 95.28
+[[34m2025-06-06 00:51:08[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 00:51:59[0m] (step=0148100) Train Loss: 0.0703, Train Steps/Sec: 1.58, Samples/Sec: 75.82
+[[34m2025-06-06 00:52:49[0m] (step=0148200) Train Loss: 0.0665, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 00:53:39[0m] (step=0148300) Train Loss: 0.0731, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 00:54:30[0m] (step=0148400) Train Loss: 0.0736, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 00:55:05[0m] Beginning epoch 49...
+[[34m2025-06-06 00:55:22[0m] (step=0148500) Train Loss: 0.0719, Train Steps/Sec: 1.92, Samples/Sec: 92.29
+[[34m2025-06-06 00:56:12[0m] (step=0148600) Train Loss: 0.0738, Train Steps/Sec: 1.97, Samples/Sec: 94.66
+[[34m2025-06-06 00:57:03[0m] (step=0148700) Train Loss: 0.0718, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 00:57:53[0m] (step=0148800) Train Loss: 0.0749, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 00:58:44[0m] (step=0148900) Train Loss: 0.0734, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-06 00:59:34[0m] (step=0149000) Train Loss: 0.0713, Train Steps/Sec: 1.98, Samples/Sec: 95.00
+[[34m2025-06-06 01:00:25[0m] (step=0149100) Train Loss: 0.0680, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 01:01:15[0m] (step=0149200) Train Loss: 0.0698, Train Steps/Sec: 1.98, Samples/Sec: 94.85
+[[34m2025-06-06 01:02:06[0m] (step=0149300) Train Loss: 0.0718, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 01:02:56[0m] (step=0149400) Train Loss: 0.0700, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 01:03:47[0m] (step=0149500) Train Loss: 0.0708, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 01:04:37[0m] (step=0149600) Train Loss: 0.0665, Train Steps/Sec: 1.98, Samples/Sec: 94.97
+[[34m2025-06-06 01:05:28[0m] (step=0149700) Train Loss: 0.0744, Train Steps/Sec: 1.98, Samples/Sec: 94.99
+[[34m2025-06-06 01:06:18[0m] (step=0149800) Train Loss: 0.0682, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-06 01:07:09[0m] (step=0149900) Train Loss: 0.0736, Train Steps/Sec: 1.97, Samples/Sec: 94.72
+[[34m2025-06-06 01:07:59[0m] (step=0150000) Train Loss: 0.0725, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 01:08:13[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 01:08:16[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 01:10:17[0m] (step=0150000) Perceptual Loss: 0.3131, Eval Time: 123.70
+[[34m2025-06-06 01:11:13[0m] (step=0150100) Train Loss: 0.0727, Train Steps/Sec: 0.52, Samples/Sec: 24.76
+[[34m2025-06-06 01:12:04[0m] (step=0150200) Train Loss: 0.0747, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 01:13:02[0m] (step=0150300) Train Loss: 0.0722, Train Steps/Sec: 1.72, Samples/Sec: 82.79
+[[34m2025-06-06 01:13:52[0m] (step=0150400) Train Loss: 0.0702, Train Steps/Sec: 1.98, Samples/Sec: 94.95
+[[34m2025-06-06 01:14:43[0m] (step=0150500) Train Loss: 0.0712, Train Steps/Sec: 1.97, Samples/Sec: 94.34
+[[34m2025-06-06 01:15:34[0m] (step=0150600) Train Loss: 0.0720, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 01:16:25[0m] (step=0150700) Train Loss: 0.0678, Train Steps/Sec: 1.95, Samples/Sec: 93.76
+[[34m2025-06-06 01:17:19[0m] (step=0150800) Train Loss: 0.0709, Train Steps/Sec: 1.83, Samples/Sec: 87.89
+[[34m2025-06-06 01:18:10[0m] (step=0150900) Train Loss: 0.0713, Train Steps/Sec: 1.98, Samples/Sec: 94.95
+[[34m2025-06-06 01:19:01[0m] (step=0151000) Train Loss: 0.0719, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+[[34m2025-06-06 01:19:51[0m] (step=0151100) Train Loss: 0.0677, Train Steps/Sec: 1.98, Samples/Sec: 94.84
+[[34m2025-06-06 01:20:54[0m] (step=0151200) Train Loss: 0.0696, Train Steps/Sec: 1.58, Samples/Sec: 75.84
+[[34m2025-06-06 01:21:45[0m] (step=0151300) Train Loss: 0.0719, Train Steps/Sec: 1.98, Samples/Sec: 94.86
+[[34m2025-06-06 01:22:35[0m] (step=0151400) Train Loss: 0.0688, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+[[34m2025-06-06 01:23:26[0m] (step=0151500) Train Loss: 0.0676, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+[[34m2025-06-06 01:23:26[0m] Beginning epoch 50...
+[[34m2025-06-06 01:24:18[0m] (step=0151600) Train Loss: 0.0668, Train Steps/Sec: 1.93, Samples/Sec: 92.59
+[[34m2025-06-06 01:25:08[0m] (step=0151700) Train Loss: 0.0691, Train Steps/Sec: 1.98, Samples/Sec: 94.93
+[[34m2025-06-06 01:25:59[0m] (step=0151800) Train Loss: 0.0697, Train Steps/Sec: 1.97, Samples/Sec: 94.70
+[[34m2025-06-06 01:26:49[0m] (step=0151900) Train Loss: 0.0720, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 01:27:40[0m] (step=0152000) Train Loss: 0.0681, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 01:27:53[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 01:28:48[0m] (step=0152100) Train Loss: 0.0659, Train Steps/Sec: 1.48, Samples/Sec: 70.81
+[[34m2025-06-06 01:29:38[0m] (step=0152200) Train Loss: 0.0694, Train Steps/Sec: 1.98, Samples/Sec: 94.87
+[[34m2025-06-06 01:30:29[0m] (step=0152300) Train Loss: 0.0727, Train Steps/Sec: 1.98, Samples/Sec: 94.96
+[[34m2025-06-06 01:31:19[0m] (step=0152400) Train Loss: 0.0717, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+[[34m2025-06-06 01:32:13[0m] (step=0152500) Train Loss: 0.0744, Train Steps/Sec: 1.85, Samples/Sec: 89.01
+[[34m2025-06-06 01:33:04[0m] (step=0152600) Train Loss: 0.0684, Train Steps/Sec: 1.98, Samples/Sec: 94.81
+[[34m2025-06-06 01:33:54[0m] (step=0152700) Train Loss: 0.0703, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 01:34:45[0m] (step=0152800) Train Loss: 0.0737, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 01:35:35[0m] (step=0152900) Train Loss: 0.0724, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 01:36:29[0m] (step=0153000) Train Loss: 0.0673, Train Steps/Sec: 1.86, Samples/Sec: 89.25
+[[34m2025-06-06 01:37:20[0m] (step=0153100) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 01:38:13[0m] (step=0153200) Train Loss: 0.0697, Train Steps/Sec: 1.87, Samples/Sec: 89.96
+[[34m2025-06-06 01:39:03[0m] (step=0153300) Train Loss: 0.0688, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 01:39:59[0m] (step=0153400) Train Loss: 0.0702, Train Steps/Sec: 1.80, Samples/Sec: 86.48
+[[34m2025-06-06 01:40:50[0m] (step=0153500) Train Loss: 0.0740, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+[[34m2025-06-06 01:41:40[0m] (step=0153600) Train Loss: 0.0711, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 01:42:31[0m] (step=0153700) Train Loss: 0.0695, Train Steps/Sec: 1.98, Samples/Sec: 94.94
+[[34m2025-06-06 01:43:21[0m] (step=0153800) Train Loss: 0.0714, Train Steps/Sec: 1.98, Samples/Sec: 94.84
+[[34m2025-06-06 01:44:12[0m] (step=0153900) Train Loss: 0.0745, Train Steps/Sec: 1.98, Samples/Sec: 95.01
+[[34m2025-06-06 01:45:02[0m] (step=0154000) Train Loss: 0.0684, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 01:45:15[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 01:46:06[0m] (step=0154100) Train Loss: 0.0727, Train Steps/Sec: 1.57, Samples/Sec: 75.53
+[[34m2025-06-06 01:46:56[0m] (step=0154200) Train Loss: 0.0675, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 01:47:47[0m] (step=0154300) Train Loss: 0.0724, Train Steps/Sec: 1.97, Samples/Sec: 94.70
+[[34m2025-06-06 01:48:37[0m] (step=0154400) Train Loss: 0.0723, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+[[34m2025-06-06 01:49:28[0m] (step=0154500) Train Loss: 0.0682, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-06 01:49:43[0m] Beginning epoch 51...
+[[34m2025-06-06 01:50:20[0m] (step=0154600) Train Loss: 0.0704, Train Steps/Sec: 1.92, Samples/Sec: 92.36
+[[34m2025-06-06 01:51:10[0m] (step=0154700) Train Loss: 0.0721, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 01:52:01[0m] (step=0154800) Train Loss: 0.0689, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 01:52:51[0m] (step=0154900) Train Loss: 0.0698, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 01:53:42[0m] (step=0155000) Train Loss: 0.0685, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 01:54:32[0m] (step=0155100) Train Loss: 0.0708, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 01:55:23[0m] (step=0155200) Train Loss: 0.0692, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-06 01:56:13[0m] (step=0155300) Train Loss: 0.0692, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+[[34m2025-06-06 01:57:04[0m] (step=0155400) Train Loss: 0.0690, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-06 01:57:54[0m] (step=0155500) Train Loss: 0.0728, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 01:58:45[0m] (step=0155600) Train Loss: 0.0729, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 01:59:35[0m] (step=0155700) Train Loss: 0.0681, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 02:00:25[0m] (step=0155800) Train Loss: 0.0712, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 02:01:16[0m] (step=0155900) Train Loss: 0.0686, Train Steps/Sec: 1.97, Samples/Sec: 94.68
+[[34m2025-06-06 02:02:07[0m] (step=0156000) Train Loss: 0.0659, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 02:02:21[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 02:03:11[0m] (step=0156100) Train Loss: 0.0685, Train Steps/Sec: 1.55, Samples/Sec: 74.25
+[[34m2025-06-06 02:04:02[0m] (step=0156200) Train Loss: 0.0722, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 02:04:52[0m] (step=0156300) Train Loss: 0.0685, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 02:05:43[0m] (step=0156400) Train Loss: 0.0723, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 02:06:33[0m] (step=0156500) Train Loss: 0.0728, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 02:07:24[0m] (step=0156600) Train Loss: 0.0673, Train Steps/Sec: 1.98, Samples/Sec: 95.02
+[[34m2025-06-06 02:08:14[0m] (step=0156700) Train Loss: 0.0703, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-06 02:09:05[0m] (step=0156800) Train Loss: 0.0725, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 02:09:55[0m] (step=0156900) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 02:10:46[0m] (step=0157000) Train Loss: 0.0715, Train Steps/Sec: 1.98, Samples/Sec: 95.05
+[[34m2025-06-06 02:11:36[0m] (step=0157100) Train Loss: 0.0678, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 02:12:27[0m] (step=0157200) Train Loss: 0.0694, Train Steps/Sec: 1.97, Samples/Sec: 94.63
+[[34m2025-06-06 02:13:17[0m] (step=0157300) Train Loss: 0.0672, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 02:14:08[0m] (step=0157400) Train Loss: 0.0696, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-06 02:15:02[0m] (step=0157500) Train Loss: 0.0649, Train Steps/Sec: 1.83, Samples/Sec: 88.06
+[[34m2025-06-06 02:15:33[0m] Beginning epoch 52...
+[[34m2025-06-06 02:15:55[0m] (step=0157600) Train Loss: 0.0681, Train Steps/Sec: 1.88, Samples/Sec: 90.46
+[[34m2025-06-06 02:16:46[0m] (step=0157700) Train Loss: 0.0666, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 02:17:36[0m] (step=0157800) Train Loss: 0.0701, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 02:18:31[0m] (step=0157900) Train Loss: 0.0695, Train Steps/Sec: 1.81, Samples/Sec: 86.76
+[[34m2025-06-06 02:19:22[0m] (step=0158000) Train Loss: 0.0670, Train Steps/Sec: 1.98, Samples/Sec: 94.92
+[[34m2025-06-06 02:19:35[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 02:20:25[0m] (step=0158100) Train Loss: 0.0678, Train Steps/Sec: 1.58, Samples/Sec: 75.82
+[[34m2025-06-06 02:21:21[0m] (step=0158200) Train Loss: 0.0707, Train Steps/Sec: 1.80, Samples/Sec: 86.50
+[[34m2025-06-06 02:22:11[0m] (step=0158300) Train Loss: 0.0716, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 02:23:06[0m] (step=0158400) Train Loss: 0.0655, Train Steps/Sec: 1.83, Samples/Sec: 87.92
+[[34m2025-06-06 02:23:56[0m] (step=0158500) Train Loss: 0.0669, Train Steps/Sec: 1.98, Samples/Sec: 94.97
+[[34m2025-06-06 02:24:47[0m] (step=0158600) Train Loss: 0.0653, Train Steps/Sec: 1.97, Samples/Sec: 94.57
+[[34m2025-06-06 02:25:41[0m] (step=0158700) Train Loss: 0.0641, Train Steps/Sec: 1.86, Samples/Sec: 89.08
+[[34m2025-06-06 02:26:32[0m] (step=0158800) Train Loss: 0.0646, Train Steps/Sec: 1.98, Samples/Sec: 94.95
+[[34m2025-06-06 02:27:27[0m] (step=0158900) Train Loss: 0.0693, Train Steps/Sec: 1.82, Samples/Sec: 87.42
+[[34m2025-06-06 02:28:17[0m] (step=0159000) Train Loss: 0.0740, Train Steps/Sec: 1.97, Samples/Sec: 94.62
+[[34m2025-06-06 02:29:08[0m] (step=0159100) Train Loss: 0.0711, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 02:29:58[0m] (step=0159200) Train Loss: 0.0676, Train Steps/Sec: 1.98, Samples/Sec: 94.84
+[[34m2025-06-06 02:30:49[0m] (step=0159300) Train Loss: 0.0650, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 02:31:39[0m] (step=0159400) Train Loss: 0.0678, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 02:32:30[0m] (step=0159500) Train Loss: 0.0682, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 02:33:20[0m] (step=0159600) Train Loss: 0.0678, Train Steps/Sec: 1.98, Samples/Sec: 94.92
+[[34m2025-06-06 02:34:11[0m] (step=0159700) Train Loss: 0.0704, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 02:35:01[0m] (step=0159800) Train Loss: 0.0664, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 02:35:52[0m] (step=0159900) Train Loss: 0.0672, Train Steps/Sec: 1.97, Samples/Sec: 94.59
+[[34m2025-06-06 02:36:42[0m] (step=0160000) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 02:37:10[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/0160000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 02:37:13[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 02:39:14[0m] (step=0160000) Perceptual Loss: 0.3043, Eval Time: 123.41
+[[34m2025-06-06 02:40:11[0m] (step=0160100) Train Loss: 0.0672, Train Steps/Sec: 0.48, Samples/Sec: 23.01
+[[34m2025-06-06 02:41:01[0m] (step=0160200) Train Loss: 0.0663, Train Steps/Sec: 1.98, Samples/Sec: 95.00
+[[34m2025-06-06 02:41:52[0m] (step=0160300) Train Loss: 0.0683, Train Steps/Sec: 1.98, Samples/Sec: 95.04
+[[34m2025-06-06 02:42:43[0m] (step=0160400) Train Loss: 0.0697, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 02:43:33[0m] (step=0160500) Train Loss: 0.0709, Train Steps/Sec: 1.96, Samples/Sec: 94.26
+[[34m2025-06-06 02:44:19[0m] Beginning epoch 53...
+[[34m2025-06-06 02:44:26[0m] (step=0160600) Train Loss: 0.0694, Train Steps/Sec: 1.89, Samples/Sec: 90.84
+[[34m2025-06-06 02:45:17[0m] (step=0160700) Train Loss: 0.0688, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+[[34m2025-06-06 02:46:10[0m] (step=0160800) Train Loss: 0.0695, Train Steps/Sec: 1.87, Samples/Sec: 89.82
+[[34m2025-06-06 02:47:01[0m] (step=0160900) Train Loss: 0.0668, Train Steps/Sec: 1.98, Samples/Sec: 94.96
+[[34m2025-06-06 02:47:51[0m] (step=0161000) Train Loss: 0.0670, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 02:48:42[0m] (step=0161100) Train Loss: 0.0740, Train Steps/Sec: 1.97, Samples/Sec: 94.57
+[[34m2025-06-06 02:49:33[0m] (step=0161200) Train Loss: 0.0684, Train Steps/Sec: 1.98, Samples/Sec: 94.87
+[[34m2025-06-06 02:50:23[0m] (step=0161300) Train Loss: 0.0663, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 02:51:14[0m] (step=0161400) Train Loss: 0.0677, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 02:52:08[0m] (step=0161500) Train Loss: 0.0708, Train Steps/Sec: 1.85, Samples/Sec: 88.62
+[[34m2025-06-06 02:52:59[0m] (step=0161600) Train Loss: 0.0674, Train Steps/Sec: 1.97, Samples/Sec: 94.45
+[[34m2025-06-06 02:53:49[0m] (step=0161700) Train Loss: 0.0704, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 02:54:40[0m] (step=0161800) Train Loss: 0.0641, Train Steps/Sec: 1.97, Samples/Sec: 94.60
+[[34m2025-06-06 02:55:30[0m] (step=0161900) Train Loss: 0.0682, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 02:56:21[0m] (step=0162000) Train Loss: 0.0659, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-06 02:56:34[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 02:57:24[0m] (step=0162100) Train Loss: 0.0707, Train Steps/Sec: 1.58, Samples/Sec: 75.85
+[[34m2025-06-06 02:58:14[0m] (step=0162200) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 02:59:05[0m] (step=0162300) Train Loss: 0.0630, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 02:59:55[0m] (step=0162400) Train Loss: 0.0679, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 03:00:46[0m] (step=0162500) Train Loss: 0.0674, Train Steps/Sec: 1.97, Samples/Sec: 94.63
+[[34m2025-06-06 03:01:36[0m] (step=0162600) Train Loss: 0.0711, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 03:02:27[0m] (step=0162700) Train Loss: 0.0738, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 03:03:17[0m] (step=0162800) Train Loss: 0.0692, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 03:04:08[0m] (step=0162900) Train Loss: 0.0661, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 03:04:58[0m] (step=0163000) Train Loss: 0.0678, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 03:05:49[0m] (step=0163100) Train Loss: 0.0685, Train Steps/Sec: 1.96, Samples/Sec: 94.14
+[[34m2025-06-06 03:06:40[0m] (step=0163200) Train Loss: 0.0682, Train Steps/Sec: 1.96, Samples/Sec: 94.27
+[[34m2025-06-06 03:07:31[0m] (step=0163300) Train Loss: 0.0698, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 03:08:21[0m] (step=0163400) Train Loss: 0.0663, Train Steps/Sec: 1.98, Samples/Sec: 95.10
+[[34m2025-06-06 03:09:12[0m] (step=0163500) Train Loss: 0.0673, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 03:10:02[0m] (step=0163600) Train Loss: 0.0658, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 03:10:12[0m] Beginning epoch 54...
+[[34m2025-06-06 03:10:53[0m] (step=0163700) Train Loss: 0.0696, Train Steps/Sec: 1.95, Samples/Sec: 93.69
+[[34m2025-06-06 03:11:44[0m] (step=0163800) Train Loss: 0.0671, Train Steps/Sec: 1.98, Samples/Sec: 94.87
+[[34m2025-06-06 03:12:34[0m] (step=0163900) Train Loss: 0.0709, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 03:13:25[0m] (step=0164000) Train Loss: 0.0696, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 03:13:38[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 03:14:28[0m] (step=0164100) Train Loss: 0.0649, Train Steps/Sec: 1.58, Samples/Sec: 75.74
+[[34m2025-06-06 03:15:18[0m] (step=0164200) Train Loss: 0.0623, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 03:16:09[0m] (step=0164300) Train Loss: 0.0658, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 03:16:59[0m] (step=0164400) Train Loss: 0.0769, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 03:17:50[0m] (step=0164500) Train Loss: 0.0683, Train Steps/Sec: 1.97, Samples/Sec: 94.74
+[[34m2025-06-06 03:18:40[0m] (step=0164600) Train Loss: 0.0663, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 03:19:31[0m] (step=0164700) Train Loss: 0.0682, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 03:20:21[0m] (step=0164800) Train Loss: 0.0629, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 03:21:12[0m] (step=0164900) Train Loss: 0.0715, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 03:22:02[0m] (step=0165000) Train Loss: 0.0650, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 03:22:52[0m] (step=0165100) Train Loss: 0.0666, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 03:23:43[0m] (step=0165200) Train Loss: 0.0641, Train Steps/Sec: 1.97, Samples/Sec: 94.72
+[[34m2025-06-06 03:24:34[0m] (step=0165300) Train Loss: 0.0694, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 03:25:24[0m] (step=0165400) Train Loss: 0.0709, Train Steps/Sec: 1.98, Samples/Sec: 94.82
+[[34m2025-06-06 03:26:15[0m] (step=0165500) Train Loss: 0.0664, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 03:27:05[0m] (step=0165600) Train Loss: 0.0671, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 03:27:55[0m] (step=0165700) Train Loss: 0.0683, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 03:28:46[0m] (step=0165800) Train Loss: 0.0670, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 03:29:37[0m] (step=0165900) Train Loss: 0.0665, Train Steps/Sec: 1.97, Samples/Sec: 94.60
+[[34m2025-06-06 03:30:27[0m] (step=0166000) Train Loss: 0.0682, Train Steps/Sec: 1.98, Samples/Sec: 95.00
+[[34m2025-06-06 03:30:42[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 03:31:32[0m] (step=0166100) Train Loss: 0.0744, Train Steps/Sec: 1.54, Samples/Sec: 73.74
+[[34m2025-06-06 03:32:23[0m] (step=0166200) Train Loss: 0.0708, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 03:33:13[0m] (step=0166300) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 03:34:04[0m] (step=0166400) Train Loss: 0.0676, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 03:34:54[0m] (step=0166500) Train Loss: 0.0661, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 03:35:45[0m] (step=0166600) Train Loss: 0.0696, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 03:36:10[0m] Beginning epoch 55...
+[[34m2025-06-06 03:36:36[0m] (step=0166700) Train Loss: 0.0662, Train Steps/Sec: 1.95, Samples/Sec: 93.57
+[[34m2025-06-06 03:37:26[0m] (step=0166800) Train Loss: 0.0689, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 03:38:17[0m] (step=0166900) Train Loss: 0.0651, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 03:39:07[0m] (step=0167000) Train Loss: 0.0672, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 03:39:57[0m] (step=0167100) Train Loss: 0.0644, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 03:40:48[0m] (step=0167200) Train Loss: 0.0690, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-06 03:41:39[0m] (step=0167300) Train Loss: 0.0630, Train Steps/Sec: 1.98, Samples/Sec: 95.02
+[[34m2025-06-06 03:42:29[0m] (step=0167400) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 94.80
+[[34m2025-06-06 03:43:20[0m] (step=0167500) Train Loss: 0.0721, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+[[34m2025-06-06 03:44:10[0m] (step=0167600) Train Loss: 0.0710, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 03:45:01[0m] (step=0167700) Train Loss: 0.0667, Train Steps/Sec: 1.98, Samples/Sec: 95.15
+[[34m2025-06-06 03:45:51[0m] (step=0167800) Train Loss: 0.0672, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 03:46:42[0m] (step=0167900) Train Loss: 0.0697, Train Steps/Sec: 1.97, Samples/Sec: 94.50
+[[34m2025-06-06 03:47:32[0m] (step=0168000) Train Loss: 0.0706, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 03:47:45[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 03:48:36[0m] (step=0168100) Train Loss: 0.0684, Train Steps/Sec: 1.58, Samples/Sec: 75.68
+[[34m2025-06-06 03:49:26[0m] (step=0168200) Train Loss: 0.0703, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 03:50:17[0m] (step=0168300) Train Loss: 0.0649, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 03:51:07[0m] (step=0168400) Train Loss: 0.0655, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 03:51:57[0m] (step=0168500) Train Loss: 0.0700, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 03:52:48[0m] (step=0168600) Train Loss: 0.0619, Train Steps/Sec: 1.97, Samples/Sec: 94.74
+[[34m2025-06-06 03:53:39[0m] (step=0168700) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 03:54:29[0m] (step=0168800) Train Loss: 0.0680, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 03:55:19[0m] (step=0168900) Train Loss: 0.0707, Train Steps/Sec: 1.99, Samples/Sec: 95.31
+[[34m2025-06-06 03:56:10[0m] (step=0169000) Train Loss: 0.0700, Train Steps/Sec: 1.98, Samples/Sec: 95.28
+[[34m2025-06-06 03:57:00[0m] (step=0169100) Train Loss: 0.0665, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 03:57:51[0m] (step=0169200) Train Loss: 0.0669, Train Steps/Sec: 1.98, Samples/Sec: 94.93
+[[34m2025-06-06 03:58:41[0m] (step=0169300) Train Loss: 0.0718, Train Steps/Sec: 1.98, Samples/Sec: 95.05
+[[34m2025-06-06 03:59:32[0m] (step=0169400) Train Loss: 0.0668, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-06 04:00:22[0m] (step=0169500) Train Loss: 0.0669, Train Steps/Sec: 1.99, Samples/Sec: 95.28
+[[34m2025-06-06 04:01:13[0m] (step=0169600) Train Loss: 0.0658, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 04:01:53[0m] Beginning epoch 56...
+[[34m2025-06-06 04:02:04[0m] (step=0169700) Train Loss: 0.0698, Train Steps/Sec: 1.95, Samples/Sec: 93.67
+[[34m2025-06-06 04:02:54[0m] (step=0169800) Train Loss: 0.0686, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 04:03:45[0m] (step=0169900) Train Loss: 0.0651, Train Steps/Sec: 1.97, Samples/Sec: 94.79
+[[34m2025-06-06 04:04:35[0m] (step=0170000) Train Loss: 0.0694, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 04:04:49[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 04:04:52[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 04:06:52[0m] (step=0170000) Perceptual Loss: 0.3152, Eval Time: 122.66
+[[34m2025-06-06 04:07:42[0m] (step=0170100) Train Loss: 0.0688, Train Steps/Sec: 0.54, Samples/Sec: 25.70
+[[34m2025-06-06 04:08:33[0m] (step=0170200) Train Loss: 0.0686, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 04:09:23[0m] (step=0170300) Train Loss: 0.0645, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 04:10:13[0m] (step=0170400) Train Loss: 0.0672, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 04:11:04[0m] (step=0170500) Train Loss: 0.0658, Train Steps/Sec: 1.97, Samples/Sec: 94.59
+[[34m2025-06-06 04:11:55[0m] (step=0170600) Train Loss: 0.0665, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 04:12:45[0m] (step=0170700) Train Loss: 0.0703, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 04:13:35[0m] (step=0170800) Train Loss: 0.0710, Train Steps/Sec: 1.99, Samples/Sec: 95.28
+[[34m2025-06-06 04:14:26[0m] (step=0170900) Train Loss: 0.0664, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 04:15:16[0m] (step=0171000) Train Loss: 0.0656, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 04:16:07[0m] (step=0171100) Train Loss: 0.0688, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 04:16:57[0m] (step=0171200) Train Loss: 0.0712, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 04:17:48[0m] (step=0171300) Train Loss: 0.0667, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 04:18:38[0m] (step=0171400) Train Loss: 0.0657, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 04:19:29[0m] (step=0171500) Train Loss: 0.0697, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 04:20:19[0m] (step=0171600) Train Loss: 0.0692, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 04:21:09[0m] (step=0171700) Train Loss: 0.0645, Train Steps/Sec: 1.99, Samples/Sec: 95.28
+[[34m2025-06-06 04:22:00[0m] (step=0171800) Train Loss: 0.0660, Train Steps/Sec: 1.98, Samples/Sec: 94.95
+[[34m2025-06-06 04:22:50[0m] (step=0171900) Train Loss: 0.0686, Train Steps/Sec: 1.98, Samples/Sec: 95.11
+[[34m2025-06-06 04:23:41[0m] (step=0172000) Train Loss: 0.0685, Train Steps/Sec: 1.98, Samples/Sec: 95.28
+[[34m2025-06-06 04:23:54[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 04:24:44[0m] (step=0172100) Train Loss: 0.0696, Train Steps/Sec: 1.58, Samples/Sec: 75.68
+[[34m2025-06-06 04:25:35[0m] (step=0172200) Train Loss: 0.0674, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 04:26:25[0m] (step=0172300) Train Loss: 0.0668, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 04:27:15[0m] (step=0172400) Train Loss: 0.0707, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 04:28:06[0m] (step=0172500) Train Loss: 0.0616, Train Steps/Sec: 1.97, Samples/Sec: 94.63
+[[34m2025-06-06 04:28:57[0m] (step=0172600) Train Loss: 0.0647, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 04:29:47[0m] (step=0172700) Train Loss: 0.0626, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 04:29:52[0m] Beginning epoch 57...
+[[34m2025-06-06 04:30:38[0m] (step=0172800) Train Loss: 0.0687, Train Steps/Sec: 1.95, Samples/Sec: 93.67
+[[34m2025-06-06 04:31:29[0m] (step=0172900) Train Loss: 0.0670, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 04:32:19[0m] (step=0173000) Train Loss: 0.0730, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 04:33:09[0m] (step=0173100) Train Loss: 0.0708, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 04:34:00[0m] (step=0173200) Train Loss: 0.0652, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-06 04:34:50[0m] (step=0173300) Train Loss: 0.0665, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 04:35:41[0m] (step=0173400) Train Loss: 0.0680, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 04:36:31[0m] (step=0173500) Train Loss: 0.0684, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 04:37:22[0m] (step=0173600) Train Loss: 0.0666, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 04:38:12[0m] (step=0173700) Train Loss: 0.0653, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 04:39:03[0m] (step=0173800) Train Loss: 0.0686, Train Steps/Sec: 1.98, Samples/Sec: 94.94
+[[34m2025-06-06 04:39:53[0m] (step=0173900) Train Loss: 0.0658, Train Steps/Sec: 1.98, Samples/Sec: 95.10
+[[34m2025-06-06 04:40:44[0m] (step=0174000) Train Loss: 0.0713, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 04:40:57[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 04:41:47[0m] (step=0174100) Train Loss: 0.0736, Train Steps/Sec: 1.58, Samples/Sec: 75.78
+[[34m2025-06-06 04:42:37[0m] (step=0174200) Train Loss: 0.0659, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 04:43:28[0m] (step=0174300) Train Loss: 0.0685, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 04:44:18[0m] (step=0174400) Train Loss: 0.0616, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 04:45:09[0m] (step=0174500) Train Loss: 0.0723, Train Steps/Sec: 1.98, Samples/Sec: 94.92
+[[34m2025-06-06 04:45:59[0m] (step=0174600) Train Loss: 0.0646, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 04:46:50[0m] (step=0174700) Train Loss: 0.0669, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 04:47:40[0m] (step=0174800) Train Loss: 0.0664, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 04:48:30[0m] (step=0174900) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 04:49:21[0m] (step=0175000) Train Loss: 0.0683, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 04:50:11[0m] (step=0175100) Train Loss: 0.0624, Train Steps/Sec: 1.98, Samples/Sec: 95.04
+[[34m2025-06-06 04:51:02[0m] (step=0175200) Train Loss: 0.0688, Train Steps/Sec: 1.97, Samples/Sec: 94.55
+[[34m2025-06-06 04:51:53[0m] (step=0175300) Train Loss: 0.0686, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 04:52:43[0m] (step=0175400) Train Loss: 0.0713, Train Steps/Sec: 1.98, Samples/Sec: 95.05
+[[34m2025-06-06 04:53:33[0m] (step=0175500) Train Loss: 0.0622, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 04:54:24[0m] (step=0175600) Train Loss: 0.0629, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 04:55:14[0m] (step=0175700) Train Loss: 0.0640, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 04:55:34[0m] Beginning epoch 58...
+[[34m2025-06-06 04:56:06[0m] (step=0175800) Train Loss: 0.0638, Train Steps/Sec: 1.95, Samples/Sec: 93.48
+[[34m2025-06-06 04:56:56[0m] (step=0175900) Train Loss: 0.0651, Train Steps/Sec: 1.97, Samples/Sec: 94.73
+[[34m2025-06-06 04:57:47[0m] (step=0176000) Train Loss: 0.0647, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 04:58:04[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 04:58:55[0m] (step=0176100) Train Loss: 0.0664, Train Steps/Sec: 1.47, Samples/Sec: 70.44
+[[34m2025-06-06 04:59:45[0m] (step=0176200) Train Loss: 0.0667, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 05:00:36[0m] (step=0176300) Train Loss: 0.0650, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 05:01:26[0m] (step=0176400) Train Loss: 0.0646, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 05:02:17[0m] (step=0176500) Train Loss: 0.0686, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 05:03:07[0m] (step=0176600) Train Loss: 0.0669, Train Steps/Sec: 1.98, Samples/Sec: 94.87
+[[34m2025-06-06 05:03:58[0m] (step=0176700) Train Loss: 0.0645, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 05:04:48[0m] (step=0176800) Train Loss: 0.0702, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 05:05:39[0m] (step=0176900) Train Loss: 0.0641, Train Steps/Sec: 1.98, Samples/Sec: 94.93
+[[34m2025-06-06 05:06:29[0m] (step=0177000) Train Loss: 0.0665, Train Steps/Sec: 1.98, Samples/Sec: 95.12
+[[34m2025-06-06 05:07:20[0m] (step=0177100) Train Loss: 0.0671, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 05:08:10[0m] (step=0177200) Train Loss: 0.0656, Train Steps/Sec: 1.98, Samples/Sec: 94.82
+[[34m2025-06-06 05:09:01[0m] (step=0177300) Train Loss: 0.0619, Train Steps/Sec: 1.97, Samples/Sec: 94.78
+[[34m2025-06-06 05:09:52[0m] (step=0177400) Train Loss: 0.0704, Train Steps/Sec: 1.97, Samples/Sec: 94.45
+[[34m2025-06-06 05:10:42[0m] (step=0177500) Train Loss: 0.0654, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 05:11:33[0m] (step=0177600) Train Loss: 0.0652, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 05:12:23[0m] (step=0177700) Train Loss: 0.0672, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 05:13:13[0m] (step=0177800) Train Loss: 0.0691, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 05:14:04[0m] (step=0177900) Train Loss: 0.0682, Train Steps/Sec: 1.97, Samples/Sec: 94.70
+[[34m2025-06-06 05:14:55[0m] (step=0178000) Train Loss: 0.0658, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 05:15:07[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 05:15:58[0m] (step=0178100) Train Loss: 0.0676, Train Steps/Sec: 1.58, Samples/Sec: 75.72
+[[34m2025-06-06 05:16:48[0m] (step=0178200) Train Loss: 0.0694, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 05:17:39[0m] (step=0178300) Train Loss: 0.0660, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 05:18:29[0m] (step=0178400) Train Loss: 0.0692, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 05:19:20[0m] (step=0178500) Train Loss: 0.0677, Train Steps/Sec: 1.98, Samples/Sec: 94.95
+[[34m2025-06-06 05:20:10[0m] (step=0178600) Train Loss: 0.0699, Train Steps/Sec: 1.97, Samples/Sec: 94.53
+[[34m2025-06-06 05:21:01[0m] (step=0178700) Train Loss: 0.0658, Train Steps/Sec: 1.97, Samples/Sec: 94.77
+[[34m2025-06-06 05:21:36[0m] Beginning epoch 59...
+[[34m2025-06-06 05:21:52[0m] (step=0178800) Train Loss: 0.0664, Train Steps/Sec: 1.95, Samples/Sec: 93.49
+[[34m2025-06-06 05:22:43[0m] (step=0178900) Train Loss: 0.0681, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 05:23:33[0m] (step=0179000) Train Loss: 0.0652, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 05:24:24[0m] (step=0179100) Train Loss: 0.0670, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 05:25:14[0m] (step=0179200) Train Loss: 0.0671, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 05:26:05[0m] (step=0179300) Train Loss: 0.0610, Train Steps/Sec: 1.97, Samples/Sec: 94.65
+[[34m2025-06-06 05:26:55[0m] (step=0179400) Train Loss: 0.0694, Train Steps/Sec: 1.98, Samples/Sec: 95.05
+[[34m2025-06-06 05:27:46[0m] (step=0179500) Train Loss: 0.0652, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 05:28:36[0m] (step=0179600) Train Loss: 0.0639, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 05:29:27[0m] (step=0179700) Train Loss: 0.0661, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 05:30:17[0m] (step=0179800) Train Loss: 0.0681, Train Steps/Sec: 1.98, Samples/Sec: 95.14
+[[34m2025-06-06 05:31:08[0m] (step=0179900) Train Loss: 0.0642, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+[[34m2025-06-06 05:31:58[0m] (step=0180000) Train Loss: 0.0655, Train Steps/Sec: 1.98, Samples/Sec: 95.02
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 05:32:23[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/0180000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 05:32:26[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 05:34:26[0m] (step=0180000) Perceptual Loss: 0.3015, Eval Time: 122.75
+[[34m2025-06-06 05:35:17[0m] (step=0180100) Train Loss: 0.0671, Train Steps/Sec: 0.50, Samples/Sec: 24.19
+[[34m2025-06-06 05:36:07[0m] (step=0180200) Train Loss: 0.0664, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 05:36:57[0m] (step=0180300) Train Loss: 0.0647, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 05:37:48[0m] (step=0180400) Train Loss: 0.0624, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 05:38:39[0m] (step=0180500) Train Loss: 0.0633, Train Steps/Sec: 1.97, Samples/Sec: 94.55
+[[34m2025-06-06 05:39:29[0m] (step=0180600) Train Loss: 0.0675, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 05:40:20[0m] (step=0180700) Train Loss: 0.0679, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 05:41:10[0m] (step=0180800) Train Loss: 0.0693, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 05:42:00[0m] (step=0180900) Train Loss: 0.0676, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 05:42:51[0m] (step=0181000) Train Loss: 0.0676, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 05:43:41[0m] (step=0181100) Train Loss: 0.0643, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 05:44:32[0m] (step=0181200) Train Loss: 0.0669, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 05:45:22[0m] (step=0181300) Train Loss: 0.0658, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 05:46:13[0m] (step=0181400) Train Loss: 0.0680, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 05:47:03[0m] (step=0181500) Train Loss: 0.0696, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 05:47:53[0m] (step=0181600) Train Loss: 0.0663, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 05:48:44[0m] (step=0181700) Train Loss: 0.0650, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 05:49:34[0m] (step=0181800) Train Loss: 0.0664, Train Steps/Sec: 1.98, Samples/Sec: 94.98
+[[34m2025-06-06 05:49:34[0m] Beginning epoch 60...
+[[34m2025-06-06 05:50:26[0m] (step=0181900) Train Loss: 0.0685, Train Steps/Sec: 1.95, Samples/Sec: 93.47
+[[34m2025-06-06 05:51:16[0m] (step=0182000) Train Loss: 0.0639, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 05:51:29[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 05:52:19[0m] (step=0182100) Train Loss: 0.0653, Train Steps/Sec: 1.58, Samples/Sec: 75.84
+[[34m2025-06-06 05:53:10[0m] (step=0182200) Train Loss: 0.0637, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 05:54:00[0m] (step=0182300) Train Loss: 0.0706, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 05:54:51[0m] (step=0182400) Train Loss: 0.0613, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 05:55:41[0m] (step=0182500) Train Loss: 0.0642, Train Steps/Sec: 1.97, Samples/Sec: 94.77
+[[34m2025-06-06 05:56:32[0m] (step=0182600) Train Loss: 0.0607, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 05:57:22[0m] (step=0182700) Train Loss: 0.0699, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 05:58:13[0m] (step=0182800) Train Loss: 0.0680, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 05:59:03[0m] (step=0182900) Train Loss: 0.0667, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 05:59:53[0m] (step=0183000) Train Loss: 0.0657, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 06:00:44[0m] (step=0183100) Train Loss: 0.0707, Train Steps/Sec: 1.98, Samples/Sec: 95.28
+[[34m2025-06-06 06:01:34[0m] (step=0183200) Train Loss: 0.0658, Train Steps/Sec: 1.97, Samples/Sec: 94.75
+[[34m2025-06-06 06:02:25[0m] (step=0183300) Train Loss: 0.0668, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 06:03:15[0m] (step=0183400) Train Loss: 0.0628, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 06:04:06[0m] (step=0183500) Train Loss: 0.0625, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 06:04:56[0m] (step=0183600) Train Loss: 0.0659, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 06:05:46[0m] (step=0183700) Train Loss: 0.0661, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 06:06:37[0m] (step=0183800) Train Loss: 0.0633, Train Steps/Sec: 1.98, Samples/Sec: 95.28
+[[34m2025-06-06 06:07:28[0m] (step=0183900) Train Loss: 0.0666, Train Steps/Sec: 1.97, Samples/Sec: 94.79
+[[34m2025-06-06 06:08:18[0m] (step=0184000) Train Loss: 0.0658, Train Steps/Sec: 1.99, Samples/Sec: 95.29
+[[34m2025-06-06 06:08:31[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 06:09:21[0m] (step=0184100) Train Loss: 0.0654, Train Steps/Sec: 1.58, Samples/Sec: 75.78
+[[34m2025-06-06 06:10:12[0m] (step=0184200) Train Loss: 0.0621, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 06:11:02[0m] (step=0184300) Train Loss: 0.0676, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 06:11:52[0m] (step=0184400) Train Loss: 0.0616, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 06:12:43[0m] (step=0184500) Train Loss: 0.0625, Train Steps/Sec: 1.98, Samples/Sec: 94.89
+[[34m2025-06-06 06:13:34[0m] (step=0184600) Train Loss: 0.0648, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 06:14:24[0m] (step=0184700) Train Loss: 0.0684, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 06:15:14[0m] (step=0184800) Train Loss: 0.0647, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 06:15:30[0m] Beginning epoch 61...
+[[34m2025-06-06 06:16:06[0m] (step=0184900) Train Loss: 0.0623, Train Steps/Sec: 1.96, Samples/Sec: 93.86
+[[34m2025-06-06 06:16:56[0m] (step=0185000) Train Loss: 0.0647, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 06:17:46[0m] (step=0185100) Train Loss: 0.0703, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 06:18:37[0m] (step=0185200) Train Loss: 0.0630, Train Steps/Sec: 1.97, Samples/Sec: 94.66
+[[34m2025-06-06 06:19:28[0m] (step=0185300) Train Loss: 0.0638, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 06:20:18[0m] (step=0185400) Train Loss: 0.0664, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 06:21:09[0m] (step=0185500) Train Loss: 0.0670, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 06:21:59[0m] (step=0185600) Train Loss: 0.0651, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 06:22:49[0m] (step=0185700) Train Loss: 0.0635, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 06:23:40[0m] (step=0185800) Train Loss: 0.0650, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 06:24:30[0m] (step=0185900) Train Loss: 0.0662, Train Steps/Sec: 1.97, Samples/Sec: 94.75
+[[34m2025-06-06 06:25:21[0m] (step=0186000) Train Loss: 0.0631, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 06:25:34[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 06:26:24[0m] (step=0186100) Train Loss: 0.0625, Train Steps/Sec: 1.57, Samples/Sec: 75.55
+[[34m2025-06-06 06:27:15[0m] (step=0186200) Train Loss: 0.0626, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 06:28:05[0m] (step=0186300) Train Loss: 0.0675, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 06:28:56[0m] (step=0186400) Train Loss: 0.0684, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 06:29:46[0m] (step=0186500) Train Loss: 0.0638, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 06:30:37[0m] (step=0186600) Train Loss: 0.0629, Train Steps/Sec: 1.97, Samples/Sec: 94.74
+[[34m2025-06-06 06:31:27[0m] (step=0186700) Train Loss: 0.0651, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 06:32:17[0m] (step=0186800) Train Loss: 0.0656, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 06:33:08[0m] (step=0186900) Train Loss: 0.0689, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 06:33:58[0m] (step=0187000) Train Loss: 0.0639, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 06:34:49[0m] (step=0187100) Train Loss: 0.0649, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 06:35:39[0m] (step=0187200) Train Loss: 0.0620, Train Steps/Sec: 1.98, Samples/Sec: 94.94
+[[34m2025-06-06 06:36:30[0m] (step=0187300) Train Loss: 0.0631, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 06:37:20[0m] (step=0187400) Train Loss: 0.0644, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 06:38:11[0m] (step=0187500) Train Loss: 0.0662, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 06:39:01[0m] (step=0187600) Train Loss: 0.0633, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 06:39:51[0m] (step=0187700) Train Loss: 0.0670, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 06:40:42[0m] (step=0187800) Train Loss: 0.0666, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 06:41:12[0m] Beginning epoch 62...
+[[34m2025-06-06 06:41:33[0m] (step=0187900) Train Loss: 0.0665, Train Steps/Sec: 1.94, Samples/Sec: 93.25
+[[34m2025-06-06 06:42:24[0m] (step=0188000) Train Loss: 0.0658, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 06:42:37[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 06:43:27[0m] (step=0188100) Train Loss: 0.0633, Train Steps/Sec: 1.58, Samples/Sec: 75.72
+[[34m2025-06-06 06:44:18[0m] (step=0188200) Train Loss: 0.0687, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 06:45:08[0m] (step=0188300) Train Loss: 0.0601, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 06:45:58[0m] (step=0188400) Train Loss: 0.0633, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 06:46:49[0m] (step=0188500) Train Loss: 0.0591, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 06:47:40[0m] (step=0188600) Train Loss: 0.0633, Train Steps/Sec: 1.97, Samples/Sec: 94.63
+[[34m2025-06-06 06:48:30[0m] (step=0188700) Train Loss: 0.0601, Train Steps/Sec: 1.98, Samples/Sec: 95.00
+[[34m2025-06-06 06:49:21[0m] (step=0188800) Train Loss: 0.0671, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 06:50:11[0m] (step=0188900) Train Loss: 0.0655, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 06:51:01[0m] (step=0189000) Train Loss: 0.0626, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 06:51:52[0m] (step=0189100) Train Loss: 0.0681, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 06:52:42[0m] (step=0189200) Train Loss: 0.0619, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 06:53:33[0m] (step=0189300) Train Loss: 0.0615, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-06 06:54:23[0m] (step=0189400) Train Loss: 0.0665, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 06:55:14[0m] (step=0189500) Train Loss: 0.0603, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 06:56:04[0m] (step=0189600) Train Loss: 0.0644, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 06:56:55[0m] (step=0189700) Train Loss: 0.0659, Train Steps/Sec: 1.98, Samples/Sec: 95.13
+[[34m2025-06-06 06:57:45[0m] (step=0189800) Train Loss: 0.0661, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 06:58:36[0m] (step=0189900) Train Loss: 0.0654, Train Steps/Sec: 1.98, Samples/Sec: 94.84
+[[34m2025-06-06 06:59:26[0m] (step=0190000) Train Loss: 0.0667, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 06:59:40[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 06:59:43[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 07:01:43[0m] (step=0190000) Perceptual Loss: 0.3057, Eval Time: 122.71
+[[34m2025-06-06 07:02:33[0m] (step=0190100) Train Loss: 0.0668, Train Steps/Sec: 0.54, Samples/Sec: 25.68
+[[34m2025-06-06 07:03:24[0m] (step=0190200) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 07:04:14[0m] (step=0190300) Train Loss: 0.0661, Train Steps/Sec: 1.98, Samples/Sec: 95.16
+[[34m2025-06-06 07:05:04[0m] (step=0190400) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 07:05:55[0m] (step=0190500) Train Loss: 0.0684, Train Steps/Sec: 1.97, Samples/Sec: 94.55
+[[34m2025-06-06 07:06:46[0m] (step=0190600) Train Loss: 0.0692, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 07:07:36[0m] (step=0190700) Train Loss: 0.0629, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 07:08:27[0m] (step=0190800) Train Loss: 0.0590, Train Steps/Sec: 1.98, Samples/Sec: 95.02
+[[34m2025-06-06 07:09:12[0m] Beginning epoch 63...
+[[34m2025-06-06 07:09:18[0m] (step=0190900) Train Loss: 0.0654, Train Steps/Sec: 1.95, Samples/Sec: 93.70
+[[34m2025-06-06 07:10:08[0m] (step=0191000) Train Loss: 0.0723, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 07:10:59[0m] (step=0191100) Train Loss: 0.0653, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 07:11:49[0m] (step=0191200) Train Loss: 0.0617, Train Steps/Sec: 1.98, Samples/Sec: 94.92
+[[34m2025-06-06 07:12:40[0m] (step=0191300) Train Loss: 0.0659, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:13:30[0m] (step=0191400) Train Loss: 0.0642, Train Steps/Sec: 1.98, Samples/Sec: 95.04
+[[34m2025-06-06 07:14:21[0m] (step=0191500) Train Loss: 0.0668, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 07:15:11[0m] (step=0191600) Train Loss: 0.0642, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 07:16:01[0m] (step=0191700) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 07:16:52[0m] (step=0191800) Train Loss: 0.0637, Train Steps/Sec: 1.98, Samples/Sec: 94.84
+[[34m2025-06-06 07:17:43[0m] (step=0191900) Train Loss: 0.0652, Train Steps/Sec: 1.98, Samples/Sec: 95.03
+[[34m2025-06-06 07:18:33[0m] (step=0192000) Train Loss: 0.0625, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 07:18:46[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 07:19:36[0m] (step=0192100) Train Loss: 0.0649, Train Steps/Sec: 1.58, Samples/Sec: 75.63
+[[34m2025-06-06 07:20:27[0m] (step=0192200) Train Loss: 0.0666, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 07:21:17[0m] (step=0192300) Train Loss: 0.0647, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 07:22:08[0m] (step=0192400) Train Loss: 0.0612, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:22:58[0m] (step=0192500) Train Loss: 0.0674, Train Steps/Sec: 1.97, Samples/Sec: 94.68
+[[34m2025-06-06 07:23:49[0m] (step=0192600) Train Loss: 0.0609, Train Steps/Sec: 1.98, Samples/Sec: 95.17
+[[34m2025-06-06 07:24:39[0m] (step=0192700) Train Loss: 0.0638, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 07:25:30[0m] (step=0192800) Train Loss: 0.0652, Train Steps/Sec: 1.99, Samples/Sec: 95.30
+[[34m2025-06-06 07:26:20[0m] (step=0192900) Train Loss: 0.0684, Train Steps/Sec: 1.99, Samples/Sec: 95.31
+[[34m2025-06-06 07:27:10[0m] (step=0193000) Train Loss: 0.0646, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 07:28:01[0m] (step=0193100) Train Loss: 0.0642, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:28:51[0m] (step=0193200) Train Loss: 0.0649, Train Steps/Sec: 1.97, Samples/Sec: 94.74
+[[34m2025-06-06 07:29:42[0m] (step=0193300) Train Loss: 0.0605, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:30:32[0m] (step=0193400) Train Loss: 0.0623, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 07:31:23[0m] (step=0193500) Train Loss: 0.0630, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 07:32:13[0m] (step=0193600) Train Loss: 0.0660, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 07:33:04[0m] (step=0193700) Train Loss: 0.0678, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:33:54[0m] (step=0193800) Train Loss: 0.0626, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 07:34:45[0m] (step=0193900) Train Loss: 0.0641, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+[[34m2025-06-06 07:34:55[0m] Beginning epoch 64...
+[[34m2025-06-06 07:35:36[0m] (step=0194000) Train Loss: 0.0645, Train Steps/Sec: 1.96, Samples/Sec: 93.93
+[[34m2025-06-06 07:35:49[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 07:36:39[0m] (step=0194100) Train Loss: 0.0627, Train Steps/Sec: 1.57, Samples/Sec: 75.54
+[[34m2025-06-06 07:37:30[0m] (step=0194200) Train Loss: 0.0607, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 07:38:20[0m] (step=0194300) Train Loss: 0.0649, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 07:39:10[0m] (step=0194400) Train Loss: 0.0633, Train Steps/Sec: 1.98, Samples/Sec: 95.18
+[[34m2025-06-06 07:40:01[0m] (step=0194500) Train Loss: 0.0674, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+[[34m2025-06-06 07:40:52[0m] (step=0194600) Train Loss: 0.0647, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 07:41:42[0m] (step=0194700) Train Loss: 0.0634, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 07:42:32[0m] (step=0194800) Train Loss: 0.0640, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 07:43:23[0m] (step=0194900) Train Loss: 0.0637, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 07:44:13[0m] (step=0195000) Train Loss: 0.0655, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 07:45:04[0m] (step=0195100) Train Loss: 0.0639, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 07:45:54[0m] (step=0195200) Train Loss: 0.0675, Train Steps/Sec: 1.97, Samples/Sec: 94.72
+[[34m2025-06-06 07:46:45[0m] (step=0195300) Train Loss: 0.0644, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:47:35[0m] (step=0195400) Train Loss: 0.0691, Train Steps/Sec: 1.98, Samples/Sec: 95.05
+[[34m2025-06-06 07:48:26[0m] (step=0195500) Train Loss: 0.0674, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:49:16[0m] (step=0195600) Train Loss: 0.0617, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:50:06[0m] (step=0195700) Train Loss: 0.0676, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 07:50:57[0m] (step=0195800) Train Loss: 0.0641, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:51:48[0m] (step=0195900) Train Loss: 0.0602, Train Steps/Sec: 1.97, Samples/Sec: 94.70
+[[34m2025-06-06 07:52:38[0m] (step=0196000) Train Loss: 0.0620, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 07:52:51[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 07:53:41[0m] (step=0196100) Train Loss: 0.0612, Train Steps/Sec: 1.58, Samples/Sec: 75.64
+[[34m2025-06-06 07:54:32[0m] (step=0196200) Train Loss: 0.0658, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 07:55:22[0m] (step=0196300) Train Loss: 0.0681, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 07:56:13[0m] (step=0196400) Train Loss: 0.0648, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 07:57:03[0m] (step=0196500) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 07:57:54[0m] (step=0196600) Train Loss: 0.0616, Train Steps/Sec: 1.97, Samples/Sec: 94.74
+[[34m2025-06-06 07:58:44[0m] (step=0196700) Train Loss: 0.0618, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 07:59:35[0m] (step=0196800) Train Loss: 0.0650, Train Steps/Sec: 1.98, Samples/Sec: 95.20
+[[34m2025-06-06 08:00:25[0m] (step=0196900) Train Loss: 0.0645, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 08:00:50[0m] Beginning epoch 65...
+[[34m2025-06-06 08:01:16[0m] (step=0197000) Train Loss: 0.0637, Train Steps/Sec: 1.96, Samples/Sec: 93.95
+[[34m2025-06-06 08:02:07[0m] (step=0197100) Train Loss: 0.0680, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 08:02:57[0m] (step=0197200) Train Loss: 0.0644, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 08:03:48[0m] (step=0197300) Train Loss: 0.0643, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 08:04:38[0m] (step=0197400) Train Loss: 0.0627, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 08:05:28[0m] (step=0197500) Train Loss: 0.0644, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:06:19[0m] (step=0197600) Train Loss: 0.0651, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:07:09[0m] (step=0197700) Train Loss: 0.0634, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 08:08:00[0m] (step=0197800) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:08:50[0m] (step=0197900) Train Loss: 0.0604, Train Steps/Sec: 1.97, Samples/Sec: 94.65
+[[34m2025-06-06 08:09:41[0m] (step=0198000) Train Loss: 0.0672, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:09:54[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 08:10:44[0m] (step=0198100) Train Loss: 0.0630, Train Steps/Sec: 1.57, Samples/Sec: 75.60
+[[34m2025-06-06 08:11:35[0m] (step=0198200) Train Loss: 0.0638, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:12:25[0m] (step=0198300) Train Loss: 0.0663, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:13:15[0m] (step=0198400) Train Loss: 0.0635, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 08:14:06[0m] (step=0198500) Train Loss: 0.0653, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:14:57[0m] (step=0198600) Train Loss: 0.0644, Train Steps/Sec: 1.97, Samples/Sec: 94.71
+[[34m2025-06-06 08:15:47[0m] (step=0198700) Train Loss: 0.0659, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 08:16:37[0m] (step=0198800) Train Loss: 0.0631, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 08:17:28[0m] (step=0198900) Train Loss: 0.0621, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 08:18:18[0m] (step=0199000) Train Loss: 0.0645, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 08:19:09[0m] (step=0199100) Train Loss: 0.0664, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 08:19:59[0m] (step=0199200) Train Loss: 0.0631, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:20:50[0m] (step=0199300) Train Loss: 0.0603, Train Steps/Sec: 1.97, Samples/Sec: 94.73
+[[34m2025-06-06 08:21:40[0m] (step=0199400) Train Loss: 0.0713, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 08:22:31[0m] (step=0199500) Train Loss: 0.0651, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 08:23:21[0m] (step=0199600) Train Loss: 0.0686, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:24:11[0m] (step=0199700) Train Loss: 0.0606, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:25:02[0m] (step=0199800) Train Loss: 0.0611, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 08:25:52[0m] (step=0199900) Train Loss: 0.0665, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 08:26:33[0m] Beginning epoch 66...
+[[34m2025-06-06 08:26:44[0m] (step=0200000) Train Loss: 0.0607, Train Steps/Sec: 1.95, Samples/Sec: 93.60
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 08:27:08[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/0200000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 08:27:11[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 08:29:11[0m] (step=0200000) Perceptual Loss: 0.2774, Eval Time: 122.63
+[[34m2025-06-06 08:30:02[0m] (step=0200100) Train Loss: 0.0650, Train Steps/Sec: 0.51, Samples/Sec: 24.25
+[[34m2025-06-06 08:30:52[0m] (step=0200200) Train Loss: 0.0626, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:31:42[0m] (step=0200300) Train Loss: 0.0620, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 08:32:33[0m] (step=0200400) Train Loss: 0.0639, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:33:23[0m] (step=0200500) Train Loss: 0.0641, Train Steps/Sec: 1.98, Samples/Sec: 94.80
+[[34m2025-06-06 08:34:14[0m] (step=0200600) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 08:35:04[0m] (step=0200700) Train Loss: 0.0632, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 08:35:55[0m] (step=0200800) Train Loss: 0.0630, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 08:36:45[0m] (step=0200900) Train Loss: 0.0637, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 08:37:35[0m] (step=0201000) Train Loss: 0.0577, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 08:38:26[0m] (step=0201100) Train Loss: 0.0614, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 08:39:16[0m] (step=0201200) Train Loss: 0.0633, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+[[34m2025-06-06 08:40:07[0m] (step=0201300) Train Loss: 0.0668, Train Steps/Sec: 1.99, Samples/Sec: 95.28
+[[34m2025-06-06 08:40:57[0m] (step=0201400) Train Loss: 0.0639, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 08:41:48[0m] (step=0201500) Train Loss: 0.0615, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 08:42:38[0m] (step=0201600) Train Loss: 0.0637, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:43:28[0m] (step=0201700) Train Loss: 0.0609, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:44:19[0m] (step=0201800) Train Loss: 0.0635, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 08:45:10[0m] (step=0201900) Train Loss: 0.0661, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 08:46:00[0m] (step=0202000) Train Loss: 0.0670, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:46:13[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 08:47:03[0m] (step=0202100) Train Loss: 0.0597, Train Steps/Sec: 1.58, Samples/Sec: 75.66
+[[34m2025-06-06 08:47:54[0m] (step=0202200) Train Loss: 0.0607, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:48:44[0m] (step=0202300) Train Loss: 0.0613, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 08:49:35[0m] (step=0202400) Train Loss: 0.0674, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 08:50:25[0m] (step=0202500) Train Loss: 0.0613, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 08:51:16[0m] (step=0202600) Train Loss: 0.0631, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 08:52:06[0m] (step=0202700) Train Loss: 0.0613, Train Steps/Sec: 1.98, Samples/Sec: 95.09
+[[34m2025-06-06 08:52:56[0m] (step=0202800) Train Loss: 0.0621, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 08:53:47[0m] (step=0202900) Train Loss: 0.0648, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:54:37[0m] (step=0203000) Train Loss: 0.0604, Train Steps/Sec: 1.99, Samples/Sec: 95.29
+[[34m2025-06-06 08:54:42[0m] Beginning epoch 67...
+[[34m2025-06-06 08:55:28[0m] (step=0203100) Train Loss: 0.0618, Train Steps/Sec: 1.95, Samples/Sec: 93.69
+[[34m2025-06-06 08:56:19[0m] (step=0203200) Train Loss: 0.0609, Train Steps/Sec: 1.97, Samples/Sec: 94.73
+[[34m2025-06-06 08:57:10[0m] (step=0203300) Train Loss: 0.0606, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:58:00[0m] (step=0203400) Train Loss: 0.0593, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 08:58:50[0m] (step=0203500) Train Loss: 0.0611, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 08:59:41[0m] (step=0203600) Train Loss: 0.0606, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 09:00:31[0m] (step=0203700) Train Loss: 0.0654, Train Steps/Sec: 1.98, Samples/Sec: 95.28
+[[34m2025-06-06 09:01:22[0m] (step=0203800) Train Loss: 0.0632, Train Steps/Sec: 1.98, Samples/Sec: 95.19
+[[34m2025-06-06 09:02:12[0m] (step=0203900) Train Loss: 0.0598, Train Steps/Sec: 1.98, Samples/Sec: 94.89
+[[34m2025-06-06 09:03:03[0m] (step=0204000) Train Loss: 0.0635, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:03:16[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 09:04:06[0m] (step=0204100) Train Loss: 0.0606, Train Steps/Sec: 1.57, Samples/Sec: 75.59
+[[34m2025-06-06 09:04:56[0m] (step=0204200) Train Loss: 0.0624, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 09:05:47[0m] (step=0204300) Train Loss: 0.0640, Train Steps/Sec: 1.98, Samples/Sec: 95.21
+[[34m2025-06-06 09:06:37[0m] (step=0204400) Train Loss: 0.0611, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 09:07:28[0m] (step=0204500) Train Loss: 0.0606, Train Steps/Sec: 1.98, Samples/Sec: 94.90
+[[34m2025-06-06 09:08:18[0m] (step=0204600) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 94.91
+[[34m2025-06-06 09:09:09[0m] (step=0204700) Train Loss: 0.0615, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 09:09:59[0m] (step=0204800) Train Loss: 0.0634, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 09:10:50[0m] (step=0204900) Train Loss: 0.0594, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 09:11:40[0m] (step=0205000) Train Loss: 0.0619, Train Steps/Sec: 1.98, Samples/Sec: 95.28
+[[34m2025-06-06 09:12:30[0m] (step=0205100) Train Loss: 0.0652, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 09:13:21[0m] (step=0205200) Train Loss: 0.0642, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-06 09:14:12[0m] (step=0205300) Train Loss: 0.0592, Train Steps/Sec: 1.98, Samples/Sec: 95.06
+[[34m2025-06-06 09:15:02[0m] (step=0205400) Train Loss: 0.0648, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 09:15:52[0m] (step=0205500) Train Loss: 0.0683, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 09:16:43[0m] (step=0205600) Train Loss: 0.0654, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 09:17:33[0m] (step=0205700) Train Loss: 0.0630, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 09:18:24[0m] (step=0205800) Train Loss: 0.0633, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 09:19:14[0m] (step=0205900) Train Loss: 0.0622, Train Steps/Sec: 1.97, Samples/Sec: 94.69
+[[34m2025-06-06 09:20:05[0m] (step=0206000) Train Loss: 0.0669, Train Steps/Sec: 1.98, Samples/Sec: 95.04
+[[34m2025-06-06 09:20:18[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 09:20:38[0m] Beginning epoch 68...
+[[34m2025-06-06 09:21:09[0m] (step=0206100) Train Loss: 0.0617, Train Steps/Sec: 1.55, Samples/Sec: 74.48
+[[34m2025-06-06 09:22:00[0m] (step=0206200) Train Loss: 0.0638, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 09:22:50[0m] (step=0206300) Train Loss: 0.0642, Train Steps/Sec: 1.98, Samples/Sec: 95.10
+[[34m2025-06-06 09:23:41[0m] (step=0206400) Train Loss: 0.0644, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 09:24:31[0m] (step=0206500) Train Loss: 0.0627, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 09:25:22[0m] (step=0206600) Train Loss: 0.0606, Train Steps/Sec: 1.97, Samples/Sec: 94.50
+[[34m2025-06-06 09:26:12[0m] (step=0206700) Train Loss: 0.0659, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 09:27:03[0m] (step=0206800) Train Loss: 0.0598, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 09:27:53[0m] (step=0206900) Train Loss: 0.0616, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 09:28:43[0m] (step=0207000) Train Loss: 0.0644, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:29:34[0m] (step=0207100) Train Loss: 0.0633, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 09:30:24[0m] (step=0207200) Train Loss: 0.0671, Train Steps/Sec: 1.98, Samples/Sec: 95.08
+[[34m2025-06-06 09:31:15[0m] (step=0207300) Train Loss: 0.0642, Train Steps/Sec: 1.98, Samples/Sec: 94.92
+[[34m2025-06-06 09:32:05[0m] (step=0207400) Train Loss: 0.0596, Train Steps/Sec: 1.98, Samples/Sec: 95.28
+[[34m2025-06-06 09:32:56[0m] (step=0207500) Train Loss: 0.0627, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:33:46[0m] (step=0207600) Train Loss: 0.0646, Train Steps/Sec: 1.98, Samples/Sec: 95.24
+[[34m2025-06-06 09:34:36[0m] (step=0207700) Train Loss: 0.0637, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 09:35:27[0m] (step=0207800) Train Loss: 0.0638, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 09:36:18[0m] (step=0207900) Train Loss: 0.0628, Train Steps/Sec: 1.97, Samples/Sec: 94.73
+[[34m2025-06-06 09:37:08[0m] (step=0208000) Train Loss: 0.0615, Train Steps/Sec: 1.98, Samples/Sec: 95.07
+[[34m2025-06-06 09:37:21[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 09:38:11[0m] (step=0208100) Train Loss: 0.0603, Train Steps/Sec: 1.58, Samples/Sec: 75.84
+[[34m2025-06-06 09:39:02[0m] (step=0208200) Train Loss: 0.0636, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:39:52[0m] (step=0208300) Train Loss: 0.0645, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:40:42[0m] (step=0208400) Train Loss: 0.0602, Train Steps/Sec: 1.98, Samples/Sec: 95.23
+[[34m2025-06-06 09:41:33[0m] (step=0208500) Train Loss: 0.0620, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 09:42:24[0m] (step=0208600) Train Loss: 0.0623, Train Steps/Sec: 1.97, Samples/Sec: 94.55
+[[34m2025-06-06 09:43:14[0m] (step=0208700) Train Loss: 0.0606, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:44:04[0m] (step=0208800) Train Loss: 0.0624, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 09:44:55[0m] (step=0208900) Train Loss: 0.0574, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:45:45[0m] (step=0209000) Train Loss: 0.0607, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:46:20[0m] Beginning epoch 69...
+[[34m2025-06-06 09:46:37[0m] (step=0209100) Train Loss: 0.0636, Train Steps/Sec: 1.95, Samples/Sec: 93.56
+[[34m2025-06-06 09:47:27[0m] (step=0209200) Train Loss: 0.0660, Train Steps/Sec: 1.98, Samples/Sec: 95.10
+[[34m2025-06-06 09:48:18[0m] (step=0209300) Train Loss: 0.0610, Train Steps/Sec: 1.97, Samples/Sec: 94.76
+[[34m2025-06-06 09:49:08[0m] (step=0209400) Train Loss: 0.0630, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 09:49:58[0m] (step=0209500) Train Loss: 0.0628, Train Steps/Sec: 1.98, Samples/Sec: 95.25
+[[34m2025-06-06 09:50:49[0m] (step=0209600) Train Loss: 0.0646, Train Steps/Sec: 1.98, Samples/Sec: 95.27
+[[34m2025-06-06 09:51:39[0m] (step=0209700) Train Loss: 0.0641, Train Steps/Sec: 1.98, Samples/Sec: 95.26
+[[34m2025-06-06 09:52:30[0m] (step=0209800) Train Loss: 0.0616, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 09:53:20[0m] (step=0209900) Train Loss: 0.0599, Train Steps/Sec: 1.98, Samples/Sec: 94.91
+[[34m2025-06-06 09:54:11[0m] (step=0210000) Train Loss: 0.0679, Train Steps/Sec: 1.98, Samples/Sec: 94.88
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 09:54:25[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 09:54:28[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 09:56:28[0m] (step=0210000) Perceptual Loss: 0.3060, Eval Time: 122.69
+[[34m2025-06-06 09:57:18[0m] (step=0210100) Train Loss: 0.0614, Train Steps/Sec: 0.53, Samples/Sec: 25.59
+[[34m2025-06-06 09:58:09[0m] (step=0210200) Train Loss: 0.0623, Train Steps/Sec: 1.98, Samples/Sec: 95.22
+[[34m2025-06-06 09:58:57[0m] (step=0210300) Train Loss: 0.0628, Train Steps/Sec: 2.05, Samples/Sec: 98.51
+[[34m2025-06-06 09:59:42[0m] (step=0210400) Train Loss: 0.0599, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 10:00:27[0m] (step=0210500) Train Loss: 0.0655, Train Steps/Sec: 2.22, Samples/Sec: 106.33
+[[34m2025-06-06 10:01:12[0m] (step=0210600) Train Loss: 0.0652, Train Steps/Sec: 2.24, Samples/Sec: 107.47
+[[34m2025-06-06 10:01:57[0m] (step=0210700) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 10:02:41[0m] (step=0210800) Train Loss: 0.0637, Train Steps/Sec: 2.24, Samples/Sec: 107.53
+[[34m2025-06-06 10:03:26[0m] (step=0210900) Train Loss: 0.0612, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 10:04:10[0m] (step=0211000) Train Loss: 0.0647, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 10:04:55[0m] (step=0211100) Train Loss: 0.0615, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 10:05:40[0m] (step=0211200) Train Loss: 0.0622, Train Steps/Sec: 2.22, Samples/Sec: 106.74
+[[34m2025-06-06 10:06:25[0m] (step=0211300) Train Loss: 0.0577, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 10:07:09[0m] (step=0211400) Train Loss: 0.0614, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 10:07:54[0m] (step=0211500) Train Loss: 0.0607, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 10:08:38[0m] (step=0211600) Train Loss: 0.0639, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 10:09:23[0m] (step=0211700) Train Loss: 0.0675, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 10:10:08[0m] (step=0211800) Train Loss: 0.0634, Train Steps/Sec: 2.24, Samples/Sec: 107.36
+[[34m2025-06-06 10:10:53[0m] (step=0211900) Train Loss: 0.0638, Train Steps/Sec: 2.23, Samples/Sec: 107.15
+[[34m2025-06-06 10:11:37[0m] (step=0212000) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 10:11:50[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 10:12:35[0m] (step=0212100) Train Loss: 0.0627, Train Steps/Sec: 1.74, Samples/Sec: 83.30
+[[34m2025-06-06 10:12:35[0m] Beginning epoch 70...
+[[34m2025-06-06 10:13:20[0m] (step=0212200) Train Loss: 0.0605, Train Steps/Sec: 2.20, Samples/Sec: 105.40
+[[34m2025-06-06 10:14:05[0m] (step=0212300) Train Loss: 0.0661, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 10:14:50[0m] (step=0212400) Train Loss: 0.0599, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 10:15:35[0m] (step=0212500) Train Loss: 0.0618, Train Steps/Sec: 2.22, Samples/Sec: 106.68
+[[34m2025-06-06 10:16:19[0m] (step=0212600) Train Loss: 0.0630, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 10:17:04[0m] (step=0212700) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 10:17:48[0m] (step=0212800) Train Loss: 0.0669, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 10:18:33[0m] (step=0212900) Train Loss: 0.0597, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 10:19:18[0m] (step=0213000) Train Loss: 0.0599, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 10:20:02[0m] (step=0213100) Train Loss: 0.0585, Train Steps/Sec: 2.24, Samples/Sec: 107.53
+[[34m2025-06-06 10:20:47[0m] (step=0213200) Train Loss: 0.0627, Train Steps/Sec: 2.23, Samples/Sec: 106.82
+[[34m2025-06-06 10:21:32[0m] (step=0213300) Train Loss: 0.0635, Train Steps/Sec: 2.24, Samples/Sec: 107.50
+[[34m2025-06-06 10:22:17[0m] (step=0213400) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.53
+[[34m2025-06-06 10:23:01[0m] (step=0213500) Train Loss: 0.0637, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 10:23:46[0m] (step=0213600) Train Loss: 0.0649, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 10:24:30[0m] (step=0213700) Train Loss: 0.0619, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 10:25:15[0m] (step=0213800) Train Loss: 0.0632, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 10:26:00[0m] (step=0213900) Train Loss: 0.0627, Train Steps/Sec: 2.22, Samples/Sec: 106.73
+[[34m2025-06-06 10:26:45[0m] (step=0214000) Train Loss: 0.0621, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 10:26:58[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 10:27:42[0m] (step=0214100) Train Loss: 0.0651, Train Steps/Sec: 1.73, Samples/Sec: 83.22
+[[34m2025-06-06 10:28:27[0m] (step=0214200) Train Loss: 0.0651, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 10:29:11[0m] (step=0214300) Train Loss: 0.0647, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 10:29:56[0m] (step=0214400) Train Loss: 0.0650, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 10:30:41[0m] (step=0214500) Train Loss: 0.0609, Train Steps/Sec: 2.23, Samples/Sec: 107.20
+[[34m2025-06-06 10:31:26[0m] (step=0214600) Train Loss: 0.0639, Train Steps/Sec: 2.24, Samples/Sec: 107.36
+[[34m2025-06-06 10:32:10[0m] (step=0214700) Train Loss: 0.0599, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 10:32:55[0m] (step=0214800) Train Loss: 0.0574, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 10:33:39[0m] (step=0214900) Train Loss: 0.0596, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 10:34:24[0m] (step=0215000) Train Loss: 0.0675, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 10:35:09[0m] (step=0215100) Train Loss: 0.0635, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 10:35:22[0m] Beginning epoch 71...
+[[34m2025-06-06 10:35:54[0m] (step=0215200) Train Loss: 0.0629, Train Steps/Sec: 2.19, Samples/Sec: 105.18
+[[34m2025-06-06 10:36:39[0m] (step=0215300) Train Loss: 0.0630, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 10:37:24[0m] (step=0215400) Train Loss: 0.0610, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 10:38:08[0m] (step=0215500) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 10:38:53[0m] (step=0215600) Train Loss: 0.0630, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 10:39:38[0m] (step=0215700) Train Loss: 0.0555, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 10:40:22[0m] (step=0215800) Train Loss: 0.0581, Train Steps/Sec: 2.24, Samples/Sec: 107.36
+[[34m2025-06-06 10:41:07[0m] (step=0215900) Train Loss: 0.0647, Train Steps/Sec: 2.23, Samples/Sec: 106.96
+[[34m2025-06-06 10:41:52[0m] (step=0216000) Train Loss: 0.0611, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 10:42:05[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 10:42:49[0m] (step=0216100) Train Loss: 0.0639, Train Steps/Sec: 1.73, Samples/Sec: 83.25
+[[34m2025-06-06 10:43:34[0m] (step=0216200) Train Loss: 0.0642, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 10:44:19[0m] (step=0216300) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 10:45:03[0m] (step=0216400) Train Loss: 0.0647, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 10:45:48[0m] (step=0216500) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 10:46:33[0m] (step=0216600) Train Loss: 0.0567, Train Steps/Sec: 2.23, Samples/Sec: 107.20
+[[34m2025-06-06 10:47:17[0m] (step=0216700) Train Loss: 0.0607, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 10:48:02[0m] (step=0216800) Train Loss: 0.0600, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 10:48:47[0m] (step=0216900) Train Loss: 0.0619, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 10:49:31[0m] (step=0217000) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 10:50:16[0m] (step=0217100) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.32
+[[34m2025-06-06 10:51:01[0m] (step=0217200) Train Loss: 0.0664, Train Steps/Sec: 2.23, Samples/Sec: 106.93
+[[34m2025-06-06 10:51:45[0m] (step=0217300) Train Loss: 0.0604, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 10:52:30[0m] (step=0217400) Train Loss: 0.0599, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 10:53:15[0m] (step=0217500) Train Loss: 0.0639, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 10:53:59[0m] (step=0217600) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 10:54:44[0m] (step=0217700) Train Loss: 0.0652, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 10:55:29[0m] (step=0217800) Train Loss: 0.0605, Train Steps/Sec: 2.24, Samples/Sec: 107.44
+[[34m2025-06-06 10:56:13[0m] (step=0217900) Train Loss: 0.0648, Train Steps/Sec: 2.23, Samples/Sec: 107.07
+[[34m2025-06-06 10:56:58[0m] (step=0218000) Train Loss: 0.0599, Train Steps/Sec: 2.24, Samples/Sec: 107.69
+[[34m2025-06-06 10:57:11[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 10:57:55[0m] (step=0218100) Train Loss: 0.0652, Train Steps/Sec: 1.74, Samples/Sec: 83.55
+[[34m2025-06-06 10:58:22[0m] Beginning epoch 72...
+[[34m2025-06-06 10:58:41[0m] (step=0218200) Train Loss: 0.0588, Train Steps/Sec: 2.20, Samples/Sec: 105.55
+[[34m2025-06-06 10:59:26[0m] (step=0218300) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 11:00:10[0m] (step=0218400) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.30
+[[34m2025-06-06 11:00:55[0m] (step=0218500) Train Loss: 0.0657, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 11:01:40[0m] (step=0218600) Train Loss: 0.0604, Train Steps/Sec: 2.23, Samples/Sec: 107.00
+[[34m2025-06-06 11:02:24[0m] (step=0218700) Train Loss: 0.0611, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 11:03:09[0m] (step=0218800) Train Loss: 0.0613, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:03:54[0m] (step=0218900) Train Loss: 0.0644, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 11:04:38[0m] (step=0219000) Train Loss: 0.0600, Train Steps/Sec: 2.24, Samples/Sec: 107.37
+[[34m2025-06-06 11:05:23[0m] (step=0219100) Train Loss: 0.0605, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:06:08[0m] (step=0219200) Train Loss: 0.0593, Train Steps/Sec: 2.24, Samples/Sec: 107.36
+[[34m2025-06-06 11:06:52[0m] (step=0219300) Train Loss: 0.0620, Train Steps/Sec: 2.23, Samples/Sec: 107.20
+[[34m2025-06-06 11:07:37[0m] (step=0219400) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:08:22[0m] (step=0219500) Train Loss: 0.0585, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:09:06[0m] (step=0219600) Train Loss: 0.0645, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 11:09:51[0m] (step=0219700) Train Loss: 0.0647, Train Steps/Sec: 2.24, Samples/Sec: 107.39
+[[34m2025-06-06 11:10:36[0m] (step=0219800) Train Loss: 0.0677, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 11:11:20[0m] (step=0219900) Train Loss: 0.0648, Train Steps/Sec: 2.23, Samples/Sec: 106.98
+[[34m2025-06-06 11:12:05[0m] (step=0220000) Train Loss: 0.0625, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 11:12:30[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/0220000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 11:12:33[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 11:14:33[0m] (step=0220000) Perceptual Loss: 0.3129, Eval Time: 122.75
+[[34m2025-06-06 11:15:17[0m] (step=0220100) Train Loss: 0.0590, Train Steps/Sec: 0.52, Samples/Sec: 24.95
+[[34m2025-06-06 11:16:02[0m] (step=0220200) Train Loss: 0.0604, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 11:16:47[0m] (step=0220300) Train Loss: 0.0598, Train Steps/Sec: 2.24, Samples/Sec: 107.31
+[[34m2025-06-06 11:17:31[0m] (step=0220400) Train Loss: 0.0596, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 11:18:16[0m] (step=0220500) Train Loss: 0.0625, Train Steps/Sec: 2.22, Samples/Sec: 106.70
+[[34m2025-06-06 11:19:01[0m] (step=0220600) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 11:19:46[0m] (step=0220700) Train Loss: 0.0616, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:20:30[0m] (step=0220800) Train Loss: 0.0610, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 11:21:15[0m] (step=0220900) Train Loss: 0.0628, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 11:21:59[0m] (step=0221000) Train Loss: 0.0642, Train Steps/Sec: 2.24, Samples/Sec: 107.38
+[[34m2025-06-06 11:22:44[0m] (step=0221100) Train Loss: 0.0606, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 11:23:24[0m] Beginning epoch 73...
+[[34m2025-06-06 11:23:30[0m] (step=0221200) Train Loss: 0.0621, Train Steps/Sec: 2.19, Samples/Sec: 105.15
+[[34m2025-06-06 11:24:14[0m] (step=0221300) Train Loss: 0.0610, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 11:24:59[0m] (step=0221400) Train Loss: 0.0600, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 11:25:44[0m] (step=0221500) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 11:26:28[0m] (step=0221600) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.36
+[[34m2025-06-06 11:27:13[0m] (step=0221700) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 11:27:58[0m] (step=0221800) Train Loss: 0.0646, Train Steps/Sec: 2.23, Samples/Sec: 107.23
+[[34m2025-06-06 11:28:42[0m] (step=0221900) Train Loss: 0.0592, Train Steps/Sec: 2.24, Samples/Sec: 107.37
+[[34m2025-06-06 11:29:27[0m] (step=0222000) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 11:29:40[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 11:30:25[0m] (step=0222100) Train Loss: 0.0610, Train Steps/Sec: 1.74, Samples/Sec: 83.34
+[[34m2025-06-06 11:31:09[0m] (step=0222200) Train Loss: 0.0577, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:31:54[0m] (step=0222300) Train Loss: 0.0635, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 11:32:39[0m] (step=0222400) Train Loss: 0.0607, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 11:33:23[0m] (step=0222500) Train Loss: 0.0627, Train Steps/Sec: 2.23, Samples/Sec: 106.95
+[[34m2025-06-06 11:34:08[0m] (step=0222600) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 11:34:53[0m] (step=0222700) Train Loss: 0.0581, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:35:37[0m] (step=0222800) Train Loss: 0.0618, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 11:36:22[0m] (step=0222900) Train Loss: 0.0664, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 11:37:07[0m] (step=0223000) Train Loss: 0.0658, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 11:37:51[0m] (step=0223100) Train Loss: 0.0644, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 11:38:36[0m] (step=0223200) Train Loss: 0.0619, Train Steps/Sec: 2.23, Samples/Sec: 106.94
+[[34m2025-06-06 11:39:21[0m] (step=0223300) Train Loss: 0.0605, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 11:40:05[0m] (step=0223400) Train Loss: 0.0645, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:40:50[0m] (step=0223500) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 11:41:34[0m] (step=0223600) Train Loss: 0.0592, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 11:42:19[0m] (step=0223700) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 11:43:04[0m] (step=0223800) Train Loss: 0.0595, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 11:43:49[0m] (step=0223900) Train Loss: 0.0624, Train Steps/Sec: 2.23, Samples/Sec: 107.18
+[[34m2025-06-06 11:44:33[0m] (step=0224000) Train Loss: 0.0604, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 11:44:46[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 11:45:30[0m] (step=0224100) Train Loss: 0.0638, Train Steps/Sec: 1.75, Samples/Sec: 83.78
+[[34m2025-06-06 11:46:15[0m] (step=0224200) Train Loss: 0.0643, Train Steps/Sec: 2.24, Samples/Sec: 107.43
+[[34m2025-06-06 11:46:24[0m] Beginning epoch 74...
+[[34m2025-06-06 11:47:01[0m] (step=0224300) Train Loss: 0.0626, Train Steps/Sec: 2.20, Samples/Sec: 105.74
+[[34m2025-06-06 11:47:45[0m] (step=0224400) Train Loss: 0.0614, Train Steps/Sec: 2.24, Samples/Sec: 107.53
+[[34m2025-06-06 11:48:30[0m] (step=0224500) Train Loss: 0.0629, Train Steps/Sec: 2.23, Samples/Sec: 106.95
+[[34m2025-06-06 11:49:15[0m] (step=0224600) Train Loss: 0.0584, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 11:49:59[0m] (step=0224700) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 11:50:44[0m] (step=0224800) Train Loss: 0.0664, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 11:51:29[0m] (step=0224900) Train Loss: 0.0629, Train Steps/Sec: 2.24, Samples/Sec: 107.45
+[[34m2025-06-06 11:52:13[0m] (step=0225000) Train Loss: 0.0607, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 11:52:58[0m] (step=0225100) Train Loss: 0.0590, Train Steps/Sec: 2.24, Samples/Sec: 107.67
+[[34m2025-06-06 11:53:43[0m] (step=0225200) Train Loss: 0.0618, Train Steps/Sec: 2.23, Samples/Sec: 106.96
+[[34m2025-06-06 11:54:27[0m] (step=0225300) Train Loss: 0.0644, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 11:55:12[0m] (step=0225400) Train Loss: 0.0618, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 11:55:56[0m] (step=0225500) Train Loss: 0.0663, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 11:56:41[0m] (step=0225600) Train Loss: 0.0665, Train Steps/Sec: 2.24, Samples/Sec: 107.44
+[[34m2025-06-06 11:57:26[0m] (step=0225700) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.68
+[[34m2025-06-06 11:58:10[0m] (step=0225800) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.47
+[[34m2025-06-06 11:58:55[0m] (step=0225900) Train Loss: 0.0639, Train Steps/Sec: 2.23, Samples/Sec: 107.23
+[[34m2025-06-06 11:59:40[0m] (step=0226000) Train Loss: 0.0624, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 11:59:53[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 12:00:37[0m] (step=0226100) Train Loss: 0.0630, Train Steps/Sec: 1.74, Samples/Sec: 83.29
+[[34m2025-06-06 12:01:22[0m] (step=0226200) Train Loss: 0.0652, Train Steps/Sec: 2.24, Samples/Sec: 107.43
+[[34m2025-06-06 12:02:07[0m] (step=0226300) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 12:02:51[0m] (step=0226400) Train Loss: 0.0652, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 12:03:36[0m] (step=0226500) Train Loss: 0.0633, Train Steps/Sec: 2.23, Samples/Sec: 107.18
+[[34m2025-06-06 12:04:21[0m] (step=0226600) Train Loss: 0.0626, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 12:05:05[0m] (step=0226700) Train Loss: 0.0642, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 12:05:50[0m] (step=0226800) Train Loss: 0.0639, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 12:06:34[0m] (step=0226900) Train Loss: 0.0683, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 12:07:19[0m] (step=0227000) Train Loss: 0.0624, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 12:08:04[0m] (step=0227100) Train Loss: 0.0615, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 12:08:49[0m] (step=0227200) Train Loss: 0.0637, Train Steps/Sec: 2.23, Samples/Sec: 106.98
+[[34m2025-06-06 12:09:11[0m] Beginning epoch 75...
+[[34m2025-06-06 12:09:34[0m] (step=0227300) Train Loss: 0.0611, Train Steps/Sec: 2.21, Samples/Sec: 105.86
+[[34m2025-06-06 12:10:19[0m] (step=0227400) Train Loss: 0.0641, Train Steps/Sec: 2.24, Samples/Sec: 107.45
+[[34m2025-06-06 12:11:03[0m] (step=0227500) Train Loss: 0.0587, Train Steps/Sec: 2.24, Samples/Sec: 107.49
+[[34m2025-06-06 12:11:48[0m] (step=0227600) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.30
+[[34m2025-06-06 12:12:33[0m] (step=0227700) Train Loss: 0.0619, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 12:13:17[0m] (step=0227800) Train Loss: 0.0633, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 12:14:02[0m] (step=0227900) Train Loss: 0.0611, Train Steps/Sec: 2.23, Samples/Sec: 106.87
+[[34m2025-06-06 12:14:47[0m] (step=0228000) Train Loss: 0.0612, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 12:15:00[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 12:15:45[0m] (step=0228100) Train Loss: 0.0617, Train Steps/Sec: 1.73, Samples/Sec: 82.95
+[[34m2025-06-06 12:16:29[0m] (step=0228200) Train Loss: 0.0626, Train Steps/Sec: 2.24, Samples/Sec: 107.34
+[[34m2025-06-06 12:17:14[0m] (step=0228300) Train Loss: 0.0575, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 12:17:59[0m] (step=0228400) Train Loss: 0.0595, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 12:18:43[0m] (step=0228500) Train Loss: 0.0624, Train Steps/Sec: 2.24, Samples/Sec: 107.38
+[[34m2025-06-06 12:19:28[0m] (step=0228600) Train Loss: 0.0578, Train Steps/Sec: 2.23, Samples/Sec: 107.14
+[[34m2025-06-06 12:20:13[0m] (step=0228700) Train Loss: 0.0637, Train Steps/Sec: 2.24, Samples/Sec: 107.51
+[[34m2025-06-06 12:20:57[0m] (step=0228800) Train Loss: 0.0621, Train Steps/Sec: 2.24, Samples/Sec: 107.33
+[[34m2025-06-06 12:21:42[0m] (step=0228900) Train Loss: 0.0602, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 12:22:27[0m] (step=0229000) Train Loss: 0.0603, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 12:23:11[0m] (step=0229100) Train Loss: 0.0602, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 12:23:56[0m] (step=0229200) Train Loss: 0.0626, Train Steps/Sec: 2.23, Samples/Sec: 107.16
+[[34m2025-06-06 12:24:41[0m] (step=0229300) Train Loss: 0.0610, Train Steps/Sec: 2.24, Samples/Sec: 107.34
+[[34m2025-06-06 12:25:25[0m] (step=0229400) Train Loss: 0.0657, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 12:26:10[0m] (step=0229500) Train Loss: 0.0629, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 12:26:55[0m] (step=0229600) Train Loss: 0.0625, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 12:27:39[0m] (step=0229700) Train Loss: 0.0603, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 12:28:24[0m] (step=0229800) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 12:29:09[0m] (step=0229900) Train Loss: 0.0650, Train Steps/Sec: 2.23, Samples/Sec: 106.93
+[[34m2025-06-06 12:29:53[0m] (step=0230000) Train Loss: 0.0560, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 12:30:07[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 12:30:10[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 12:32:10[0m] (step=0230000) Perceptual Loss: 0.3173, Eval Time: 122.65
+[[34m2025-06-06 12:32:54[0m] (step=0230100) Train Loss: 0.0637, Train Steps/Sec: 0.55, Samples/Sec: 26.54
+[[34m2025-06-06 12:33:39[0m] (step=0230200) Train Loss: 0.0655, Train Steps/Sec: 2.24, Samples/Sec: 107.29
+[[34m2025-06-06 12:34:15[0m] Beginning epoch 76...
+[[34m2025-06-06 12:34:25[0m] (step=0230300) Train Loss: 0.0569, Train Steps/Sec: 2.20, Samples/Sec: 105.46
+[[34m2025-06-06 12:35:09[0m] (step=0230400) Train Loss: 0.0652, Train Steps/Sec: 2.23, Samples/Sec: 107.25
+[[34m2025-06-06 12:35:54[0m] (step=0230500) Train Loss: 0.0582, Train Steps/Sec: 2.23, Samples/Sec: 107.01
+[[34m2025-06-06 12:36:39[0m] (step=0230600) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 12:37:23[0m] (step=0230700) Train Loss: 0.0661, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 12:38:08[0m] (step=0230800) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 12:38:53[0m] (step=0230900) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 12:39:37[0m] (step=0231000) Train Loss: 0.0658, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 12:40:22[0m] (step=0231100) Train Loss: 0.0586, Train Steps/Sec: 2.23, Samples/Sec: 107.15
+[[34m2025-06-06 12:41:07[0m] (step=0231200) Train Loss: 0.0636, Train Steps/Sec: 2.24, Samples/Sec: 107.47
+[[34m2025-06-06 12:41:51[0m] (step=0231300) Train Loss: 0.0641, Train Steps/Sec: 2.24, Samples/Sec: 107.72
+[[34m2025-06-06 12:42:36[0m] (step=0231400) Train Loss: 0.0613, Train Steps/Sec: 2.24, Samples/Sec: 107.71
+[[34m2025-06-06 12:43:21[0m] (step=0231500) Train Loss: 0.0610, Train Steps/Sec: 2.24, Samples/Sec: 107.44
+[[34m2025-06-06 12:44:05[0m] (step=0231600) Train Loss: 0.0598, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 12:44:50[0m] (step=0231700) Train Loss: 0.0668, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 12:45:35[0m] (step=0231800) Train Loss: 0.0594, Train Steps/Sec: 2.23, Samples/Sec: 106.97
+[[34m2025-06-06 12:46:19[0m] (step=0231900) Train Loss: 0.0629, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 12:47:04[0m] (step=0232000) Train Loss: 0.0629, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 12:47:17[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 12:48:02[0m] (step=0232100) Train Loss: 0.0599, Train Steps/Sec: 1.73, Samples/Sec: 83.22
+[[34m2025-06-06 12:48:46[0m] (step=0232200) Train Loss: 0.0621, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 12:49:31[0m] (step=0232300) Train Loss: 0.0643, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 12:50:15[0m] (step=0232400) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.39
+[[34m2025-06-06 12:51:00[0m] (step=0232500) Train Loss: 0.0569, Train Steps/Sec: 2.23, Samples/Sec: 107.20
+[[34m2025-06-06 12:51:45[0m] (step=0232600) Train Loss: 0.0614, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 12:52:29[0m] (step=0232700) Train Loss: 0.0663, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 12:53:14[0m] (step=0232800) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 12:53:59[0m] (step=0232900) Train Loss: 0.0629, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 12:54:43[0m] (step=0233000) Train Loss: 0.0680, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 12:55:28[0m] (step=0233100) Train Loss: 0.0630, Train Steps/Sec: 2.23, Samples/Sec: 107.16
+[[34m2025-06-06 12:56:13[0m] (step=0233200) Train Loss: 0.0646, Train Steps/Sec: 2.24, Samples/Sec: 107.38
+[[34m2025-06-06 12:56:57[0m] (step=0233300) Train Loss: 0.0632, Train Steps/Sec: 2.24, Samples/Sec: 107.68
+[[34m2025-06-06 12:57:02[0m] Beginning epoch 77...
+[[34m2025-06-06 12:57:43[0m] (step=0233400) Train Loss: 0.0618, Train Steps/Sec: 2.20, Samples/Sec: 105.57
+[[34m2025-06-06 12:58:28[0m] (step=0233500) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.39
+[[34m2025-06-06 12:59:12[0m] (step=0233600) Train Loss: 0.0582, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 12:59:57[0m] (step=0233700) Train Loss: 0.0665, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 13:00:42[0m] (step=0233800) Train Loss: 0.0660, Train Steps/Sec: 2.23, Samples/Sec: 106.98
+[[34m2025-06-06 13:01:26[0m] (step=0233900) Train Loss: 0.0625, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 13:02:11[0m] (step=0234000) Train Loss: 0.0629, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 13:02:24[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 13:03:08[0m] (step=0234100) Train Loss: 0.0620, Train Steps/Sec: 1.73, Samples/Sec: 83.22
+[[34m2025-06-06 13:03:53[0m] (step=0234200) Train Loss: 0.0606, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 13:04:38[0m] (step=0234300) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 13:05:22[0m] (step=0234400) Train Loss: 0.0636, Train Steps/Sec: 2.24, Samples/Sec: 107.69
+[[34m2025-06-06 13:06:07[0m] (step=0234500) Train Loss: 0.0604, Train Steps/Sec: 2.23, Samples/Sec: 107.02
+[[34m2025-06-06 13:06:52[0m] (step=0234600) Train Loss: 0.0654, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 13:07:36[0m] (step=0234700) Train Loss: 0.0628, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 13:08:21[0m] (step=0234800) Train Loss: 0.0665, Train Steps/Sec: 2.24, Samples/Sec: 107.44
+[[34m2025-06-06 13:09:06[0m] (step=0234900) Train Loss: 0.0619, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 13:09:50[0m] (step=0235000) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 13:10:35[0m] (step=0235100) Train Loss: 0.0608, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 13:11:20[0m] (step=0235200) Train Loss: 0.0617, Train Steps/Sec: 2.23, Samples/Sec: 107.19
+[[34m2025-06-06 13:12:04[0m] (step=0235300) Train Loss: 0.0633, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 13:12:49[0m] (step=0235400) Train Loss: 0.0607, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 13:13:34[0m] (step=0235500) Train Loss: 0.0589, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 13:14:18[0m] (step=0235600) Train Loss: 0.0608, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 13:15:03[0m] (step=0235700) Train Loss: 0.0634, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 13:15:48[0m] (step=0235800) Train Loss: 0.0626, Train Steps/Sec: 2.23, Samples/Sec: 107.20
+[[34m2025-06-06 13:16:32[0m] (step=0235900) Train Loss: 0.0598, Train Steps/Sec: 2.24, Samples/Sec: 107.32
+[[34m2025-06-06 13:17:17[0m] (step=0236000) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 13:17:30[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 13:18:15[0m] (step=0236100) Train Loss: 0.0594, Train Steps/Sec: 1.73, Samples/Sec: 83.12
+[[34m2025-06-06 13:18:59[0m] (step=0236200) Train Loss: 0.0607, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 13:19:44[0m] (step=0236300) Train Loss: 0.0629, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 13:20:02[0m] Beginning epoch 78...
+[[34m2025-06-06 13:20:29[0m] (step=0236400) Train Loss: 0.0638, Train Steps/Sec: 2.20, Samples/Sec: 105.45
+[[34m2025-06-06 13:21:14[0m] (step=0236500) Train Loss: 0.0639, Train Steps/Sec: 2.23, Samples/Sec: 106.91
+[[34m2025-06-06 13:21:59[0m] (step=0236600) Train Loss: 0.0596, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 13:22:44[0m] (step=0236700) Train Loss: 0.0605, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 13:23:28[0m] (step=0236800) Train Loss: 0.0583, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 13:24:13[0m] (step=0236900) Train Loss: 0.0614, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 13:24:57[0m] (step=0237000) Train Loss: 0.0640, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 13:25:42[0m] (step=0237100) Train Loss: 0.0646, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 13:26:27[0m] (step=0237200) Train Loss: 0.0636, Train Steps/Sec: 2.23, Samples/Sec: 107.00
+[[34m2025-06-06 13:27:11[0m] (step=0237300) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 13:27:56[0m] (step=0237400) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 13:28:41[0m] (step=0237500) Train Loss: 0.0614, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 13:29:25[0m] (step=0237600) Train Loss: 0.0673, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 13:30:10[0m] (step=0237700) Train Loss: 0.0634, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 13:30:55[0m] (step=0237800) Train Loss: 0.0613, Train Steps/Sec: 2.24, Samples/Sec: 107.39
+[[34m2025-06-06 13:31:39[0m] (step=0237900) Train Loss: 0.0631, Train Steps/Sec: 2.23, Samples/Sec: 107.21
+[[34m2025-06-06 13:32:24[0m] (step=0238000) Train Loss: 0.0593, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 13:32:37[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 13:33:22[0m] (step=0238100) Train Loss: 0.0675, Train Steps/Sec: 1.73, Samples/Sec: 82.99
+[[34m2025-06-06 13:34:06[0m] (step=0238200) Train Loss: 0.0657, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 13:34:51[0m] (step=0238300) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 13:35:36[0m] (step=0238400) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 13:36:20[0m] (step=0238500) Train Loss: 0.0636, Train Steps/Sec: 2.23, Samples/Sec: 107.24
+[[34m2025-06-06 13:37:05[0m] (step=0238600) Train Loss: 0.0597, Train Steps/Sec: 2.24, Samples/Sec: 107.39
+[[34m2025-06-06 13:37:50[0m] (step=0238700) Train Loss: 0.0618, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 13:38:34[0m] (step=0238800) Train Loss: 0.0616, Train Steps/Sec: 2.24, Samples/Sec: 107.39
+[[34m2025-06-06 13:39:19[0m] (step=0238900) Train Loss: 0.0615, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 13:40:04[0m] (step=0239000) Train Loss: 0.0624, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 13:40:48[0m] (step=0239100) Train Loss: 0.0618, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 13:41:33[0m] (step=0239200) Train Loss: 0.0605, Train Steps/Sec: 2.23, Samples/Sec: 106.97
+[[34m2025-06-06 13:42:18[0m] (step=0239300) Train Loss: 0.0634, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 13:42:49[0m] Beginning epoch 79...
+[[34m2025-06-06 13:43:03[0m] (step=0239400) Train Loss: 0.0644, Train Steps/Sec: 2.20, Samples/Sec: 105.55
+[[34m2025-06-06 13:43:48[0m] (step=0239500) Train Loss: 0.0634, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 13:44:32[0m] (step=0239600) Train Loss: 0.0657, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 13:45:17[0m] (step=0239700) Train Loss: 0.0605, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 13:46:02[0m] (step=0239800) Train Loss: 0.0636, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 13:46:46[0m] (step=0239900) Train Loss: 0.0594, Train Steps/Sec: 2.23, Samples/Sec: 107.18
+[[34m2025-06-06 13:47:31[0m] (step=0240000) Train Loss: 0.0690, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 13:47:56[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/0240000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 13:47:59[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 13:49:59[0m] (step=0240000) Perceptual Loss: 0.3144, Eval Time: 122.72
+[[34m2025-06-06 13:50:43[0m] (step=0240100) Train Loss: 0.0595, Train Steps/Sec: 0.52, Samples/Sec: 24.98
+[[34m2025-06-06 13:51:28[0m] (step=0240200) Train Loss: 0.0634, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 13:52:12[0m] (step=0240300) Train Loss: 0.0647, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 13:52:57[0m] (step=0240400) Train Loss: 0.0607, Train Steps/Sec: 2.23, Samples/Sec: 107.14
+[[34m2025-06-06 13:53:42[0m] (step=0240500) Train Loss: 0.0608, Train Steps/Sec: 2.24, Samples/Sec: 107.30
+[[34m2025-06-06 13:54:27[0m] (step=0240600) Train Loss: 0.0665, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 13:55:11[0m] (step=0240700) Train Loss: 0.0626, Train Steps/Sec: 2.24, Samples/Sec: 107.34
+[[34m2025-06-06 13:55:56[0m] (step=0240800) Train Loss: 0.0618, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 13:56:40[0m] (step=0240900) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 13:57:25[0m] (step=0241000) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 13:58:10[0m] (step=0241100) Train Loss: 0.0616, Train Steps/Sec: 2.23, Samples/Sec: 106.97
+[[34m2025-06-06 13:58:55[0m] (step=0241200) Train Loss: 0.0636, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 13:59:39[0m] (step=0241300) Train Loss: 0.0601, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 14:00:24[0m] (step=0241400) Train Loss: 0.0610, Train Steps/Sec: 2.24, Samples/Sec: 107.43
+[[34m2025-06-06 14:01:08[0m] (step=0241500) Train Loss: 0.0643, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 14:01:53[0m] (step=0241600) Train Loss: 0.0611, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 14:02:38[0m] (step=0241700) Train Loss: 0.0637, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 14:03:23[0m] (step=0241800) Train Loss: 0.0663, Train Steps/Sec: 2.23, Samples/Sec: 107.19
+[[34m2025-06-06 14:04:07[0m] (step=0241900) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:04:52[0m] (step=0242000) Train Loss: 0.0619, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 14:05:09[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 14:05:54[0m] (step=0242100) Train Loss: 0.0614, Train Steps/Sec: 1.62, Samples/Sec: 77.61
+[[34m2025-06-06 14:06:38[0m] (step=0242200) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:07:23[0m] (step=0242300) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 14:08:07[0m] (step=0242400) Train Loss: 0.0635, Train Steps/Sec: 2.24, Samples/Sec: 107.34
+[[34m2025-06-06 14:08:07[0m] Beginning epoch 80...
+[[34m2025-06-06 14:08:53[0m] (step=0242500) Train Loss: 0.0634, Train Steps/Sec: 2.19, Samples/Sec: 105.27
+[[34m2025-06-06 14:09:38[0m] (step=0242600) Train Loss: 0.0621, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 14:10:22[0m] (step=0242700) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 14:11:07[0m] (step=0242800) Train Loss: 0.0649, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:11:52[0m] (step=0242900) Train Loss: 0.0636, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 14:12:36[0m] (step=0243000) Train Loss: 0.0614, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 14:13:21[0m] (step=0243100) Train Loss: 0.0619, Train Steps/Sec: 2.23, Samples/Sec: 107.23
+[[34m2025-06-06 14:14:06[0m] (step=0243200) Train Loss: 0.0633, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 14:14:50[0m] (step=0243300) Train Loss: 0.0604, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 14:15:35[0m] (step=0243400) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 14:16:19[0m] (step=0243500) Train Loss: 0.0637, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 14:17:04[0m] (step=0243600) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 14:17:49[0m] (step=0243700) Train Loss: 0.0628, Train Steps/Sec: 2.24, Samples/Sec: 107.66
+[[34m2025-06-06 14:18:33[0m] (step=0243800) Train Loss: 0.0601, Train Steps/Sec: 2.23, Samples/Sec: 106.99
+[[34m2025-06-06 14:19:18[0m] (step=0243900) Train Loss: 0.0646, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:20:03[0m] (step=0244000) Train Loss: 0.0618, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 14:20:16[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 14:21:01[0m] (step=0244100) Train Loss: 0.0650, Train Steps/Sec: 1.73, Samples/Sec: 82.84
+[[34m2025-06-06 14:21:45[0m] (step=0244200) Train Loss: 0.0620, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:22:30[0m] (step=0244300) Train Loss: 0.0578, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:23:15[0m] (step=0244400) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 14:23:59[0m] (step=0244500) Train Loss: 0.0621, Train Steps/Sec: 2.23, Samples/Sec: 107.22
+[[34m2025-06-06 14:24:44[0m] (step=0244600) Train Loss: 0.0612, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 14:25:29[0m] (step=0244700) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 14:26:13[0m] (step=0244800) Train Loss: 0.0628, Train Steps/Sec: 2.24, Samples/Sec: 107.67
+[[34m2025-06-06 14:26:58[0m] (step=0244900) Train Loss: 0.0640, Train Steps/Sec: 2.24, Samples/Sec: 107.69
+[[34m2025-06-06 14:27:42[0m] (step=0245000) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.69
+[[34m2025-06-06 14:28:27[0m] (step=0245100) Train Loss: 0.0635, Train Steps/Sec: 2.23, Samples/Sec: 107.21
+[[34m2025-06-06 14:29:12[0m] (step=0245200) Train Loss: 0.0641, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 14:29:56[0m] (step=0245300) Train Loss: 0.0639, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 14:30:41[0m] (step=0245400) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 14:30:54[0m] Beginning epoch 81...
+[[34m2025-06-06 14:31:27[0m] (step=0245500) Train Loss: 0.0625, Train Steps/Sec: 2.19, Samples/Sec: 105.28
+[[34m2025-06-06 14:32:11[0m] (step=0245600) Train Loss: 0.0594, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:32:56[0m] (step=0245700) Train Loss: 0.0678, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 14:33:41[0m] (step=0245800) Train Loss: 0.0628, Train Steps/Sec: 2.23, Samples/Sec: 106.98
+[[34m2025-06-06 14:34:25[0m] (step=0245900) Train Loss: 0.0608, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 14:35:10[0m] (step=0246000) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.43
+[[34m2025-06-06 14:35:23[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 14:36:08[0m] (step=0246100) Train Loss: 0.0622, Train Steps/Sec: 1.73, Samples/Sec: 83.20
+[[34m2025-06-06 14:36:52[0m] (step=0246200) Train Loss: 0.0608, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:37:37[0m] (step=0246300) Train Loss: 0.0564, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 14:38:22[0m] (step=0246400) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 14:39:06[0m] (step=0246500) Train Loss: 0.0585, Train Steps/Sec: 2.23, Samples/Sec: 106.98
+[[34m2025-06-06 14:39:51[0m] (step=0246600) Train Loss: 0.0650, Train Steps/Sec: 2.24, Samples/Sec: 107.37
+[[34m2025-06-06 14:40:36[0m] (step=0246700) Train Loss: 0.0621, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 14:41:20[0m] (step=0246800) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 14:42:05[0m] (step=0246900) Train Loss: 0.0602, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 14:42:50[0m] (step=0247000) Train Loss: 0.0600, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 14:43:34[0m] (step=0247100) Train Loss: 0.0700, Train Steps/Sec: 2.24, Samples/Sec: 107.33
+[[34m2025-06-06 14:44:19[0m] (step=0247200) Train Loss: 0.0625, Train Steps/Sec: 2.23, Samples/Sec: 107.14
+[[34m2025-06-06 14:45:04[0m] (step=0247300) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.33
+[[34m2025-06-06 14:45:48[0m] (step=0247400) Train Loss: 0.0615, Train Steps/Sec: 2.24, Samples/Sec: 107.47
+[[34m2025-06-06 14:46:33[0m] (step=0247500) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.35
+[[34m2025-06-06 14:47:18[0m] (step=0247600) Train Loss: 0.0596, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 14:48:03[0m] (step=0247700) Train Loss: 0.0607, Train Steps/Sec: 2.24, Samples/Sec: 107.39
+[[34m2025-06-06 14:48:47[0m] (step=0247800) Train Loss: 0.0598, Train Steps/Sec: 2.23, Samples/Sec: 106.93
+[[34m2025-06-06 14:49:32[0m] (step=0247900) Train Loss: 0.0627, Train Steps/Sec: 2.23, Samples/Sec: 107.13
+[[34m2025-06-06 14:50:17[0m] (step=0248000) Train Loss: 0.0599, Train Steps/Sec: 2.23, Samples/Sec: 107.16
+[[34m2025-06-06 14:50:31[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 14:51:16[0m] (step=0248100) Train Loss: 0.0618, Train Steps/Sec: 1.70, Samples/Sec: 81.69
+[[34m2025-06-06 14:52:00[0m] (step=0248200) Train Loss: 0.0595, Train Steps/Sec: 2.24, Samples/Sec: 107.42
+[[34m2025-06-06 14:52:45[0m] (step=0248300) Train Loss: 0.0666, Train Steps/Sec: 2.24, Samples/Sec: 107.45
+[[34m2025-06-06 14:53:30[0m] (step=0248400) Train Loss: 0.0570, Train Steps/Sec: 2.24, Samples/Sec: 107.38
+[[34m2025-06-06 14:53:57[0m] Beginning epoch 82...
+[[34m2025-06-06 14:54:16[0m] (step=0248500) Train Loss: 0.0614, Train Steps/Sec: 2.18, Samples/Sec: 104.56
+[[34m2025-06-06 14:55:01[0m] (step=0248600) Train Loss: 0.0602, Train Steps/Sec: 2.23, Samples/Sec: 107.08
+[[34m2025-06-06 14:55:45[0m] (step=0248700) Train Loss: 0.0579, Train Steps/Sec: 2.24, Samples/Sec: 107.37
+[[34m2025-06-06 14:56:30[0m] (step=0248800) Train Loss: 0.0563, Train Steps/Sec: 2.24, Samples/Sec: 107.38
+[[34m2025-06-06 14:57:15[0m] (step=0248900) Train Loss: 0.0587, Train Steps/Sec: 2.24, Samples/Sec: 107.47
+[[34m2025-06-06 14:57:59[0m] (step=0249000) Train Loss: 0.0604, Train Steps/Sec: 2.24, Samples/Sec: 107.47
+[[34m2025-06-06 14:58:44[0m] (step=0249100) Train Loss: 0.0600, Train Steps/Sec: 2.24, Samples/Sec: 107.48
+[[34m2025-06-06 14:59:29[0m] (step=0249200) Train Loss: 0.0599, Train Steps/Sec: 2.22, Samples/Sec: 106.76
+[[34m2025-06-06 15:00:14[0m] (step=0249300) Train Loss: 0.0609, Train Steps/Sec: 2.23, Samples/Sec: 107.26
+[[34m2025-06-06 15:00:58[0m] (step=0249400) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.44
+[[34m2025-06-06 15:01:43[0m] (step=0249500) Train Loss: 0.0632, Train Steps/Sec: 2.24, Samples/Sec: 107.46
+[[34m2025-06-06 15:02:28[0m] (step=0249600) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.37
+[[34m2025-06-06 15:03:12[0m] (step=0249700) Train Loss: 0.0618, Train Steps/Sec: 2.24, Samples/Sec: 107.43
+[[34m2025-06-06 15:03:57[0m] (step=0249800) Train Loss: 0.0642, Train Steps/Sec: 2.24, Samples/Sec: 107.28
+[[34m2025-06-06 15:04:42[0m] (step=0249900) Train Loss: 0.0627, Train Steps/Sec: 2.23, Samples/Sec: 107.06
+[[34m2025-06-06 15:05:27[0m] (step=0250000) Train Loss: 0.0612, Train Steps/Sec: 2.23, Samples/Sec: 107.24
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 15:05:41[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 15:05:43[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 15:07:43[0m] (step=0250000) Perceptual Loss: 0.3045, Eval Time: 122.66
+[[34m2025-06-06 15:08:28[0m] (step=0250100) Train Loss: 0.0665, Train Steps/Sec: 0.55, Samples/Sec: 26.46
+[[34m2025-06-06 15:09:13[0m] (step=0250200) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 15:09:57[0m] (step=0250300) Train Loss: 0.0613, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 15:10:42[0m] (step=0250400) Train Loss: 0.0589, Train Steps/Sec: 2.22, Samples/Sec: 106.66
+[[34m2025-06-06 15:11:27[0m] (step=0250500) Train Loss: 0.0632, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 15:12:12[0m] (step=0250600) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.33
+[[34m2025-06-06 15:12:56[0m] (step=0250700) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 15:13:41[0m] (step=0250800) Train Loss: 0.0605, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 15:14:26[0m] (step=0250900) Train Loss: 0.0680, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 15:15:10[0m] (step=0251000) Train Loss: 0.0655, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 15:15:55[0m] (step=0251100) Train Loss: 0.0617, Train Steps/Sec: 2.23, Samples/Sec: 107.17
+[[34m2025-06-06 15:16:40[0m] (step=0251200) Train Loss: 0.0621, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 15:17:24[0m] (step=0251300) Train Loss: 0.0640, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 15:18:09[0m] (step=0251400) Train Loss: 0.0592, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 15:18:49[0m] Beginning epoch 83...
+[[34m2025-06-06 15:18:54[0m] (step=0251500) Train Loss: 0.0631, Train Steps/Sec: 2.20, Samples/Sec: 105.70
+[[34m2025-06-06 15:19:39[0m] (step=0251600) Train Loss: 0.0620, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 15:20:24[0m] (step=0251700) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.37
+[[34m2025-06-06 15:21:09[0m] (step=0251800) Train Loss: 0.0560, Train Steps/Sec: 2.23, Samples/Sec: 107.16
+[[34m2025-06-06 15:21:53[0m] (step=0251900) Train Loss: 0.0613, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 15:22:38[0m] (step=0252000) Train Loss: 0.0656, Train Steps/Sec: 2.24, Samples/Sec: 107.37
+[[34m2025-06-06 15:22:51[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 15:23:36[0m] (step=0252100) Train Loss: 0.0652, Train Steps/Sec: 1.73, Samples/Sec: 82.96
+[[34m2025-06-06 15:24:20[0m] (step=0252200) Train Loss: 0.0606, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 15:25:05[0m] (step=0252300) Train Loss: 0.0603, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 15:25:50[0m] (step=0252400) Train Loss: 0.0657, Train Steps/Sec: 2.23, Samples/Sec: 106.94
+[[34m2025-06-06 15:26:34[0m] (step=0252500) Train Loss: 0.0659, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 15:27:19[0m] (step=0252600) Train Loss: 0.0605, Train Steps/Sec: 2.24, Samples/Sec: 107.43
+[[34m2025-06-06 15:28:04[0m] (step=0252700) Train Loss: 0.0625, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 15:28:48[0m] (step=0252800) Train Loss: 0.0621, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 15:29:33[0m] (step=0252900) Train Loss: 0.0606, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 15:30:18[0m] (step=0253000) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 15:31:02[0m] (step=0253100) Train Loss: 0.0624, Train Steps/Sec: 2.23, Samples/Sec: 106.87
+[[34m2025-06-06 15:31:47[0m] (step=0253200) Train Loss: 0.0640, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 15:32:32[0m] (step=0253300) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.37
+[[34m2025-06-06 15:33:16[0m] (step=0253400) Train Loss: 0.0586, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 15:34:01[0m] (step=0253500) Train Loss: 0.0585, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 15:34:46[0m] (step=0253600) Train Loss: 0.0606, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 15:35:30[0m] (step=0253700) Train Loss: 0.0595, Train Steps/Sec: 2.24, Samples/Sec: 107.36
+[[34m2025-06-06 15:36:15[0m] (step=0253800) Train Loss: 0.0582, Train Steps/Sec: 2.23, Samples/Sec: 107.13
+[[34m2025-06-06 15:37:00[0m] (step=0253900) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.38
+[[34m2025-06-06 15:37:44[0m] (step=0254000) Train Loss: 0.0646, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 15:37:57[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 15:38:42[0m] (step=0254100) Train Loss: 0.0617, Train Steps/Sec: 1.74, Samples/Sec: 83.34
+[[34m2025-06-06 15:39:27[0m] (step=0254200) Train Loss: 0.0585, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 15:40:11[0m] (step=0254300) Train Loss: 0.0646, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 15:40:56[0m] (step=0254400) Train Loss: 0.0648, Train Steps/Sec: 2.23, Samples/Sec: 107.20
+[[34m2025-06-06 15:41:41[0m] (step=0254500) Train Loss: 0.0585, Train Steps/Sec: 2.23, Samples/Sec: 107.20
+[[34m2025-06-06 15:41:50[0m] Beginning epoch 84...
+[[34m2025-06-06 15:42:26[0m] (step=0254600) Train Loss: 0.0606, Train Steps/Sec: 2.20, Samples/Sec: 105.46
+[[34m2025-06-06 15:43:11[0m] (step=0254700) Train Loss: 0.0588, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 15:43:55[0m] (step=0254800) Train Loss: 0.0635, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 15:44:40[0m] (step=0254900) Train Loss: 0.0645, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 15:45:25[0m] (step=0255000) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 15:46:10[0m] (step=0255100) Train Loss: 0.0648, Train Steps/Sec: 2.23, Samples/Sec: 107.00
+[[34m2025-06-06 15:46:54[0m] (step=0255200) Train Loss: 0.0589, Train Steps/Sec: 2.24, Samples/Sec: 107.43
+[[34m2025-06-06 15:47:39[0m] (step=0255300) Train Loss: 0.0634, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 15:48:23[0m] (step=0255400) Train Loss: 0.0624, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 15:49:08[0m] (step=0255500) Train Loss: 0.0669, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 15:49:53[0m] (step=0255600) Train Loss: 0.0619, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 15:50:37[0m] (step=0255700) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 15:51:22[0m] (step=0255800) Train Loss: 0.0622, Train Steps/Sec: 2.23, Samples/Sec: 106.92
+[[34m2025-06-06 15:52:07[0m] (step=0255900) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.36
+[[34m2025-06-06 15:52:52[0m] (step=0256000) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 15:53:05[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 15:53:49[0m] (step=0256100) Train Loss: 0.0592, Train Steps/Sec: 1.73, Samples/Sec: 83.16
+[[34m2025-06-06 15:54:34[0m] (step=0256200) Train Loss: 0.0620, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 15:55:18[0m] (step=0256300) Train Loss: 0.0677, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 15:56:03[0m] (step=0256400) Train Loss: 0.0581, Train Steps/Sec: 2.24, Samples/Sec: 107.39
+[[34m2025-06-06 15:56:48[0m] (step=0256500) Train Loss: 0.0617, Train Steps/Sec: 2.23, Samples/Sec: 106.90
+[[34m2025-06-06 15:57:33[0m] (step=0256600) Train Loss: 0.0647, Train Steps/Sec: 2.24, Samples/Sec: 107.52
+[[34m2025-06-06 15:58:17[0m] (step=0256700) Train Loss: 0.0619, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 15:59:02[0m] (step=0256800) Train Loss: 0.0564, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 15:59:47[0m] (step=0256900) Train Loss: 0.0645, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 16:00:31[0m] (step=0257000) Train Loss: 0.0630, Train Steps/Sec: 2.24, Samples/Sec: 107.52
+[[34m2025-06-06 16:01:16[0m] (step=0257100) Train Loss: 0.0590, Train Steps/Sec: 2.23, Samples/Sec: 107.07
+[[34m2025-06-06 16:02:01[0m] (step=0257200) Train Loss: 0.0632, Train Steps/Sec: 2.23, Samples/Sec: 107.13
+[[34m2025-06-06 16:02:46[0m] (step=0257300) Train Loss: 0.0639, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 16:03:30[0m] (step=0257400) Train Loss: 0.0625, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 16:04:15[0m] (step=0257500) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.53
+[[34m2025-06-06 16:04:37[0m] Beginning epoch 85...
+[[34m2025-06-06 16:05:00[0m] (step=0257600) Train Loss: 0.0610, Train Steps/Sec: 2.20, Samples/Sec: 105.64
+[[34m2025-06-06 16:05:45[0m] (step=0257700) Train Loss: 0.0598, Train Steps/Sec: 2.24, Samples/Sec: 107.48
+[[34m2025-06-06 16:06:30[0m] (step=0257800) Train Loss: 0.0632, Train Steps/Sec: 2.23, Samples/Sec: 106.93
+[[34m2025-06-06 16:07:14[0m] (step=0257900) Train Loss: 0.0583, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 16:07:59[0m] (step=0258000) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 16:08:12[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 16:08:57[0m] (step=0258100) Train Loss: 0.0636, Train Steps/Sec: 1.73, Samples/Sec: 83.27
+[[34m2025-06-06 16:09:41[0m] (step=0258200) Train Loss: 0.0623, Train Steps/Sec: 2.24, Samples/Sec: 107.51
+[[34m2025-06-06 16:10:26[0m] (step=0258300) Train Loss: 0.0641, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 16:11:11[0m] (step=0258400) Train Loss: 0.0633, Train Steps/Sec: 2.23, Samples/Sec: 107.27
+[[34m2025-06-06 16:11:56[0m] (step=0258500) Train Loss: 0.0615, Train Steps/Sec: 2.23, Samples/Sec: 106.99
+[[34m2025-06-06 16:12:40[0m] (step=0258600) Train Loss: 0.0581, Train Steps/Sec: 2.24, Samples/Sec: 107.65
+[[34m2025-06-06 16:13:25[0m] (step=0258700) Train Loss: 0.0595, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 16:14:09[0m] (step=0258800) Train Loss: 0.0614, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 16:14:54[0m] (step=0258900) Train Loss: 0.0588, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 16:15:39[0m] (step=0259000) Train Loss: 0.0611, Train Steps/Sec: 2.24, Samples/Sec: 107.53
+[[34m2025-06-06 16:16:23[0m] (step=0259100) Train Loss: 0.0621, Train Steps/Sec: 2.24, Samples/Sec: 107.38
+[[34m2025-06-06 16:17:08[0m] (step=0259200) Train Loss: 0.0573, Train Steps/Sec: 2.23, Samples/Sec: 106.87
+[[34m2025-06-06 16:17:53[0m] (step=0259300) Train Loss: 0.0654, Train Steps/Sec: 2.24, Samples/Sec: 107.54
+[[34m2025-06-06 16:18:38[0m] (step=0259400) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 16:19:22[0m] (step=0259500) Train Loss: 0.0620, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 16:20:07[0m] (step=0259600) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 16:20:51[0m] (step=0259700) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 16:21:36[0m] (step=0259800) Train Loss: 0.0591, Train Steps/Sec: 2.22, Samples/Sec: 106.68
+[[34m2025-06-06 16:22:21[0m] (step=0259900) Train Loss: 0.0602, Train Steps/Sec: 2.24, Samples/Sec: 107.53
+[[34m2025-06-06 16:23:06[0m] (step=0260000) Train Loss: 0.0609, Train Steps/Sec: 2.24, Samples/Sec: 107.51
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 16:23:30[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/0260000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-06 16:23:33[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-06 16:25:33[0m] (step=0260000) Perceptual Loss: 0.3271, Eval Time: 122.55
+[[34m2025-06-06 16:26:17[0m] (step=0260100) Train Loss: 0.0682, Train Steps/Sec: 0.52, Samples/Sec: 25.04
+[[34m2025-06-06 16:27:02[0m] (step=0260200) Train Loss: 0.0603, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 16:27:47[0m] (step=0260300) Train Loss: 0.0659, Train Steps/Sec: 2.23, Samples/Sec: 107.27
+[[34m2025-06-06 16:28:32[0m] (step=0260400) Train Loss: 0.0647, Train Steps/Sec: 2.22, Samples/Sec: 106.76
+[[34m2025-06-06 16:29:16[0m] (step=0260500) Train Loss: 0.0656, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 16:29:52[0m] Beginning epoch 86...
+[[34m2025-06-06 16:30:02[0m] (step=0260600) Train Loss: 0.0611, Train Steps/Sec: 2.20, Samples/Sec: 105.69
+[[34m2025-06-06 16:30:46[0m] (step=0260700) Train Loss: 0.0631, Train Steps/Sec: 2.24, Samples/Sec: 107.56
+[[34m2025-06-06 16:31:31[0m] (step=0260800) Train Loss: 0.0600, Train Steps/Sec: 2.24, Samples/Sec: 107.52
+[[34m2025-06-06 16:32:16[0m] (step=0260900) Train Loss: 0.0644, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 16:33:01[0m] (step=0261000) Train Loss: 0.0641, Train Steps/Sec: 2.23, Samples/Sec: 107.13
+[[34m2025-06-06 16:33:45[0m] (step=0261100) Train Loss: 0.0624, Train Steps/Sec: 2.23, Samples/Sec: 107.16
+[[34m2025-06-06 16:34:30[0m] (step=0261200) Train Loss: 0.0611, Train Steps/Sec: 2.24, Samples/Sec: 107.40
+[[34m2025-06-06 16:35:15[0m] (step=0261300) Train Loss: 0.0600, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 16:35:59[0m] (step=0261400) Train Loss: 0.0598, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 16:36:44[0m] (step=0261500) Train Loss: 0.0626, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 16:37:28[0m] (step=0261600) Train Loss: 0.0639, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 16:38:13[0m] (step=0261700) Train Loss: 0.0642, Train Steps/Sec: 2.22, Samples/Sec: 106.71
+[[34m2025-06-06 16:38:58[0m] (step=0261800) Train Loss: 0.0646, Train Steps/Sec: 2.24, Samples/Sec: 107.64
+[[34m2025-06-06 16:39:43[0m] (step=0261900) Train Loss: 0.0630, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 16:40:27[0m] (step=0262000) Train Loss: 0.0620, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 16:40:40[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 16:41:25[0m] (step=0262100) Train Loss: 0.0622, Train Steps/Sec: 1.73, Samples/Sec: 83.07
+[[34m2025-06-06 16:42:10[0m] (step=0262200) Train Loss: 0.0584, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 16:42:54[0m] (step=0262300) Train Loss: 0.0645, Train Steps/Sec: 2.24, Samples/Sec: 107.38
+[[34m2025-06-06 16:43:39[0m] (step=0262400) Train Loss: 0.0624, Train Steps/Sec: 2.23, Samples/Sec: 106.91
+[[34m2025-06-06 16:44:24[0m] (step=0262500) Train Loss: 0.0622, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 16:45:08[0m] (step=0262600) Train Loss: 0.0603, Train Steps/Sec: 2.24, Samples/Sec: 107.55
+[[34m2025-06-06 16:45:53[0m] (step=0262700) Train Loss: 0.0627, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 16:46:38[0m] (step=0262800) Train Loss: 0.0624, Train Steps/Sec: 2.24, Samples/Sec: 107.58
+[[34m2025-06-06 16:47:22[0m] (step=0262900) Train Loss: 0.0620, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 16:48:07[0m] (step=0263000) Train Loss: 0.0630, Train Steps/Sec: 2.23, Samples/Sec: 107.15
+[[34m2025-06-06 16:48:52[0m] (step=0263100) Train Loss: 0.0613, Train Steps/Sec: 2.23, Samples/Sec: 107.15
+[[34m2025-06-06 16:49:37[0m] (step=0263200) Train Loss: 0.0648, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 16:50:21[0m] (step=0263300) Train Loss: 0.0625, Train Steps/Sec: 2.24, Samples/Sec: 107.61
+[[34m2025-06-06 16:51:06[0m] (step=0263400) Train Loss: 0.0579, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[[34m2025-06-06 16:51:50[0m] (step=0263500) Train Loss: 0.0663, Train Steps/Sec: 2.24, Samples/Sec: 107.59
+[[34m2025-06-06 16:52:35[0m] (step=0263600) Train Loss: 0.0629, Train Steps/Sec: 2.24, Samples/Sec: 107.67
+[[34m2025-06-06 16:52:39[0m] Beginning epoch 87...
+[[34m2025-06-06 16:53:21[0m] (step=0263700) Train Loss: 0.0648, Train Steps/Sec: 2.19, Samples/Sec: 104.93
+[[34m2025-06-06 16:54:05[0m] (step=0263800) Train Loss: 0.0632, Train Steps/Sec: 2.24, Samples/Sec: 107.36
+[[34m2025-06-06 16:54:50[0m] (step=0263900) Train Loss: 0.0617, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 16:55:35[0m] (step=0264000) Train Loss: 0.0615, Train Steps/Sec: 2.24, Samples/Sec: 107.60
+[[34m2025-06-06 16:55:48[0m] Saved checkpoint to logs/nwm_cdit_wuhan_union/checkpoints/latest.pth.tar
+[[34m2025-06-06 16:56:32[0m] (step=0264100) Train Loss: 0.0627, Train Steps/Sec: 1.74, Samples/Sec: 83.42
+[[34m2025-06-06 16:57:17[0m] (step=0264200) Train Loss: 0.0562, Train Steps/Sec: 2.24, Samples/Sec: 107.57
+[[34m2025-06-06 16:58:01[0m] (step=0264300) Train Loss: 0.0638, Train Steps/Sec: 2.24, Samples/Sec: 107.41
+[[34m2025-06-06 16:58:46[0m] (step=0264400) Train Loss: 0.0611, Train Steps/Sec: 2.23, Samples/Sec: 106.98
+[[34m2025-06-06 16:59:31[0m] (step=0264500) Train Loss: 0.0624, Train Steps/Sec: 2.24, Samples/Sec: 107.63
+[[34m2025-06-06 17:00:16[0m] (step=0264600) Train Loss: 0.0612, Train Steps/Sec: 2.24, Samples/Sec: 107.62
+[2025-06-06 17:00:59,849] torch.distributed.elastic.agent.server.api: [WARNING] Received Signals.SIGINT death signal, shutting down workers
+[2025-06-06 17:00:59,851] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1604656 closing signal SIGINT
+[2025-06-06 17:00:59,851] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1604657 closing signal SIGINT
+[2025-06-06 17:00:59,851] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1604658 closing signal SIGINT
+[2025-06-06 17:00:59,851] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 1604659 closing signal SIGINT
+Traceback (most recent call last):
+  File "train_v0.py", line 446, in <module>
+Traceback (most recent call last):
+  File "train_v0.py", line 446, in <module>
+    main(args)
+  File "train_v0.py", line 299, in main
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 737, in training_losses
+    main(args)
+  File "train_v0.py", line 299, in main
+    x_t = self.q_sample(x_start, t, noise=noise)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 234, in q_sample
+    _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
+      File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
+loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+Traceback (most recent call last):
+      File "train_v0.py", line 446, in <module>
+return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 737, in training_losses
+    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()Traceback (most recent call last):
+
+  File "train_v0.py", line 446, in <module>
+KeyboardInterrupt
+    x_t = self.q_sample(x_start, t, noise=noise)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 234, in q_sample
+    _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
+    main(args)
+  File "train_v0.py", line 299, in main
+    main(args)
+  File "train_v0.py", line 299, in main
+        loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
+
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+KeyboardInterrupt  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 737, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 737, in training_losses
+    x_t = self.q_sample(x_start, t, noise=noise)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 234, in q_sample
+    x_t = self.q_sample(x_start, t, noise=noise)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 234, in q_sample
+    _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
+    _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
+    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
+KeyboardInterrupt
+    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm2/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 346, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 806, in main
+    run(args)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 797, in run
+    elastic_launch(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 134, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
+    result = agent.run()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
+    result = f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 736, in run
+    result = self._invoke_run(role)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 877, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 62, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 1604584 got signal: 2
