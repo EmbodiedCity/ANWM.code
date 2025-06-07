@@ -275,12 +275,24 @@ class EvalDataset(BaseDataset):
             actions, _ = self._compute_actions(curr_traj_data, curr_time, np.array([curr_time+1])) # last argument is dummy goal
             actions[:, :2] = normalize_data(actions[:, :2], self.ACTION_STATS)
             delta = get_delta_np(actions)
+            # Compute projected images
+            f_img, t_img = context[-1]    # curr_time img
+            rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
+            rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
+            original_height, original_width = rgb_img.shape[:2]
+            resized_width = original_width // 2
+            resized_height = original_height // 2
+            rgb_img = cv2.resize(rgb_img, (resized_width, resized_height))
+            projected_images = self._compute_projected_image(curr_traj_data, curr_time, goal_time, rgb_img)
+            projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
+            projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
             return (
                 torch.tensor([i], dtype=torch.float32), # for logging purposes
                 torch.as_tensor(obs_image, dtype=torch.float32),
                 torch.as_tensor(pred_image, dtype=torch.float32),
                 torch.as_tensor(delta, dtype=torch.float32),
+                torch.as_tensor(projected_tensor, dtype=torch.float32),
             )
         except Exception as e:
             print(f"Exception in {self.dataset_name}", e)
@@ -330,6 +342,18 @@ class TrajectoryEvalDataset(BaseDataset):
             curr_traj_data = self._get_trajectory(f_curr)
 
             actions, goal_pos = self._compute_actions(curr_traj_data, curr_time, np.array([goal_time]))
+            
+            # Compute projected images
+            f_img, t_img = context[-1]    # curr_time img
+            rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
+            rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
+            original_height, original_width = rgb_img.shape[:2]
+            resized_width = original_width // 2
+            resized_height = original_height // 2
+            rgb_img = cv2.resize(rgb_img, (resized_width, resized_height))
+            projected_images = self._compute_projected_image(curr_traj_data, curr_time, goal_time, rgb_img)
+            projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
+            projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
             return (
                 torch.tensor([i], dtype=torch.float32), # for logging purposes
@@ -337,6 +361,7 @@ class TrajectoryEvalDataset(BaseDataset):
                 torch.as_tensor(goal_image, dtype=torch.float32),
                 torch.as_tensor(actions, dtype=torch.float32),
                 torch.as_tensor(goal_pos, dtype=torch.float32),
+                torch.as_tensor(projected_tensor, dtype=torch.float32),
             )
         except Exception as e:
             print(f"Exception in {self.dataset_name}", e)

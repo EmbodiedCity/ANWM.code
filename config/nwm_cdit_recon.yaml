@@ -3,7 +3,7 @@ run_name: nwm_cdit_recon
 # training setup
 results_dir: logs
 train: True
-batch_size: 4
+batch_size: 3
 num_workers: 12
 model: CDiT-XL/2
 lr: 8e-5
