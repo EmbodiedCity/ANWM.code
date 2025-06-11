@@ -293,8 +293,8 @@ class EvalDataset(BaseDataset):
             actions[:, :2] = normalize_data(actions[:, :2], self.ACTION_STATS)
             delta = get_delta_np(actions)
             # ============ Compute projected image ============
-            print(f"context_times{len(context_times)}")
-            print(f"pred_times{len(pred_times)}")
+            # print(f"context_times{len(context_times)}")
+            # print(f"pred_times{len(pred_times)}")
             projected_images = self._compute_projected_image(curr_traj_data, curr_time, pred_times, pred_image)
 
             projected_tensor_list = []
