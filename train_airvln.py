@@ -1,14 +1,7 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-# --------------------------------------------------------
-# References:
-# NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
+# same as train_recon_v2.py
 # --------------------------------------------------------
 
-from isolated_nwm_infer_v2 import model_forward_wrapper
+from isolated_nwm_infer_recon_v2 import model_forward_wrapper
 import torch
 # the first flag below was False when we tested this script but True makes A100 training a lot faster:
 torch.backends.cuda.matmul.allow_tf32 = True
@@ -35,7 +28,7 @@ from diffusers.models import AutoencoderKL
 from distributed import init_distributed
 from models_tpz_v2 import CDiT_models
 from diffusion import create_diffusion
-from datasets_v0 import TrainingDataset
+from datasets_recon import TrainingDataset
 from misc import transform
 
 #################################################################################

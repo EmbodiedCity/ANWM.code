@@ -22,3 +22,6 @@ wuhan:
 
 wuhan_auto:
   metric_waypoint_spacing: 1.26
+
+airvln:
+  metric_waypoint_spacing: 3.29

@@ -1,0 +1,10 @@
+[2025-06-12 18:05:01,797] torch.distributed.run: [WARNING] 
+[2025-06-12 18:05:01,797] torch.distributed.run: [WARNING] *****************************************
+[2025-06-12 18:05:01,797] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2025-06-12 18:05:01,797] torch.distributed.run: [WARNING] *****************************************
+[[34m2025-06-12 18:05:05[0m] Experiment directory created at logs/nwm_cdit_airvln
+[[34m2025-06-12 18:05:18[0m] CDiT Parameters: 1,019,927,840
+[[34m2025-06-12 18:05:19[0m] Dataset contains 261,415 images
+[[34m2025-06-12 18:05:19[0m] Training for 300 epochs...
+[[34m2025-06-12 18:05:19[0m] Beginning epoch 0...
+[[34m2025-06-12 18:06:14[0m] (step=0000100) Train Loss: 0.3203, Train Steps/Sec: 1.80, Samples/Sec: 86.37
