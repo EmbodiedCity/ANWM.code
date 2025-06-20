@@ -54,29 +54,6 @@ class TimestepEmbedder(nn.Module):
         t_emb = self.mlp(t_freq)
         return t_emb
 
-class TimeImageEmbedder(nn.Module):
-    """
-    Projects a sequence of tokens (e.g., image tokens with positional embeddings)
-    into a global conditioning embedding via a pooling + MLP.
-    """
-    def __init__(self, hidden_size):
-        super().__init__()
-        self.pool = nn.AdaptiveAvgPool1d(1)  # or max pooling if preferred
-        self.mlp = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size, bias=True),
-            nn.SiLU(),
-            nn.Linear(hidden_size, hidden_size, bias=True),
-        )
-
-    def forward(self, x):
-        """
-        x: (N, Patch_Num, D), token sequence after patching + position encoding
-        Output: (N, D), global conditioning embedding
-        """
-        x_pooled = self.pool(x.transpose(1, 2)).squeeze(-1)  # (N, D)
-        x_emb = self.mlp(x_pooled)
-        return x_emb
-
 class ActionEmbedder(nn.Module):
     """
     Embeds action xy into vector representations.
@@ -116,9 +93,10 @@ class CDiTBlock(nn.Module):
         approx_gelu = lambda: nn.GELU(approximate="tanh")
         self.mlp = Mlp(in_features=hidden_size, hidden_features=mlp_hidden_dim, act_layer=approx_gelu, drop=0)
 
-    def forward(self, x, c, x_cond):
-        shift_msa, scale_msa, gate_msa, shift_ca_xcond, scale_ca_xcond, shift_ca_x, scale_ca_x, gate_ca_x, shift_mlp, scale_mlp, gate_mlp = self.adaLN_modulation(c).chunk(11, dim=1)
+    def forward(self, x, c, x_cond, x_sup):
+        shift_msa, scale_msa, gate_msa, shift_xsup, scale_xsup, gate_xsup, shift_ca_xcond, scale_ca_xcond, shift_ca_x, scale_ca_x, gate_ca_x, shift_mlp, scale_mlp, gate_mlp = self.adaLN_modulation(c).chunk(14, dim=1)
         x = x + gate_msa.unsqueeze(1) * self.attn(modulate(self.norm1(x), shift_msa, scale_msa))
+        x = x + gate_xsup.unsqueeze(1) * self.attn(modulate(self.norm1(x_sup), shift_xsup, scale_xsup))
         x_cond_norm = modulate(self.norm_cond(x_cond), shift_ca_xcond, scale_ca_xcond)
         x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=modulate(self.norm2(x), shift_ca_x, scale_ca_x), key=x_cond_norm, value=x_cond_norm, need_weights=False)[0]
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
@@ -175,7 +153,6 @@ class CDiT(nn.Module):
         self.blocks = nn.ModuleList([CDiTBlock(hidden_size, num_heads, mlp_ratio=mlp_ratio) for _ in range(depth)])
         self.final_layer = FinalLayer(hidden_size, patch_size, self.out_channels)
         self.time_embedder = TimestepEmbedder(hidden_size)
-        self.info_embedder = TimeImageEmbedder(hidden_size)
         self.initialize_weights()
 
     def initialize_weights(self):
@@ -254,12 +231,10 @@ class CDiT(nn.Module):
         y = self.y_embedder(y) 
         time_emb = self.time_embedder(rel_t[..., None])
         # info is an image, not a scalar, but it refers to rel_t,y(x,y,angle) one by one
-        info_emb = self.info_embedder(x_supervised)
-        c = t + time_emb + y + info_emb # if training on unlabeled data, dont add y.
-        # c = x_supervised + t.unsqueeze(1) + y.unsqueeze(1) + time_emb.unsqueeze(1)
+        c = t + time_emb + y
 
         for block in self.blocks:
-            x = block(x, c, x_cond)
+            x = block(x, c, x_cond, x_supervised)
         x = self.final_layer(x, c)
         x = self.unpatchify(x)
         return x

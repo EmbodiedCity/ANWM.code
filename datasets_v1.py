@@ -7,7 +7,7 @@
 # References:
 # NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
 # --------------------------------------------------------
-
+import cv2
 import numpy as np
 import torch
 import os
@@ -18,6 +18,7 @@ import pickle
 import tqdm
 from torch.utils.data import Dataset
 from misc import angle_difference, get_data_path, get_delta_np, normalize_data, to_local_coords
+from project_functions import reproject_depth_to_other_pose_2seq, project_to_2d_image_2seq
 
 class BaseDataset(Dataset):
     def __init__(
@@ -229,6 +230,9 @@ class TrainingDataset(BaseDataset):
             # Compute actions
             _, goal_pos, projected_images = self._compute_actions(curr_traj_data, curr_time, goal_time, rgb_img)
             goal_pos[:, :2] = normalize_data(goal_pos[:, :2], self.ACTION_STATS)
+            
+            projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
+            projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
             return (
                 torch.as_tensor(obs_image, dtype=torch.float32),
