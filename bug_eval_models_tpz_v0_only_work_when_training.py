@@ -1,12 +1,4 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-# --------------------------------------------------------
-# References:
-# GLIDE: https://github.com/openai/glide-text2im
-# MAE: https://github.com/facebookresearch/mae/blob/main/models_mae.py
+# 在final-layer加Patchembed层
 # --------------------------------------------------------
 import torch
 import torch.nn as nn
@@ -62,68 +54,19 @@ class TimestepEmbedder(nn.Module):
         t_emb = self.mlp(t_freq)
         return t_emb
 
-class TimeImageEmbedder(nn.Module):
-    """
-    Embeds scalar timesteps into vector representations.
-    """
-    def __init__(self, hidden_size, frequency_embedding_size=256):
-        super().__init__()
-        self.mlp = nn.Sequential(
-            nn.Linear(frequency_embedding_size, hidden_size, bias=True),
-            nn.SiLU(),
-            nn.Linear(hidden_size, hidden_size, bias=True),
-        )
-        self.frequency_embedding_size = frequency_embedding_size
-
-    @staticmethod
-    def timestep_embedding(t, dim, max_period=10000):
-        """
-        Create sinusoidal timestep embeddings.
-        :param t: a 1-D Tensor of N indices, one per batch element.
-                          These may be fractional.
-        :param dim: the dimension of the output.
-        :param max_period: controls the minimum frequency of the embeddings.
-        :return: an (N, D) Tensor of positional embeddings.
-        """
-        # https://github.com/openai/glide-text2im/blob/main/glide_text2im/nn.py
-        half = dim // 2
-        freqs = torch.exp(
-            -math.log(max_period) * torch.arange(start=0, end=half, dtype=torch.float32) / half
-        ).to(device=t.device)
-        args = t.float() * freqs[None]
-        embedding = torch.cat([torch.cos(args), torch.sin(args)], dim=-1)
-        if dim % 2:
-            embedding = torch.cat([embedding, torch.zeros_like(embedding[:, :1])], dim=-1)
-        return embedding
-
-    def forward(self, t):
-        t_freq = self.timestep_embedding(t, self.frequency_embedding_size)
-        t_emb = self.mlp(t_freq)
-        return t_emb
-
 class ActionEmbedder(nn.Module):
     """
-    Embeds action info: x, y, angle, info into vector representations.
+    Embeds action xy into vector representations.
     """
     def __init__(self, hidden_size, frequency_embedding_size=256):
         super().__init__()
-        hsize = hidden_size//4
+        hsize = hidden_size//3
         self.x_emb = TimestepEmbedder(hsize, frequency_embedding_size)
         self.y_emb = TimestepEmbedder(hsize, frequency_embedding_size)
-        self.angle_emb = TimestepEmbedder(hsize, frequency_embedding_size)
-        # info is an image, not a scalar, but it is related to x,y,angle one by one
-        self.info_emb = TimeImageEmbedder(hidden_size - 3 * hsize, frequency_embedding_size)
+        self.angle_emb = TimestepEmbedder(hidden_size -2*hsize, frequency_embedding_size)
 
-    def forward(self, xya, info_token):  # xya: [B, T, 3]
-        x = self.x_emb(xya[..., 0:1])
-        y = self.y_emb(xya[..., 1:2])
-        angle = self.angle_emb(xya[..., 2:3])
-        print(x.shape())
-        print(y.shape())
-        print(angle.shape())
-        print()
-        info = self.info_emb(info_token)
-        return torch.cat([x, y, angle, info], dim=-1)  # [B, T, hidden_size]
+    def forward(self, xya):
+        return torch.cat([self.x_emb(xya[...,0:1]), self.y_emb(xya[...,1:2]), self.angle_emb(xya[...,2:3])], dim=-1)
 
 #################################################################################
 #                                 Core CDiT Model                                #
@@ -171,9 +114,11 @@ class FinalLayer(nn.Module):
             nn.Linear(hidden_size, 2 * hidden_size, bias=True)
         )
 
-    def forward(self, x, c):
+    def forward(self, x, c, x_supervised):
         shift, scale = self.adaLN_modulation(c).chunk(2, dim=1)
         x = modulate(self.norm_final(x), shift, scale)
+        x_sup = self.supervised_embed(x_supervised) 
+        x = self.fuse_supervised(torch.cat([x, x_sup], dim=-1))
         x = self.linear(x)
         return x
 
@@ -283,14 +228,13 @@ class CDiT(nn.Module):
         x_cond = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1])) + self.pos_embed[:self.context_size]  # (N, T, D), where T = H * W / patch_size ** 2.flatten(1, 2)
         x_cond = x_cond.flatten(1, 2)
         t = self.t_embedder(t[..., None])
-        x_supervised_token = self.x_embedder(x_supervised) + self.pos_embed[]
-        y = self.y_embedder(y, x_supervised_token) 
+        y = self.y_embedder(y) 
         time_emb = self.time_embedder(rel_t[..., None])
         c = t + time_emb + y # if training on unlabeled data, dont add y.
 
         for block in self.blocks:
             x = block(x, c, x_cond)
-        x = self.final_layer(x, c)
+        x = self.final_layer(x, c, x_supervised)
         x = self.unpatchify(x)
         return x
 
