@@ -18,7 +18,7 @@ import pickle
 import tqdm
 from torch.utils.data import Dataset
 from misc import angle_difference, get_data_path, get_delta_np, normalize_data, to_local_coords
-from project_functions import reproject_depth_to_other_pose_2seq, project_to_2d_image_2seq
+from project_functions import reproject_depth_to_other_pose_2seq, project_to_2d_image_2seq, resize_image_half
 
 class BaseDataset(Dataset):
     def __init__(
@@ -143,6 +143,8 @@ class BaseDataset(Dataset):
         基于深度图 + pose 生成从另一个相机视角观察到的图像。
         """
         image_size = depth_map.shape  # (H, W)
+        if rgb_img.shape[:2] != image_size:
+            rgb_img = resize_image_half(rgb_img)
         points_3d, colors = reproject_depth_to_other_pose_2seq(K, depth_map, rgb_img, pose_src, pose_dst) 
         images = project_to_2d_image_2seq(K, points_3d, colors, image_size) # (H, W, 3, goal_time)
         return images
@@ -222,10 +224,6 @@ class TrainingDataset(BaseDataset):
             f_img, t_img = context[-1]    # curr_time img
             rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
             rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
-            original_height, original_width = rgb_img.shape[:2]
-            resized_width = original_width // 2
-            resized_height = original_height // 2
-            rgb_img = cv2.resize(rgb_img, (resized_width, resized_height))
             
             # Compute actions
             _, goal_pos, projected_images = self._compute_actions(curr_traj_data, curr_time, goal_time, rgb_img)
@@ -283,10 +281,6 @@ class EvalDataset(BaseDataset):
             f_img, t_img = context[-1]    # curr_time img
             rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
             rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
-            original_height, original_width = rgb_img.shape[:2]
-            resized_width = original_width // 2
-            resized_height = original_height // 2
-            rgb_img = cv2.resize(rgb_img, (resized_width, resized_height))
             # Compute actions
             actions, _, projected_images = self._compute_actions(curr_traj_data, curr_time, np.array([curr_time+1]), rgb_img) # last argument is dummy goal
             actions[:, :2] = normalize_data(actions[:, :2], self.ACTION_STATS)
@@ -351,10 +345,6 @@ class TrajectoryEvalDataset(BaseDataset):
             f_img, t_img = context[-1]    # curr_time img
             rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
             rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
-            original_height, original_width = rgb_img.shape[:2]
-            resized_width = original_width // 2
-            resized_height = original_height // 2
-            rgb_img = cv2.resize(rgb_img, (resized_width, resized_height))
             
             actions, goal_pos, projected_images = self._compute_actions(curr_traj_data, curr_time, np.array([goal_time]), rgb_img)
             

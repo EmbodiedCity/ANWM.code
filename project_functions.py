@@ -150,3 +150,10 @@ def create_relative_pose(pose_src, delta_translation=(0, 0, 0.1), delta_angle_de
     # 将相对变换应用到原始位姿上
     pose_dst = pose_src @ delta_pose
     return pose_dst
+
+def resize_image_half(rgb_img):
+    original_height, original_width = rgb_img.shape[:2]
+    resized_width = original_width // 2
+    resized_height = original_height // 2
+    resized_img = cv2.resize(rgb_img, (resized_width, resized_height))
+    return resized_img
