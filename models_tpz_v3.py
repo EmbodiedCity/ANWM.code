@@ -1,4 +1,4 @@
-# 把监督图像当作conditioning的一部分, 与标量直接加起来
+# 继承自v1，监督图像做context or x_t attn
 # --------------------------------------------------------
 import torch
 import torch.nn as nn
@@ -85,7 +85,7 @@ class CDiTBlock(nn.Module):
         self.cttn = nn.MultiheadAttention(hidden_size, num_heads=num_heads, add_bias_kv=True, bias=True, batch_first=True, **block_kwargs)
         self.adaLN_modulation = nn.Sequential(
             nn.SiLU(),
-            nn.Linear(hidden_size, 11 * hidden_size, bias=True)
+            nn.Linear(hidden_size, 14 * hidden_size, bias=True)
         )
 
         self.norm3 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)

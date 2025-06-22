@@ -119,6 +119,10 @@ def project_to_2d_image_2seq(K, points_3d, colors, image_size):
 
     return np.stack(images, axis=0)  # shape: (B, H, W, 3)
 
+def euler_to_quaternion(yaw, pitch, roll):
+    r = R.from_euler('zyx', [yaw, pitch, roll])
+    return r.as_quat()
+
 def create_pose_matrix(translation, quaternion):
     rot = R.from_quat(quaternion)
     rot_mat = rot.as_matrix()  # 3x3
