@@ -1,0 +1,183 @@
+[2025-06-26 21:48:42,080] torch.distributed.run: [WARNING] 
+[2025-06-26 21:48:42,080] torch.distributed.run: [WARNING] *****************************************
+[2025-06-26 21:48:42,080] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2025-06-26 21:48:42,080] torch.distributed.run: [WARNING] *****************************************
+[[34m2025-06-26 21:48:45[0m] Experiment directory created at logs/nwm_cdit_airvln_v4
+[[34m2025-06-26 21:49:03[0m] CDiT Parameters: 1,123,532,960
+[[34m2025-06-26 21:57:26[0m] Dataset contains 261,415 images
+[[34m2025-06-26 21:57:26[0m] Training for 300 epochs...
+[[34m2025-06-26 21:57:26[0m] Beginning epoch 0...
+Traceback (most recent call last):
+  File "train_v4.py", line 446, in <module>
+    main(args)
+  File "train_v4.py", line 299, in main
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 753, in training_losses
+    model_output = model(x_t, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1519, in forward
+    else self._run_ddp_forward(*inputs, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1355, in _run_ddp_forward
+    return self.module(*inputs, **kwargs)  # type: ignore[index]
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v4.py", line 247, in forward
+    x = self.final_layer(x, c, x_supervised)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v4.py", line 128, in forward
+    attn_output = self.attn(query=x, key=x_supervised_token, value=x_supervised_token)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1695, in __getattr__
+    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+AttributeError: 'FinalLayer' object has no attribute 'attn'
+Traceback (most recent call last):
+  File "train_v4.py", line 446, in <module>
+    main(args)
+  File "train_v4.py", line 299, in main
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 753, in training_losses
+    model_output = model(x_t, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1519, in forward
+    else self._run_ddp_forward(*inputs, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1355, in _run_ddp_forward
+    return self.module(*inputs, **kwargs)  # type: ignore[index]
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v4.py", line 247, in forward
+    x = self.final_layer(x, c, x_supervised)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v4.py", line 128, in forward
+    attn_output = self.attn(query=x, key=x_supervised_token, value=x_supervised_token)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1695, in __getattr__
+    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+AttributeError: 'FinalLayer' object has no attribute 'attn'
+Traceback (most recent call last):
+  File "train_v4.py", line 446, in <module>
+    main(args)
+  File "train_v4.py", line 299, in main
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 753, in training_losses
+    model_output = model(x_t, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1519, in forward
+    else self._run_ddp_forward(*inputs, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1355, in _run_ddp_forward
+    return self.module(*inputs, **kwargs)  # type: ignore[index]
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v4.py", line 247, in forward
+    x = self.final_layer(x, c, x_supervised)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v4.py", line 128, in forward
+    attn_output = self.attn(query=x, key=x_supervised_token, value=x_supervised_token)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1695, in __getattr__
+    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+AttributeError: 'FinalLayer' object has no attribute 'attn'
+Traceback (most recent call last):
+  File "train_v4.py", line 446, in <module>
+    main(args)
+  File "train_v4.py", line 299, in main
+    loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+    return super().training_losses(self._wrap_model(model), *args, **kwargs)
+  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 753, in training_losses
+    model_output = model(x_t, t, **model_kwargs)
+  File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+    return self.model(x, new_ts, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1519, in forward
+    else self._run_ddp_forward(*inputs, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/parallel/distributed.py", line 1355, in _run_ddp_forward
+    return self.module(*inputs, **kwargs)  # type: ignore[index]
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v4.py", line 247, in forward
+    x = self.final_layer(x, c, x_supervised)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/tpz/nwm-main/models_tpz_v4.py", line 128, in forward
+    attn_output = self.attn(query=x, key=x_supervised_token, value=x_supervised_token)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1695, in __getattr__
+    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+AttributeError: 'FinalLayer' object has no attribute 'attn'
+[2025-06-26 21:58:37,667] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 2349273 closing signal SIGTERM
+[2025-06-26 21:58:37,667] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 2349274 closing signal SIGTERM
+[2025-06-26 21:58:37,882] torch.distributed.elastic.multiprocessing.api: [ERROR] failed (exitcode: 1) local_rank: 0 (pid: 2349272) of binary: /data1/zwc/miniconda3/envs/nwm2/bin/python
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm2/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 346, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 806, in main
+    run(args)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 797, in run
+    elastic_launch(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 134, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+train_v4.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2025-06-26_21:58:37
+  host      : localhost
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 2349275)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-06-26_21:58:37
+  host      : localhost
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 2349272)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
