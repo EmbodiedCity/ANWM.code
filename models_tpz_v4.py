@@ -104,7 +104,39 @@ class CDiTBlock(nn.Module):
         x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_ca_norm, key=x_cond_norm, value=x_cond_norm, need_weights=False)[0]
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
         return x
+    
+class CrossBatchMultiheadAttention(nn.Module):
+    def __init__(self, embed_dim, num_heads):
+        super().__init__()
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.mha = nn.MultiheadAttention(embed_dim, num_heads, batch_first=True)
 
+    def forward(self, query, key, value):
+        # x_query: [B_q, T_q, D]
+        # x_key, x_value: [B_k, T_k, D]
+        B_q, T_q, D = query.shape
+        B_k, T_k, _ = key.shape
+
+        outputs = []
+        for i in range(B_q):
+            # 取第i个query
+            q = query[i:i+1]         # [1, T_q, D]
+            # key和value是全体x_supervised_token
+            k = key                  # [B_k, T_k, D]
+            v = value                # [B_k, T_k, D]
+
+            # 把key,value的batch维度合并到序列维度
+            k = k.reshape(B_k * T_k, D).unsqueeze(0)   # [1, B_k*T_k, D]
+            v = v.reshape(B_k * T_k, D).unsqueeze(0)   # [1, B_k*T_k, D]
+
+            # 直接用 mha
+            out, _ = self.mha(q, k, v)                  # [1, T_q, D]
+            outputs.append(out)
+
+        # 堆叠batch维度
+        return torch.cat(outputs, dim=0)                 # [B_q, T_q, D]
+    
 class FinalLayer(nn.Module):
     """
     The final layer of DiT.
@@ -117,6 +149,8 @@ class FinalLayer(nn.Module):
             nn.SiLU(),
             nn.Linear(hidden_size, 2 * hidden_size, bias=True)
         )
+        self.fuse_supervised = nn.Linear(hidden_size * 2, hidden_size)
+        self.attn = CrossBatchMultiheadAttention(embed_dim=hidden_size, num_heads=8)
 
     def forward(self, x, c, x_supervised_token):
         shift, scale = self.adaLN_modulation(c).chunk(2, dim=1)
