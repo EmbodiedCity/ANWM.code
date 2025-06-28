@@ -99,6 +99,42 @@ def plot_batch_final(init_imgs, pred_imgs, goal_imgs, idxs, losses, save_path="f
 
     plt.savefig(save_path, bbox_inches="tight")
     plt.close()
+    
+def save_predictions_and_actions(save_dir, preds,
+    gt_actions,
+    pred_actions,
+    pred_yaw,
+    obs_images,
+    goal_images,
+    idxs,
+    losses=None,
+    device='cuda',
+    prefix='final'
+):
+    n = preds.size(0)
+    idxs = idxs.cpu().numpy()
+
+    # Create directories
+    image_dir = os.path.join(save_dir, f'{prefix}_pred_images')
+    action_dir = os.path.join(save_dir, f'{prefix}_actions')
+    os.makedirs(image_dir, exist_ok=True)
+    os.makedirs(action_dir, exist_ok=True)
+
+    for i in range(n):
+        idx = int(idxs[i])
+
+        # Save predicted image
+        img = (preds[i].detach().cpu() + 1) / 2  # denormalize
+        vutils.save_image(img, os.path.join(image_dir, f'pred_{idx}.png'))
+
+        # Save GT action
+        np.save(os.path.join(action_dir, f'gt_action_{idx}.npy'), gt_actions[i].cpu().numpy())
+
+        # Save predicted action
+        np.save(os.path.join(action_dir, f'pred_action_{idx}.npy'), pred_actions[i].cpu().numpy())
+
+        # Save predicted yaw
+        np.save(os.path.join(action_dir, f'pred_yaw_{idx}.npy'), pred_yaw[i].cpu().numpy())
 
 def get_dataset_eval(config, dataset_name, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]
@@ -218,6 +254,8 @@ class WM_Planning_Evaluator:
         idx_string = "_".join(map(str, idxs.flatten().int().tolist())) 
         image_plot_dir = os.path.join(dataset_save_output_dir, 'plots')
         os.makedirs(image_plot_dir, exist_ok=True)
+        videos_plot_dir = os.path.join(dataset_save_output_dir, 'videos')
+        os.makedirs(videos_plot_dir, exist_ok=True)
         
         n_evals = obs_image.shape[0]
         mu, sigma = self.init_mu_sigma(obs_image, len_traj_pred)
@@ -283,6 +321,22 @@ class WM_Planning_Evaluator:
         deltas[:, -1, -1] += mu[:, -1] * np.pi
 
         preds = self.autoregressive_rollout(obs_image, deltas, self.args.rollout_stride, aug_image=aug_image)
+        # if self.args.plot:
+        #     # save all the predicted image
+        #     # save the gt actions of all the steps
+        #     # save the pred actions of all the steps
+        #     save_predictions_and_actions(save_dir=image_plot_dir,
+        #         preds=preds,
+        #         gt_actions=gt_actions,
+        #         pred_actions=pred_actions,
+        #         pred_yaw=pred_yaw,
+        #         obs_images=obs_image,
+        #         goal_images=goal_image.squeeze(1),
+        #         idxs=idxs,
+        #         losses=losses,
+        #         device=self.device,
+        #         prefix=f'final_{idx_string}'
+        #     )
         preds = preds[:, -1] # take the last predicted image
 
         loss = self.loss_fn(preds.to(self.device), goal_image.squeeze(1).to(self.device)).flatten(0)
