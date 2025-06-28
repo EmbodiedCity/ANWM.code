@@ -8,9 +8,12 @@ v0发现cat出问题
 v2 ca
 v1开始加入airvln数据
 v3 与x对齐，sa加入
-v4 与x_cond对齐，ca加入
+v4 v2 + 与x_cond对齐，ca加入
+v5 每次要改model train infer三个
 note:
 v0 / v2: supervised忘加时空编码了qwq
+v1 / v3 / v4 train的时候eval都用了infer v1 qwq
+datasets v1是v0的重构版，都是深度图投影
 [DEBUG] x before embedding: torch.Size([12, 4, 28, 28])
 [DEBUG] x after x_embedder: torch.Size([12, 196, 1152])
 [DEBUG] pos_embed slice: torch.Size([1, 196, 1152])

@@ -41,7 +41,7 @@ eval_datasets:
   #   data_folder: data/go_stanford
   #   test: data_splits/go_stanford/test/
   #   goals_per_obs: 4
-  # airvln:
-  #   data_folder: data/airvln
-  #   test: data_splits/airvln/test/
-  #   goals_per_obs: 4
+  airvln:
+    data_folder: data/airvln
+    test: data_splits/airvln/test/
+    goals_per_obs: 4
