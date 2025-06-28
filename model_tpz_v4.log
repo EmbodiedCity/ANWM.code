@@ -3192,3 +3192,73 @@ Using cache found in ./models/facebookresearch_dino_main
 [[34m2025-06-28 21:36:06[0m] (step=0295500) Train Loss: 0.0982, Train Steps/Sec: 2.00, Samples/Sec: 63.84
 [[34m2025-06-28 21:36:56[0m] (step=0295600) Train Loss: 0.0913, Train Steps/Sec: 2.00, Samples/Sec: 64.01
 [[34m2025-06-28 21:37:46[0m] (step=0295700) Train Loss: 0.0933, Train Steps/Sec: 1.99, Samples/Sec: 63.61
+[[34m2025-06-28 21:38:37[0m] (step=0295800) Train Loss: 0.0914, Train Steps/Sec: 1.98, Samples/Sec: 63.40
+[[34m2025-06-28 21:39:26[0m] (step=0295900) Train Loss: 0.0989, Train Steps/Sec: 2.02, Samples/Sec: 64.64
+[[34m2025-06-28 21:40:16[0m] (step=0296000) Train Loss: 0.0927, Train Steps/Sec: 2.02, Samples/Sec: 64.76
+[[34m2025-06-28 21:41:06[0m] (step=0296100) Train Loss: 0.0967, Train Steps/Sec: 2.00, Samples/Sec: 64.07
+[[34m2025-06-28 21:41:55[0m] (step=0296200) Train Loss: 0.0899, Train Steps/Sec: 2.02, Samples/Sec: 64.52
+[[34m2025-06-28 21:42:44[0m] (step=0296300) Train Loss: 0.0971, Train Steps/Sec: 2.04, Samples/Sec: 65.31
+[[34m2025-06-28 21:43:34[0m] (step=0296400) Train Loss: 0.1047, Train Steps/Sec: 2.04, Samples/Sec: 65.15
+[[34m2025-06-28 21:44:23[0m] (step=0296500) Train Loss: 0.0989, Train Steps/Sec: 2.03, Samples/Sec: 65.10
+[[34m2025-06-28 21:45:12[0m] (step=0296600) Train Loss: 0.1001, Train Steps/Sec: 2.02, Samples/Sec: 64.73
+[[34m2025-06-28 21:46:01[0m] (step=0296700) Train Loss: 0.0963, Train Steps/Sec: 2.06, Samples/Sec: 65.83
+[[34m2025-06-28 21:46:50[0m] (step=0296800) Train Loss: 0.0928, Train Steps/Sec: 2.02, Samples/Sec: 64.70
+[[34m2025-06-28 21:47:39[0m] (step=0296900) Train Loss: 0.0935, Train Steps/Sec: 2.04, Samples/Sec: 65.15
+[[34m2025-06-28 21:48:29[0m] (step=0297000) Train Loss: 0.0936, Train Steps/Sec: 2.02, Samples/Sec: 64.53
+[[34m2025-06-28 21:49:19[0m] (step=0297100) Train Loss: 0.0971, Train Steps/Sec: 2.02, Samples/Sec: 64.54
+[[34m2025-06-28 21:50:07[0m] (step=0297200) Train Loss: 0.0964, Train Steps/Sec: 2.05, Samples/Sec: 65.59
+[[34m2025-06-28 21:50:57[0m] (step=0297300) Train Loss: 0.0964, Train Steps/Sec: 2.03, Samples/Sec: 64.81
+[[34m2025-06-28 21:51:47[0m] (step=0297400) Train Loss: 0.0947, Train Steps/Sec: 2.00, Samples/Sec: 64.02
+[[34m2025-06-28 21:52:37[0m] (step=0297500) Train Loss: 0.0921, Train Steps/Sec: 2.00, Samples/Sec: 63.91
+[[34m2025-06-28 21:53:27[0m] (step=0297600) Train Loss: 0.0938, Train Steps/Sec: 1.98, Samples/Sec: 63.49
+[[34m2025-06-28 21:54:18[0m] (step=0297700) Train Loss: 0.0875, Train Steps/Sec: 1.98, Samples/Sec: 63.44
+[[34m2025-06-28 21:55:08[0m] (step=0297800) Train Loss: 0.0924, Train Steps/Sec: 1.97, Samples/Sec: 63.09
+[[34m2025-06-28 21:55:59[0m] (step=0297900) Train Loss: 0.0936, Train Steps/Sec: 1.98, Samples/Sec: 63.39
+[[34m2025-06-28 21:56:49[0m] (step=0298000) Train Loss: 0.0968, Train Steps/Sec: 1.98, Samples/Sec: 63.41
+[[34m2025-06-28 21:57:40[0m] (step=0298100) Train Loss: 0.0957, Train Steps/Sec: 1.98, Samples/Sec: 63.42
+[[34m2025-06-28 21:58:30[0m] (step=0298200) Train Loss: 0.0928, Train Steps/Sec: 2.00, Samples/Sec: 63.85
+[[34m2025-06-28 21:59:21[0m] (step=0298300) Train Loss: 0.0941, Train Steps/Sec: 1.98, Samples/Sec: 63.27
+[[34m2025-06-28 22:00:11[0m] (step=0298400) Train Loss: 0.0910, Train Steps/Sec: 2.00, Samples/Sec: 64.00
+[[34m2025-06-28 22:01:01[0m] (step=0298500) Train Loss: 0.1030, Train Steps/Sec: 2.00, Samples/Sec: 64.09
+[[34m2025-06-28 22:01:50[0m] (step=0298600) Train Loss: 0.0964, Train Steps/Sec: 2.01, Samples/Sec: 64.29
+[[34m2025-06-28 22:02:41[0m] (step=0298700) Train Loss: 0.0964, Train Steps/Sec: 1.99, Samples/Sec: 63.75
+[[34m2025-06-28 22:03:30[0m] (step=0298800) Train Loss: 0.0973, Train Steps/Sec: 2.00, Samples/Sec: 64.15
+[[34m2025-06-28 22:04:20[0m] (step=0298900) Train Loss: 0.0958, Train Steps/Sec: 2.01, Samples/Sec: 64.31
+[[34m2025-06-28 22:05:10[0m] (step=0299000) Train Loss: 0.0996, Train Steps/Sec: 2.02, Samples/Sec: 64.69
+[[34m2025-06-28 22:05:58[0m] (step=0299100) Train Loss: 0.1043, Train Steps/Sec: 2.05, Samples/Sec: 65.62
+[[34m2025-06-28 22:06:48[0m] (step=0299200) Train Loss: 0.0951, Train Steps/Sec: 2.02, Samples/Sec: 64.62
+[[34m2025-06-28 22:07:38[0m] (step=0299300) Train Loss: 0.0999, Train Steps/Sec: 2.02, Samples/Sec: 64.50
+[[34m2025-06-28 22:08:27[0m] (step=0299400) Train Loss: 0.0912, Train Steps/Sec: 2.04, Samples/Sec: 65.22
+[[34m2025-06-28 22:09:16[0m] (step=0299500) Train Loss: 0.0976, Train Steps/Sec: 2.02, Samples/Sec: 64.73
+[[34m2025-06-28 22:10:06[0m] (step=0299600) Train Loss: 0.0954, Train Steps/Sec: 2.01, Samples/Sec: 64.37
+[[34m2025-06-28 22:10:56[0m] (step=0299700) Train Loss: 0.0896, Train Steps/Sec: 2.01, Samples/Sec: 64.37
+[[34m2025-06-28 22:11:45[0m] (step=0299800) Train Loss: 0.0878, Train Steps/Sec: 2.02, Samples/Sec: 64.50
+[[34m2025-06-28 22:12:36[0m] (step=0299900) Train Loss: 0.1013, Train Steps/Sec: 1.98, Samples/Sec: 63.39
+[[34m2025-06-28 22:13:27[0m] (step=0300000) Train Loss: 0.1000, Train Steps/Sec: 1.96, Samples/Sec: 62.76
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-28 22:13:59[0m] Saved checkpoint to logs/nwm_cdit_airvln_v4/checkpoints/0300000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-06-28 22:14:02[0m] Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+[[34m2025-06-28 22:16:13[0m] (step=0300000) Perceptual Loss: 0.2275, Eval Time: 133.74
+[[34m2025-06-28 22:17:08[0m] (step=0300100) Train Loss: 0.0955, Train Steps/Sec: 0.45, Samples/Sec: 14.46
+[[34m2025-06-28 22:17:57[0m] (step=0300200) Train Loss: 0.0982, Train Steps/Sec: 2.03, Samples/Sec: 65.03
+[[34m2025-06-28 22:18:47[0m] (step=0300300) Train Loss: 0.1013, Train Steps/Sec: 2.01, Samples/Sec: 64.39
+[[34m2025-06-28 22:19:36[0m] (step=0300400) Train Loss: 0.0958, Train Steps/Sec: 2.02, Samples/Sec: 64.70
+[[34m2025-06-28 22:20:26[0m] (step=0300500) Train Loss: 0.0970, Train Steps/Sec: 2.01, Samples/Sec: 64.33
+[[34m2025-06-28 22:21:16[0m] (step=0300600) Train Loss: 0.0972, Train Steps/Sec: 1.99, Samples/Sec: 63.77
+[[34m2025-06-28 22:22:07[0m] (step=0300700) Train Loss: 0.0952, Train Steps/Sec: 1.98, Samples/Sec: 63.30
+[[34m2025-06-28 22:22:58[0m] (step=0300800) Train Loss: 0.0980, Train Steps/Sec: 1.98, Samples/Sec: 63.26
+[[34m2025-06-28 22:23:48[0m] (step=0300900) Train Loss: 0.0939, Train Steps/Sec: 1.99, Samples/Sec: 63.61
+[[34m2025-06-28 22:24:38[0m] (step=0301000) Train Loss: 0.0932, Train Steps/Sec: 2.00, Samples/Sec: 63.98
+[[34m2025-06-28 22:25:28[0m] (step=0301100) Train Loss: 0.0950, Train Steps/Sec: 2.00, Samples/Sec: 63.87
+[[34m2025-06-28 22:26:18[0m] (step=0301200) Train Loss: 0.0916, Train Steps/Sec: 1.99, Samples/Sec: 63.67
+[[34m2025-06-28 22:27:08[0m] (step=0301300) Train Loss: 0.0978, Train Steps/Sec: 2.00, Samples/Sec: 64.01
+[[34m2025-06-28 22:27:59[0m] (step=0301400) Train Loss: 0.0953, Train Steps/Sec: 1.98, Samples/Sec: 63.38
+[[34m2025-06-28 22:28:49[0m] (step=0301500) Train Loss: 0.0974, Train Steps/Sec: 1.98, Samples/Sec: 63.50
+[[34m2025-06-28 22:29:39[0m] (step=0301600) Train Loss: 0.1016, Train Steps/Sec: 2.00, Samples/Sec: 64.05
+[[34m2025-06-28 22:30:30[0m] (step=0301700) Train Loss: 0.0930, Train Steps/Sec: 1.97, Samples/Sec: 62.92
+[[34m2025-06-28 22:31:20[0m] (step=0301800) Train Loss: 0.0962, Train Steps/Sec: 1.99, Samples/Sec: 63.77
+[[34m2025-06-28 22:32:10[0m] (step=0301900) Train Loss: 0.0949, Train Steps/Sec: 2.02, Samples/Sec: 64.61
+[[34m2025-06-28 22:33:00[0m] (step=0302000) Train Loss: 0.0877, Train Steps/Sec: 2.00, Samples/Sec: 63.95
