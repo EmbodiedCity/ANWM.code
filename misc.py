@@ -195,7 +195,7 @@ def calculate_delta_yaw(unnorm_actions):
     
     return delta_yaw
 
-def save_planning_pred(dataset_save_output_dir, B, idxs, obs_image, goal_image, preds, deltas, loss, gt_actions, plan_iter=0):
+def save_planning_pred(dataset_save_output_dir, B, idxs, obs_image, goal_image, preds, deltas, loss, gt_actions, preds_completed, plan_iter=0):
     for batch_idx, idx in enumerate(idxs.flatten()):
         sample_idx = int(idx)
         sample_folder = os.path.join(dataset_save_output_dir, f'id_{sample_idx}')
@@ -208,6 +208,7 @@ def save_planning_pred(dataset_save_output_dir, B, idxs, obs_image, goal_image, 
             'deltas': deltas[batch_idx],
             'loss': loss[batch_idx],
             'gt_actions': gt_actions[batch_idx],
+            'preds_completed' : preds_completed[batch_idx],
         }
         preds_file = os.path.join(sample_folder, f"preds_{plan_iter}.pth")
         torch.save(preds_save, preds_file)
