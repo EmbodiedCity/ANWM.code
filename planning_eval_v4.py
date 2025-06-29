@@ -99,6 +99,57 @@ def plot_batch_final(init_imgs, pred_imgs, goal_imgs, idxs, losses, save_path="f
 
     plt.savefig(save_path, bbox_inches="tight")
     plt.close()
+    
+def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path="trajectory_grid.png"):
+    """
+    Visualize a batch of image trajectories:
+    - init_imgs: (B, C, H, W)
+    - pred_imgs_seq: (B, T, C, H, W)  --> multiple steps
+    - goal_imgs: (B, C, H, W)
+    - idxs: (B,) tensor of IDs
+    """
+    B, T, C, H, W = pred_imgs_seq.shape
+    device = init_imgs.device
+    imgs_for_plotting = []
+
+    # Denormalize from [-1, 1] to [0, 1]
+    init_imgs = (init_imgs + 1) / 2
+    goal_imgs = (goal_imgs + 1) / 2
+    pred_imgs_seq = (pred_imgs_seq + 1) / 2
+
+    for b in range(B):
+        traj = [init_imgs[b]]  # Start with initial image
+        traj += [pred_imgs_seq[b, t] for t in range(T)]  # Add each predicted step
+        traj += [goal_imgs[b]]  # End with goal image
+        imgs_for_plotting.append(torch.stack(traj))
+
+    # Stack all batch trajectories vertically: shape → (B*(T+2), C, H, W)
+    imgs_for_plotting = torch.cat(imgs_for_plotting, dim=0)
+
+    # Create image grid: (B rows, T+2 cols)
+    grid_img = vutils.make_grid(imgs_for_plotting, nrow=T+2, padding=2)
+    np_grid = grid_img.permute(1, 2, 0).cpu().numpy()
+
+    fig, ax = plt.subplots(figsize=(max(12, (T+2) * 4), B * 4))
+    ax.imshow(np_grid)
+    ax.axis("off")
+
+    img_height, img_width = H + 2, W + 2  # account for padding
+    for b in range(B):
+        for t in range(T + 2):  # init + T preds + goal
+            x = t * img_width
+            y = b * img_height
+            if t == 0:
+                label = f"ID:{int(idxs[b].item())} Init"
+            elif t == T + 1:
+                label = "Goal"
+            else:
+                label = f"Step {t}"
+            ax.text(x + img_width / 2, y + 20, label, color="white",
+                    ha="center", va="top", fontsize=16, backgroundcolor="black")
+
+    plt.savefig(save_path, bbox_inches="tight")
+    plt.close()
 
 def get_dataset_eval(config, dataset_name, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]
@@ -296,6 +347,7 @@ class WM_Planning_Evaluator:
         if self.args.plot:
             img_name = os.path.join(image_plot_dir, f'FINAL_{idx_string}.png')
             plot_batch_final(obs_image[:, -1].to(self.device), preds, goal_image.squeeze(1).to(self.device), idxs, losses, save_path=img_name)
+            plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_image.squeeze(1).to(self.device), idxs, f"TRAJ_{idx_string}.png")
 
         pred_actions = get_action_torch(deltas[:, :, :2], ACTION_STATS_TORCH)
         pred_yaw = deltas[:, :, -1].sum(1)
@@ -307,7 +359,7 @@ class WM_Planning_Evaluator:
         img_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}.png')
         plot_images_with_losses(img_for_plotting, loss_for_plotting, save_path=img_name)
         plot_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}_trajs.png')
-        num_plot = self.args.num_samples
+        num_plot = self.args.num_samples  # 采样许多条，只画采纳的 topk 条 不好改
         log_viz_single(
                         dataset_name, 
                         cur_obs_image[0], 
