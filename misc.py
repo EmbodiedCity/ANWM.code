@@ -68,20 +68,29 @@ def plot_images_and_actions(dataset_name, curr_viz_obs_image, curr_viz_goal_imag
     axs[1].set_title("Goal Image", fontsize=13)
     axs[1].axis("off")
 
-    colors = ['red', 'orange', 'cyan']
-    for i in range(1, curr_viz_pred_actions.shape[0]):
-        color = colors[(i - 1) % len(colors)]
-        label = f"Sample {i} Min Loss" if i == min_idx.item() else f"{i}"
+    max_vis = 6
+    all_indices = list(range(curr_viz_pred_actions.shape[0]))
+    other_indices = [i for i in all_indices if i != min_idx.item()]
+    show_indices = [min_idx.item()] + other_indices[:max_vis]  # 最优的 + 最多 4 条其他的
 
-        if i != min_idx.item():
-            axs[2].plot(-curr_viz_pred_actions[i, :, 1], curr_viz_pred_actions[i, :, 0], 
-                        color=color, marker="o", markersize=5, label=label)
+    for i in show_indices:
+        if i == min_idx.item():
+            color = 'green'
+            label = 'Min Loss'
+        else:
+            color = 'orange'
+            label = None  # 不显示 label，避免挤
+
+        axs[2].plot(-curr_viz_pred_actions[i, :, 1], curr_viz_pred_actions[i, :, 0], 
+                    color=color, marker="o", markersize=5, label=label)
+
+        # 只给最优轨迹添加 loss 数字
+        if i == min_idx.item():
             axs[2].text(-curr_viz_pred_actions[i, -1, 1], 
-                curr_viz_pred_actions[i, -1, 0], 
-                round(loss[i].item(), 3), 
-                color='black', 
-                fontsize=10, 
-                ha='left', va='bottom')  # Adjust position to avoid overlap
+                        curr_viz_pred_actions[i, -1, 0], 
+                        f"{loss[i].item():.3f}", 
+                        color='black', fontsize=10,
+                        ha='left', va='bottom')
 
     # Highlight the minimum loss sample
     axs[2].plot(-curr_viz_pred_actions[min_idx.item(), :, 1], curr_viz_pred_actions[min_idx.item(), :, 0], 

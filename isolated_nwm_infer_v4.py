@@ -18,7 +18,7 @@ from diffusers.models import AutoencoderKL
 
 import misc
 import distributed as dist
-from models_tpz_v4 import CDiT_models
+from models_tpz_v4_ca import CDiT_models
 from datasets_v1 import EvalDataset
 from PIL import Image
 

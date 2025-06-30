@@ -346,8 +346,9 @@ class WM_Planning_Evaluator:
         
         if self.args.plot:
             img_name = os.path.join(image_plot_dir, f'FINAL_{idx_string}.png')
+            traj_name = os.path.join(image_plot_dir, f"TRAJ_{idx_string}.png")
             plot_batch_final(obs_image[:, -1].to(self.device), preds, goal_image.squeeze(1).to(self.device), idxs, losses, save_path=img_name)
-            plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_image.squeeze(1).to(self.device), idxs, f"TRAJ_{idx_string}.png")
+            plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_image.squeeze(1).to(self.device), idxs, save_path=traj_name)
 
         pred_actions = get_action_torch(deltas[:, :, :2], ACTION_STATS_TORCH)
         pred_yaw = deltas[:, :, -1].sum(1)
@@ -359,7 +360,7 @@ class WM_Planning_Evaluator:
         img_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}.png')
         plot_images_with_losses(img_for_plotting, loss_for_plotting, save_path=img_name)
         plot_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}_trajs.png')
-        num_plot = self.args.num_samples  # 采样许多条，只画采纳的 topk 条 不好改
+        num_plot = self.args.num_samples
         log_viz_single(
                         dataset_name, 
                         cur_obs_image[0], 
