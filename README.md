@@ -9,8 +9,10 @@ v2 ca
 v1开始加入airvln数据
 v3 与x对齐，sa加入
 v4 v2 + 与x_cond对齐，ca加入
+v4_ca 与x_cond对齐，ca加入
 v5 每次要改model train infer config/expname 四个
 note:
+checkpoints备份在：/data0/tpz/nwm_checkpoints/
 v0 / v2: supervised忘加时空编码了qwq
 v1 / v3 / v4 train的时候eval都用了infer v1 qwq
 v4_ca 改用正确eval infer
