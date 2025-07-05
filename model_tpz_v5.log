@@ -1,0 +1,78 @@
+[2025-07-06 02:17:36,603] torch.distributed.run: [WARNING] 
+[2025-07-06 02:17:36,603] torch.distributed.run: [WARNING] *****************************************
+[2025-07-06 02:17:36,603] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2025-07-06 02:17:36,603] torch.distributed.run: [WARNING] *****************************************
+[[34m2025-07-06 02:17:39[0m] Experiment directory created at logs/nwm_cdit_airvln_v5
+[[34m2025-07-06 02:17:56[0m] CDiT Parameters: 1,131,501,344
+[[34m2025-07-06 02:26:40[0m] Dataset contains 261,415 images
+[[34m2025-07-06 02:26:40[0m] Training for 300 epochs...
+[[34m2025-07-06 02:26:40[0m] Beginning epoch 0...
+[[34m2025-07-06 02:29:21[0m] (step=0000100) Train Loss: 0.3446, Train Steps/Sec: 0.62, Samples/Sec: 4.98
+Traceback (most recent call last):
+  File "train_v5.py", line 446, in <module>
+    [2025-07-06 02:30:01,404] torch.distributed.elastic.agent.server.api: [WARNING] Received Signals.SIGINT death signal, shutting down workers
+main(args)
+  File "train_v5.py", line 282, in main
+[2025-07-06 02:30:01,404] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 2872009 closing signal SIGINT
+[2025-07-06 02:30:01,404] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 2872010 closing signal SIGINT
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/diffusers/utils/accelerate_utils.py", line 46, in wrapper
+Traceback (most recent call last):
+  File "train_v5.py", line 446, in <module>
+    main(args)
+    return method(self, *args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/diffusers/models/autoencoders/autoencoder_kl.py", line 278, in encode
+  File "train_v5.py", line 317, in main
+    running_loss += loss.detach().item()
+KeyboardInterrupt
+    h = self._encode(x)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/diffusers/models/autoencoders/autoencoder_kl.py", line 252, in _encode
+    enc = self.encoder(x)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/diffusers/models/autoencoders/vae.py", line 168, in forward
+    sample = down_block(sample)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/diffusers/models/unets/unet_2d_blocks.py", line 1442, in forward
+    hidden_states = resnet(hidden_states, temb=None)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/diffusers/models/resnet.py", line 327, in forward
+    hidden_states = self.norm1(hidden_states)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/modules/normalization.py", line 279, in forward
+    return F.group_norm(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/nn/functional.py", line 2553, in group_norm
+    if has_torch_function_variadic(input, weight, bias):
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm2/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 346, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 806, in main
+    run(args)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 797, in run
+    elastic_launch(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 134, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 255, in launch_agent
+    result = agent.run()
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/metrics/api.py", line 124, in wrapper
+    result = f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 736, in run
+    result = self._invoke_run(role)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 877, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 62, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 2871933 got signal: 2

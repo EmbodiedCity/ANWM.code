@@ -1,4 +1,4 @@
-# 继承自v3 & v2，final layer + ca in CDiT Block in airvln
+# 继承自v4，三维空间扩展
 # --------------------------------------------------------
 import torch
 import torch.nn as nn

@@ -153,8 +153,8 @@ class BaseDataset(Dataset):
         start_index = curr_time
         end_index = curr_time + self.len_traj_pred + 1
         yaw = traj_data["yaw"][start_index:end_index]
-        positions = traj_data["points"][start_index:end_index]
-        goal_pos = traj_data["points"][goal_time]
+        positions = traj_data["point"][start_index:end_index]
+        goal_pos = traj_data["point"][goal_time]
         goal_yaw = traj_data["yaw"][goal_time]
 
         if len(yaw.shape) == 2:
@@ -175,11 +175,12 @@ class BaseDataset(Dataset):
         goal_yaw = angle_difference(yaw[0], goal_yaw)
         
         if self.normalize:
-            actions[:, :2] /= self.data_config["metric_waypoint_spacing"]
-            goal_pos[:, :2] /= self.data_config["metric_waypoint_spacing"]
+            print(actions.shape)
+            actions[:, :3] /= self.data_config["metric_waypoint_spacing"]
+            goal_pos[:, :3] /= self.data_config["metric_waypoint_spacing"]
         
         goal_pos = np.concatenate([goal_pos, goal_yaw.reshape(-1, 1)], axis=-1)
-
+        print(goal_pos.shape)
         projected_images = self._compute_projected_image(traj_data, curr_time, goal_time, rgb_img)
         return actions, goal_pos, projected_images
 
