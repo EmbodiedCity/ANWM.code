@@ -1,6 +1,6 @@
 action_stats:
-  min: [-2.5, -4] # [min_dx, min_dy]
-  max: [5, 4] # [max_dx, max_dy]
+  min: [-2.5, -4, -3] # [min_dx, min_dy, min_dz]
+  max: [5, 4, 3] # [max_dx, max_dy, max_dz]
 
 recon:
   metric_waypoint_spacing: 0.25 # average spacing between waypoints (meters)

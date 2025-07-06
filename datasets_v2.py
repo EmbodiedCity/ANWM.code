@@ -175,12 +175,11 @@ class BaseDataset(Dataset):
         goal_yaw = angle_difference(yaw[0], goal_yaw)
         
         if self.normalize:
-            print(actions.shape)
             actions[:, :3] /= self.data_config["metric_waypoint_spacing"]
             goal_pos[:, :3] /= self.data_config["metric_waypoint_spacing"]
         
         goal_pos = np.concatenate([goal_pos, goal_yaw.reshape(-1, 1)], axis=-1)
-        print(goal_pos.shape)
+
         projected_images = self._compute_projected_image(traj_data, curr_time, goal_time, rgb_img)
         return actions, goal_pos, projected_images
 
@@ -228,7 +227,7 @@ class TrainingDataset(BaseDataset):
             
             # Compute actions
             _, goal_pos, projected_images = self._compute_actions(curr_traj_data, curr_time, goal_time, rgb_img)
-            goal_pos[:, :2] = normalize_data(goal_pos[:, :2], self.ACTION_STATS)
+            goal_pos[:, :3] = normalize_data(goal_pos[:, :3], self.ACTION_STATS)
             
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
@@ -284,7 +283,7 @@ class EvalDataset(BaseDataset):
             rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
             # Compute actions
             actions, _, projected_images = self._compute_actions(curr_traj_data, curr_time, np.array([curr_time+1]), rgb_img) # last argument is dummy goal
-            actions[:, :2] = normalize_data(actions[:, :2], self.ACTION_STATS)
+            actions[:, :3] = normalize_data(actions[:, :3], self.ACTION_STATS)
             delta = get_delta_np(actions)
             # Compute projected tensor
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
