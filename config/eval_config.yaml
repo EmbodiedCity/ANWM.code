@@ -45,3 +45,7 @@ eval_datasets:
     data_folder: data/airvln
     test: data_splits/airvln/test/
     goals_per_obs: 4
+  airvln_airspace:
+    data_folder: data/airvln_airspace
+    test: data_splits/airvln_airspace/test/
+    goals_per_obs: 4

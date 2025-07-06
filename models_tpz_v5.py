@@ -60,13 +60,14 @@ class ActionEmbedder(nn.Module):
     """
     def __init__(self, hidden_size, frequency_embedding_size=256):
         super().__init__()
-        hsize = hidden_size//3
+        hsize = hidden_size//4
         self.x_emb = TimestepEmbedder(hsize, frequency_embedding_size)
         self.y_emb = TimestepEmbedder(hsize, frequency_embedding_size)
-        self.angle_emb = TimestepEmbedder(hidden_size -2*hsize, frequency_embedding_size)
+        self.z_emb = TimestepEmbedder(hsize, frequency_embedding_size)
+        self.angle_emb = TimestepEmbedder(hidden_size -3*hsize, frequency_embedding_size)
 
-    def forward(self, xya):
-        return torch.cat([self.x_emb(xya[...,0:1]), self.y_emb(xya[...,1:2]), self.angle_emb(xya[...,2:3])], dim=-1)
+    def forward(self, xyza):
+        return torch.cat([self.x_emb(xyza[...,0:1]), self.y_emb(xyza[...,1:2]), self.z_emb(xyza[...,2:3]), self.angle_emb(xyza[...,3:4])], dim=-1)
 
 #################################################################################
 #                                 Core CDiT Model                                #
@@ -273,7 +274,7 @@ class CDiT(nn.Module):
         x_supervised = self.x_embedder(x_supervised) + self.pos_embed[self.context_size:] 
         y = self.y_embedder(y) 
         time_emb = self.time_embedder(rel_t[..., None])
-        # info is an image, not a scalar, but it refers to rel_t,y(x,y,angle) one by one
+        # info is an image, not a scalar, but it refers to rel_t,y(x,y,z,angle) one by one
         c = t + time_emb + y
 
         for block in self.blocks:
