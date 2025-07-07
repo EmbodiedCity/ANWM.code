@@ -29,6 +29,11 @@ datasets:
     train: data_splits/airvln/train/ # path to train folder with traj_names.txt
     test: data_splits/airvln/test/ # path to test folder with traj_names.txt
     goals_per_obs: 4
+  airvln_airspace:
+    data_folder: data/airvln_airspace
+    train: data_splits/airvln_airspace/train/ # path to train folder with traj_names.txt
+    test: data_splits/airvln_airspace/test/ # path to test folder with traj_names.txt
+    goals_per_obs: 4
   # recon:
   #   data_folder: data/recon
   #   train: data_splits/recon/train/ # path to train folder with traj_names.txt
