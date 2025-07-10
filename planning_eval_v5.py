@@ -255,7 +255,7 @@ class WM_Planning_Evaluator:
         self.topk = self.args.topk
         self.opt_steps = self.args.opt_steps
         self.num_repeat_eval = self.args.num_repeat_eval
-        self.action_dim = 3 # hardcoded (delta_x, delta_y, delta_yaw)
+        self.action_dim = 4 # hardcoded (delta_x, delta_y, delta_z, delta_yaw)
 
     def init_mu_sigma(self, obs_0, traj_len):
         n_evals = obs_0.shape[0]
@@ -281,7 +281,7 @@ class WM_Planning_Evaluator:
             for traj in range(n_evals):
                 traj_id = int(idxs.flatten()[traj].item())
                 sample = (torch.randn(self.num_samples, self.action_dim).to(self.device) * sigma[traj] + mu[traj])
-                single_delta = sample[:, :2]
+                single_delta = sample[:, :3]
                 deltas = single_delta.unsqueeze(1).repeat(1, len_traj_pred, 1)
                 unnorm_deltas = unnormalize_data(deltas, ACTION_STATS_TORCH)
                 delta_yaw = calculate_delta_yaw(unnorm_deltas)
@@ -326,7 +326,7 @@ class WM_Planning_Evaluator:
                     self.visualize_trajectories(dataset_name, gt_actions, image_plot_dir, i, traj, traj_id, deltas, cur_obs_image, cur_goal_image, preds, loss, topk_idx)                    
         
         # Final rollout 
-        deltas = mu[:, :2]
+        deltas = mu[:, :3]
         deltas = deltas.unsqueeze(1).repeat(1, len_traj_pred, 1)
 
         # Calculate yaws
@@ -350,7 +350,7 @@ class WM_Planning_Evaluator:
             plot_batch_final(obs_image[:, -1].to(self.device), preds, goal_image.squeeze(1).to(self.device), idxs, losses, save_path=img_name)
             plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_image.squeeze(1).to(self.device), idxs, save_path=traj_name)
 
-        pred_actions = get_action_torch(deltas[:, :, :2], ACTION_STATS_TORCH)
+        pred_actions = get_action_torch(deltas[:, :, :3], ACTION_STATS_TORCH)
         pred_yaw = deltas[:, :, -1].sum(1)
         return pred_actions, pred_yaw
 
@@ -399,7 +399,7 @@ class WM_Planning_Evaluator:
         
     def actions_to_traj(self, actions):
         positions_xyz = torch.zeros((actions.shape[0], 3))
-        positions_xyz[:, :2] = actions
+        positions_xyz[:, :3] = actions
         orientations_quat_wxyz = torch.zeros((actions.shape[0], 4)) # Define identity quaternion
         orientations_quat_wxyz[:, -1] = 1 # Define identity quaternion
         timestamps = torch.arange(actions.shape[0], dtype=torch.float64)
@@ -426,14 +426,14 @@ class WM_Planning_Evaluator:
                 with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
                     pred_actions, pred_yaw = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image)
                 for i in range(len(obs_image)):
-                    pred_traj_i = self.actions_to_traj(pred_actions[i, :, :2])
-                    gt_traj_i = self.actions_to_traj(gt_actions[i, :, :2])
+                    pred_traj_i = self.actions_to_traj(pred_actions[i, :, :3])
+                    gt_traj_i = self.actions_to_traj(gt_actions[i, :, :3])
                     
                     ate, rpe_trans, _ = self.eval_metrics(gt_traj_i, pred_traj_i)
 
-                    pred_final_pos = pred_actions[i, -1, :2].to('cpu') # (2,)
+                    pred_final_pos = pred_actions[i, -1, :3].to('cpu') # (3,)
                     pred_final_yaw = pred_yaw[i].to('cpu') # 
-                    goal_final_pos = goal_pos[i, 0, :2] # (2,)
+                    goal_final_pos = goal_pos[i, 0, :3] # (3,)
                     goal_final_yaw = goal_pos[i, 0, -1] # (B,)
                     pos_diff_norm = torch.norm(pred_final_pos - goal_final_pos)
                     yaw_diff = pred_final_yaw - goal_final_yaw  # 

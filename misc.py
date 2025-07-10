@@ -13,6 +13,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from PIL import Image
 from torchvision import transforms
 import torchvision.transforms.functional as TF
+from mpl_toolkits.mplot3d import Axes3D  # for 3D plotting
 
 
 IMAGE_ASPECT_RATIO = (4 / 3)  # all images are centered cropped to a 4:3 aspect ratio in training
@@ -23,12 +24,38 @@ with open("config/data_config.yaml", "r") as f:
 
 def get_action_torch(diffusion_output, action_stats):
     ndeltas = diffusion_output
-    ndeltas = ndeltas.reshape(ndeltas.shape[0], -1, 2)
+    ndeltas = ndeltas.reshape(ndeltas.shape[0], -1, 3)
     ndeltas = unnormalize_data(ndeltas, action_stats)
     actions = torch.cumsum(ndeltas, dim=1)
     return actions.to(ndeltas)
 
 def log_viz_single(dataset_name, obs_image, goal_image, preds, deltas, loss, min_idx, actions, action_stats, plan_iter=0, output_dir='plot.png'):
+    '''
+    Visualize a single instance
+    actions is gt actions
+    '''
+    viz_obs_image = unnormalize(obs_image.detach().cpu())[-1] # take last img 
+    viz_goal_image = unnormalize(goal_image.detach().cpu())
+    deltas = deltas.detach().cpu()
+    loss = loss.detach().cpu()
+    actions = actions.detach().cpu()
+    pred_actions = get_action_torch(deltas[:, :, :3], action_stats)
+    plot_array = plot_images_and_actions(dataset_name, viz_obs_image, viz_goal_image, pred_actions, actions, min_idx, loss=loss)
+
+    plt.imshow(plot_array)
+    plt.axis('off')  # Hide axes for a cleaner image
+
+    # Save the plot array as a PNG file locally
+    plt.savefig(output_dir, format='png', dpi=300, bbox_inches='tight')
+    
+def get_action_torch_2d(diffusion_output, action_stats):
+    ndeltas = diffusion_output
+    ndeltas = ndeltas.reshape(ndeltas.shape[0], -1, 2)
+    ndeltas = unnormalize_data(ndeltas, action_stats)
+    actions = torch.cumsum(ndeltas, dim=1)
+    return actions.to(ndeltas)
+
+def log_viz_single_2d(dataset_name, obs_image, goal_image, preds, deltas, loss, min_idx, actions, action_stats, plan_iter=0, output_dir='plot.png'):
     '''
     Visualize a single instance
     actions is gt actions
@@ -56,7 +83,8 @@ def plot_images_and_actions(dataset_name, curr_viz_obs_image, curr_viz_goal_imag
     curr_viz_actions = curr_viz_actions * data_config[dataset_name]['metric_waypoint_spacing']
     
     # Create the figure with three subplots
-    fig, axs = plt.subplots(1, 3, figsize=(9, 3))
+    fig, axs = plt.subplots(1, 4, figsize=(12, 3))
+    ax3d = fig.add_subplot(1, 4, 4, projection='3d')  # 3D subplot
 
     # Plot condition image
     axs[0].imshow(curr_viz_obs_image)
@@ -121,6 +149,27 @@ def plot_images_and_actions(dataset_name, curr_viz_obs_image, curr_viz_goal_imag
     axs[2].set_ylim(y_mid - axis_range, y_mid + axis_range)
 
     axs[2].legend(loc='lower left', fontsize=10, frameon=True, bbox_to_anchor=(0, 0))
+    # --- 3D Trajectory Plot ---
+    for i in show_indices:
+        traj = curr_viz_pred_actions[i]
+        traj = traj.cpu().numpy() if isinstance(traj, torch.Tensor) else traj
+        color = 'green' if i == min_idx.item() else 'orange'
+        label = 'Min Loss' if i == min_idx.item() else None
+        ax3d.plot(traj[:, 0], traj[:, 1], traj[:, 2], 
+                  color=color, marker='o', markersize=3, label=label)
+
+    # Ground truth in 3D [21, 8, 3] [num_samples, t, action_dim]
+    gt_traj = curr_viz_actions
+    gt_traj = gt_traj.cpu().numpy() if isinstance(gt_traj, torch.Tensor) else gt_traj
+    ax3d.plot(gt_traj[:, 0], gt_traj[:, 1], gt_traj[:, 2],
+              color='blue', marker='o', label="GT")
+    ax3d.set_title("3D Trajectory", fontsize=13)
+    ax3d.set_xlabel("X")
+    ax3d.set_ylabel("Y")
+    ax3d.set_zlabel("Z")
+    ax3d.view_init(elev=25, azim=-60)
+    ax3d.legend(fontsize=9)
+
     plt.tight_layout()
 
     canvas = FigureCanvas(fig)

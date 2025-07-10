@@ -17,9 +17,9 @@ sacson:
 #   mu: [-0.1, 0, 0]
 #   var_scale: [0.02, 0.1, 0.1]
 airvln:
-  mu: [-0.1, 0, 0]
-  var_scale: [0.02, 0.1, 0.1]
+  mu: [-0.1, 0, 0, 0]
+  var_scale: [0.02, 0.1, 0.1, 0.1]
 
 airvln_airspace:
-  mu: [-0.1, 0, 0]
-  var_scale: [0.02, 0.1, 0.1]
+  mu: [-0.1, 0, 0, 0]
+  var_scale: [0.02, 0.1, 0.1, 0.1]
