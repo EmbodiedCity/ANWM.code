@@ -28,3 +28,6 @@ airvln:
 
 airvln_airspace:
   metric_waypoint_spacing: 3.23
+
+airvln_1episode:
+  metric_waypoint_spacing: 3.09
