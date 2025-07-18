@@ -27,3 +27,7 @@ airvln_airspace:
 airvln_1episode:
   mu: [-0.1, 0, 0, 0]
   var_scale: [0.02, 0.1, 0.1, 0.1]
+
+airvln_16:
+  mu: [-0.1, 0, 0, 0]
+  var_scale: [0.02, 0.1, 0.1, 0.1]
