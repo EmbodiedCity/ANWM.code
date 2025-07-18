@@ -144,6 +144,7 @@ class CDiT(nn.Module):
         num_heads=16,
         mlp_ratio=4.0,
         learn_sigma=True,
+        goals_per_obs=2,
     ):
         super().__init__()
         self.context_size = context_size

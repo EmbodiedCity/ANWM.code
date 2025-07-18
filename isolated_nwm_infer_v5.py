@@ -73,7 +73,7 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         B, T = x.shape[:2]
 
         if rel_t is None:
-            rel_t = (torch.ones(B)* (1. / 128.)).to(device)
+            rel_t = (torch.ones(B * num_goals) * (1. / 128.)).to(device)
             rel_t *= num_timesteps
 
         x = x.flatten(0,1)
@@ -96,7 +96,7 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
 
         return torch.clip(samples, -1., 1.)
 
-def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image, gt_image, delta, num_cond, device):
+def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image, gt_image, delta, num_cond, device, x_supervised):
     rollout_stride = args.input_fps // rollout_fps
     gt_image = gt_image[:, rollout_stride-1::rollout_stride]
     delta = delta.unflatten(1, (-1, rollout_stride)).sum(2)
@@ -107,21 +107,59 @@ def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image,
         if args.gt:
             x_pred_pixels = gt_image[:, i].clone().to(device)
         else:
-            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, rollout_stride, args.latent_size, num_cond=num_cond, num_goals=1, device=device)
+            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, rollout_stride, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=x_supervised)
 
         curr_obs = torch.cat((curr_obs, x_pred_pixels.unsqueeze(1)), dim=1) # append current prediction
         curr_obs = curr_obs[:, 1:] # remove first observation
         visualize_preds(output_dir, idxs, i, x_pred_pixels)
 
-def generate_time(args, output_dir, idxs, all_models, obs_image, gt_output, delta, secs, num_cond, device):
+def generate_time_original(args, output_dir, idxs, all_models, obs_image, gt_output, delta, secs, num_cond, device, x_supervised):
     eval_timesteps = [sec*args.input_fps for sec in secs]
     for sec, timestep in zip(secs, eval_timesteps):
         curr_delta = delta[:, :timestep].sum(dim=1, keepdim=True)
         if args.gt:
             x_pred_pixels = gt_output[:, timestep-1].clone().to(device)
         else:
-            x_pred_pixels = model_forward_wrapper(all_models, obs_image, curr_delta, timestep, args.latent_size, num_cond=num_cond, num_goals=1, device=device)
+            x_pred_pixels = model_forward_wrapper(all_models, obs_image, curr_delta, timestep, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=x_supervised)
         visualize_preds(output_dir, idxs, sec, x_pred_pixels)
+
+def generate_time(args, output_dir, idxs, all_models, obs_image, gt_output, delta, secs, num_cond, device, x_supervised):
+    eval_timesteps = [sec * args.input_fps for sec in secs]
+    num_goals = len(secs)
+    B = obs_image.size(0)
+
+    # 1. 构造多个 goal 的动作输入（B, num_goals, 4)
+    delta_goals = []
+    for timestep in eval_timesteps:
+        d = delta[:, :timestep].sum(dim=1, keepdim=True)  # (B, 1, 4)
+        delta_goals.append(d)
+    delta_goals = torch.cat(delta_goals, dim=1)  # (B, num_goals, 4)
+
+    # 2. 扩展所有输入以匹配 B * num_goals
+    # obs_image = obs_image.unsqueeze(1).repeat(1, num_goals, 1, 1, 1, 1).flatten(0, 1)  # (B*num_goals, T, C, H, W)
+    delta_goals = delta_goals.flatten(0, 1)  # (B*num_goals, 4)
+
+    if x_supervised is not None:
+        x_supervised = x_supervised.unsqueeze(1).repeat(1, num_goals, 1, 1, 1, 1).flatten(0, 1)  # (B*num_goals, T, C, H, W)
+
+    if args.gt:
+        # 直接从 ground truth 中提取目标帧
+        x_pred_pixels = []
+        for timestep in eval_timesteps:
+            x_pred_pixels.append(gt_output[:, timestep - 1].clone().to(device))  # (B, C, H, W)
+        x_pred_pixels = torch.stack(x_pred_pixels, dim=1)  # (B, num_goals, C, H, W)
+    else:
+        # 3. 执行一次 forward，预测多个目标时间点
+        x_pred_pixels = model_forward_wrapper(
+            all_models, obs_image, delta_goals, max(eval_timesteps),
+            args.latent_size, num_cond=num_cond, num_goals=num_goals,
+            device=device, x_supervised=x_supervised,
+        )  # 返回 (B * num_goals, C, H, W)
+        x_pred_pixels = x_pred_pixels.view(B, num_goals, *x_pred_pixels.shape[1:])  # (B, num_goals, C, H, W)
+
+    for goal_idx, sec in enumerate(secs):
+        visualize_preds(output_dir, idxs, sec, x_pred_pixels[:, goal_idx])
+
 
 def visualize_preds(output_dir, idxs, sec, x_pred_pixels):
     for batch_idx, sample_idx in enumerate(idxs.squeeze()):
@@ -210,7 +248,7 @@ def main(args):
         os.makedirs(dataset_save_output_dir, exist_ok=True)
         curr_data_loader = datasets[dataset_name]
         
-        for data_iter_step, (idxs, obs_image, gt_image, delta) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
+        for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
             with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
                 obs_image = obs_image[:, -num_cond:].to(device)
                 gt_image = gt_image.to(device)
@@ -219,12 +257,12 @@ def main(args):
                     for rollout_fps in args.rollout_fps_values:
                         curr_rollout_output_dir = os.path.join(dataset_save_output_dir, f'rollout_{rollout_fps}fps')
                         os.makedirs(curr_rollout_output_dir, exist_ok=True)
-                        generate_rollout(args, curr_rollout_output_dir, rollout_fps, idxs, model_lst, obs_image, gt_image, delta, num_cond, device)
+                        generate_rollout(args, curr_rollout_output_dir, rollout_fps, idxs, model_lst, obs_image, gt_image, delta, num_cond, device, aug_image)
                 elif args.eval_type == 'time':
                     secs = np.array([2**i for i in range(0, args.num_sec_eval)])
                     curr_time_output_dir = os.path.join(dataset_save_output_dir, 'time')
                     os.makedirs(curr_time_output_dir, exist_ok=True)
-                    generate_time(args, curr_time_output_dir, idxs, model_lst, obs_image, gt_image, delta, secs, num_cond, device)
+                    generate_time(args, curr_time_output_dir, idxs, model_lst, obs_image, gt_image, delta, secs, num_cond, device, aug_image)
     
 
 if __name__ == "__main__":

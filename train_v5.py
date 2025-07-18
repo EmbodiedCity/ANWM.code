@@ -274,6 +274,7 @@ def main(args):
             rel_t = rel_t.to(device, non_blocking=True)
             aug = aug.to(device, non_blocking=True)
             
+            print(f"aug shape: {aug.size()}")
             with torch.amp.autocast('cuda', enabled=bfloat_enable, dtype=torch.bfloat16):
                 with torch.no_grad():
                     # Map input images to latent space + normalize latents:
@@ -285,7 +286,8 @@ def main(args):
                     B_aug, T_aug = aug.shape[:2]
                     aug = aug.flatten(0,1)
                     aug = tokenizer.encode(aug).latent_dist.sample().mul_(0.18215)
-                    aug = aug.unflatten(0, (B_aug, T_aug))
+                    aug = aug.unflatten(0, (B_aug, T_aug))              # [B, num_goals, 4, 28, 28]
+                    print(f'aug latent shape: {aug.size()}')
                 
                 num_goals = T - num_cond
                 x_start = x[:, num_cond:].flatten(0, 1)
