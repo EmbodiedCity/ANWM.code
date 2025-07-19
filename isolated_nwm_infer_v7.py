@@ -18,8 +18,8 @@ from diffusers.models import AutoencoderKL
 
 import misc
 import distributed as dist
-from models_zwc_v6 import CDiT_models
-from datasets_v2 import EvalDataset
+from models_zwc_v7 import CDiT_models
+from datasets_v3 import EvalDataset
 from PIL import Image
 
 

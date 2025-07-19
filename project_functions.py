@@ -4,6 +4,125 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+class CoordsConverter:
+    def __init__(self):
+        pass
+    
+    def coords_img2cam(self, p, dep):
+        pass
+    
+    def coords_cam2ego(self, P_cam):
+        pass
+    
+    def coords_ego2world(self, P_ego, ego_pose):
+        pass
+    
+    def coords_world2cam(self, P_w, ego_pose):
+        pass
+
+
+class AirsimCoordsConverter(CoordsConverter):
+    def __init__(self):
+        super().__init__()
+
+        w, h = 512, 512
+        fov = np.pi / 2
+        fx = 0.5 * w / np.tan(fov / 2)
+        fy = fx
+
+        self.K = np.array(
+            [[fx, 0, w / 2],
+             [0, fy, h / 2],
+             [0, 0, 1]]
+        )
+        self.T_ec = np.array(
+            [
+                [0.0, 0, 1, 0],
+                [1.0, 0, 0, 0],
+                [0.0, 1, 0, 0],
+                [0.0, 0, 0, 1]
+            ]
+        )
+
+    def coords_img2cam(self, p, dep):
+        # p: [u, v, 1], dep: depth of p
+        K_inv = np.linalg.inv(self.K)
+        P_cam = K_inv.dot(p * dep)
+
+        return P_cam
+
+    def coords_cam2ego(self, P_cam):
+        # p: [x, y, z, 1]
+        P_ego = self.T_ec.dot(P_cam)
+        return P_ego
+
+    def coords_ego2world(self, P_ego, ego_pose):
+        # P_ego: [x, y, z, 1], ego_pose: [x, y, z, p, r, y]
+        rot_quat = airsim.to_quaternion(*ego_pose[3:])
+        rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
+        shift_mat = np.array(ego_pose[:3])
+
+        trans_mat = np.eye(4)
+        trans_mat[:3, :3] = rot_mat
+        trans_mat[:3, 3] = shift_mat
+
+        P_world = trans_mat.dot(P_ego)
+
+        return P_world
+
+    def coords_world2cam(self, P_w, ego_pose):
+        # P_ego: [x, y, z, 1], ego_pose: [x, y, z, p, r, y]
+        rot_quat = airsim.to_quaternion(*ego_pose[3:])
+        rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
+        shift_mat = np.array(ego_pose[:3])
+
+        T_we = np.eye(4)
+        T_we[:3, :3] = rot_mat
+        T_we[:3, 3] = shift_mat
+
+        T_wc = T_we.dot(self.T_ec)
+        T_cw = np.linalg.inv(T_wc)
+
+        P_cam = T_cw.dot(P_w)
+
+        return P_cam
+
+    def coords_cam2img(self, P_cam):
+        # P_cam: [X, Y, Z, 1]
+        p_img = self.K.dot(P_cam[:3]) / P_cam[2]
+        
+        return p_img
+    
+    def trans_world2cam(self, cam_pose):
+        rot_quat = airsim.to_quaternion(*ego_pose[3:])
+        
+        rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
+        shift_mat = np.array(ego_pose[:3])
+
+        T_we = np.eye(4)
+        T_we[:3, :3] = rot_mat
+        T_we[:3, 3] = shift_mat
+
+        T_wc = T_we.dot(self.T_ec)
+        return T_wc
+
+    def trans_cam2world(self, cam_pose):
+        rot_quat = airsim.to_quaternion(*ego_pose[3:])
+        
+        rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
+        shift_mat = np.array(ego_pose[:3])
+
+        T_we = np.eye(4)
+        T_we[:3, :3] = rot_mat
+        T_we[:3, 3] = shift_mat
+
+        T_wc = T_we.dot(self.T_ec)
+        T_cw = np.linalg.inv(T_wc)
+        
+        return T_cw
+
+
 def reproject_depth_to_other_pose(K, depth_map, rgb_img, pose_src, pose_dst):
     """
     输入：

@@ -7,6 +7,8 @@
 # References:
 # NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
 # --------------------------------------------------------
+
+# 这个版本为加入了相机编码版本
 import cv2
 import numpy as np
 import torch
@@ -18,7 +20,7 @@ import pickle
 import tqdm
 from torch.utils.data import Dataset
 from misc import angle_difference, get_data_path, get_delta_np, normalize_data, to_local_coords
-from project_functions import reproject_depth_to_other_pose_2seq, project_to_2d_image_2seq, resize_image_half
+from project_functions import AirsimCoordsConverter, reproject_depth_to_other_pose_2seq, project_to_2d_image_2seq, resize_image_half
 
 class BaseDataset(Dataset):
     def __init__(
@@ -43,6 +45,8 @@ class BaseDataset(Dataset):
         self.dataset_name = dataset_name
         self.goals_per_obs = goals_per_obs
 
+        if 'airvln' in dataset_name:
+            self.coords_converter = AirsimCoordsConverter() 
 
         traj_names_file = os.path.join(data_split_folder, traj_names)
         with open(traj_names_file, "r") as f:
@@ -133,6 +137,8 @@ class BaseDataset(Dataset):
         depth_map = traj_data["depth"][curr_time]
         K = traj_data["K"]
         
+        print(f"pose_src shape: {pose_src.shape}, pose_dst shape: {pose_dst.shape}, dep_map shape: {depth_map.shape}")
+        
         projected_images = self.generate_augmented_image(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
         return projected_images
         
@@ -211,16 +217,17 @@ class TrainingDataset(BaseDataset):
             rel_time = (goal_offset).astype('float')/(128.) # TODO: refactor, currently a fixed const
 
             context_times = list(range(curr_time - self.context_size + 1, curr_time + 1))
-            true_context = [(f_curr, t) for t in context_times]
             context = [(f_curr, t) for t in context_times] + [(f_curr, t) for t in goal_time]
-
             obs_image = torch.stack([self.transform(Image.open(get_data_path(self.data_folder, f, t))) for f, t in context])
 
             # Load other trajectory data
             curr_traj_data = self._get_trajectory(f_curr)
-
+            # print(f"traj K: {curr_traj_data['K']}, position: {curr_traj_data['position']}, pose: {curr_traj_data['pose']}, point: {curr_traj_data['point']}")
+            
             # aug
-            f_img, t_img = true_context[-1]    # curr_time img
+            f_img, t_img = context[self.context_size-1]    # curr_time img
+            print(f"context: {context}, f_img: {f_img}, t_img: {t_img}")
+
             rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
             rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
             
@@ -231,25 +238,6 @@ class TrainingDataset(BaseDataset):
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
-            # ===================== 保存图像 =====================
-            vis_dir = './visualizations'
-            os.makedirs(vis_dir, exist_ok=True)
-
-            # 1. 保存当前帧
-            curr_img_save_path = os.path.join(vis_dir, f'{self.dataset_name}_idx{i}_curr_frame.png')
-            Image.open(curr_img_path).save(curr_img_save_path)
-
-            # 2. 保存 goal_frame
-            for idx, t_goal in enumerate(goal_time):
-                goal_img_path = get_data_path(self.data_folder, f_curr, t_goal)
-                goal_img = Image.open(goal_img_path)
-                goal_img.save(os.path.join(vis_dir, f'{self.dataset_name}_idx{i}_goal{idx}.png'))
-
-            # 3. 保存 projected goal frame
-            for idx, proj_img in enumerate(projected_images):
-                proj_img_save_path = os.path.join(vis_dir, f'{self.dataset_name}_idx{i}_projected_goal{idx}.png')
-                Image.fromarray(proj_img).save(proj_img_save_path)
-            # ==================================================
             return (
                 torch.as_tensor(obs_image, dtype=torch.float32),
                 torch.as_tensor(goal_pos, dtype=torch.float32),

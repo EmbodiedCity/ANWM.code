@@ -1,0 +1,143 @@
+[2025-07-19 06:01:51,280] torch.distributed.run: [WARNING] 
+[2025-07-19 06:01:51,280] torch.distributed.run: [WARNING] *****************************************
+[2025-07-19 06:01:51,280] torch.distributed.run: [WARNING] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+[2025-07-19 06:01:51,280] torch.distributed.run: [WARNING] *****************************************
+Traceback (most recent call last):
+  File "train.py", line 437, in <module>
+    main(args)
+  File "train.py", line 101, in main
+    _, rank, device, _ = init_distributed()
+  File "/data1/tpz/nwm-main/distributed.py", line 90, in init_distributed
+    torch.cuda.set_device(gpu)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/cuda/__init__.py", line 404, in set_device
+    torch._C._cuda_setDevice(device)
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[[34m2025-07-19 06:01:55[0m] Experiment directory created at logs/nwm_cdit_airvln_v6
+Traceback (most recent call last):
+  File "train.py", line 437, in <module>
+    main(args)
+  File "train.py", line 101, in main
+    _, rank, device, _ = init_distributed()
+  File "/data1/tpz/nwm-main/distributed.py", line 90, in init_distributed
+    torch.cuda.set_device(gpu)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/cuda/__init__.py", line 404, in set_device
+    torch._C._cuda_setDevice(device)
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Traceback (most recent call last):
+  File "train.py", line 437, in <module>
+    main(args)
+  File "train.py", line 101, in main
+    _, rank, device, _ = init_distributed()
+  File "/data1/tpz/nwm-main/distributed.py", line 90, in init_distributed
+    torch.cuda.set_device(gpu)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/cuda/__init__.py", line 404, in set_device
+    torch._C._cuda_setDevice(device)
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Traceback (most recent call last):
+  File "train.py", line 437, in <module>
+    main(args)
+  File "train.py", line 101, in main
+    _, rank, device, _ = init_distributed()
+  File "/data1/tpz/nwm-main/distributed.py", line 90, in init_distributed
+    torch.cuda.set_device(gpu)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/cuda/__init__.py", line 404, in set_device
+    torch._C._cuda_setDevice(device)
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Traceback (most recent call last):
+  File "train.py", line 437, in <module>
+    main(args)
+  File "train.py", line 101, in main
+    _, rank, device, _ = init_distributed()
+  File "/data1/tpz/nwm-main/distributed.py", line 90, in init_distributed
+    torch.cuda.set_device(gpu)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/cuda/__init__.py", line 404, in set_device
+    torch._C._cuda_setDevice(device)
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Traceback (most recent call last):
+  File "train.py", line 437, in <module>
+    main(args)
+  File "train.py", line 101, in main
+    _, rank, device, _ = init_distributed()
+  File "/data1/tpz/nwm-main/distributed.py", line 90, in init_distributed
+    torch.cuda.set_device(gpu)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/cuda/__init__.py", line 404, in set_device
+    torch._C._cuda_setDevice(device)
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+[2025-07-19 06:01:56,454] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 110092 closing signal SIGTERM
+[2025-07-19 06:01:56,454] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 110095 closing signal SIGTERM
+[2025-07-19 06:01:56,454] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 110097 closing signal SIGTERM
+[2025-07-19 06:01:56,454] torch.distributed.elastic.multiprocessing.api: [WARNING] Sending process 110101 closing signal SIGTERM
+[2025-07-19 06:01:57,521] torch.distributed.elastic.multiprocessing.api: [ERROR] failed (exitcode: 1) local_rank: 1 (pid: 110093) of binary: /data1/zwc/miniconda3/envs/nwm2/bin/python
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm2/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 346, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 806, in main
+    run(args)
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/run.py", line 797, in run
+    elastic_launch(
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 134, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/zwc/miniconda3/envs/nwm2/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 264, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+train.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2025-07-19_06:01:56
+  host      : localhost
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 110094)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2025-07-19_06:01:56
+  host      : localhost
+  rank      : 4 (local_rank: 4)
+  exitcode  : 1 (pid: 110096)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2025-07-19_06:01:56
+  host      : localhost
+  rank      : 7 (local_rank: 7)
+  exitcode  : 1 (pid: 110103)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2025-07-19_06:01:56
+  host      : localhost
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 110093)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

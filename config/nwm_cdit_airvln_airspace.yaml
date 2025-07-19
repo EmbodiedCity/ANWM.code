@@ -1,9 +1,9 @@
-run_name: nwm_cdit_airvln_v5
+run_name: nwm_cdit_airvln_v7
 
 # training setup
 results_dir: logs
 train: True
-batch_size: 1
+batch_size: 2
 num_workers: 12
 model: CDiT-XL/2
 lr: 8e-5

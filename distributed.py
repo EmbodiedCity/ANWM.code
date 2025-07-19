@@ -60,7 +60,6 @@ def init_distributed(port=37124, rank_and_world_size=(None, None)):
     dist_url='env://'
     os.environ['MASTER_PORT'] = os.environ.get('MASTER_PORT', str(port))
     print("Using port", os.environ['MASTER_PORT'])
-
     if "RANK" in os.environ and "WORLD_SIZE" in os.environ:
         try:
             rank = int(os.environ["RANK"])
@@ -87,6 +86,7 @@ def init_distributed(port=37124, rank_and_world_size=(None, None)):
         gpu = 0
         os.environ['MASTER_ADDR'] = '127.0.0.1'
 
+    print(f"gps: {gpu}")
     torch.cuda.set_device(gpu)
 
     torch.distributed.init_process_group(

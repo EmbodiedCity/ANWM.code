@@ -8,7 +8,9 @@
 # NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
 # --------------------------------------------------------
 
-from isolated_nwm_infer_v6 import model_forward_wrapper
+# 这个版本为加入相机编码版本
+
+from isolated_nwm_infer_v7 import model_forward_wrapper
 import torch
 # the first flag below was False when we tested this script but True makes A100 training a lot faster:
 torch.backends.cuda.matmul.allow_tf32 = True
@@ -35,7 +37,7 @@ from diffusers.models import AutoencoderKL
 from distributed import init_distributed
 from models_zwc_v6 import CDiT_models
 from diffusion import create_diffusion
-from datasets_v2 import TrainingDataset
+from datasets_v3 import TrainingDataset
 from misc import transform
 
 #################################################################################

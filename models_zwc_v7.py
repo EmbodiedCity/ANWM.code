@@ -9,7 +9,7 @@
 # MAE: https://github.com/facebookresearch/mae/blob/main/models_mae.py
 # --------------------------------------------------------
 
-# 该版本把y_cond和x_cond concate，CDIT block和原版一样，final layer和v5一样
+# 加入了相机位姿编码，对应的修改了attention模块
 import torch
 import torch.nn as nn
 import numpy as np
@@ -87,13 +87,15 @@ class CDiTBlock(nn.Module):
     """
     A DiT block with adaptive layer norm zero (adaLN-Zero) conditioning.
     """
-    def __init__(self, hidden_size, num_heads, mlp_ratio=4.0, **block_kwargs):
+    def __init__(self, hidden_size, num_heads, mlp_ratio=4.0, latent_size=28, patch_size=2, **block_kwargs):
         super().__init__()
+        self.latent_size = latent_size
+        self.patch_size = patch_size
         self.norm1 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
         self.attn = Attention(hidden_size, num_heads=num_heads, qkv_bias=True, **block_kwargs)
         self.norm2 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
         self.norm_cond = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
-        self.cttn = nn.MultiheadAttention(hidden_size, num_heads=num_heads, add_bias_kv=True, bias=True, batch_first=True, **block_kwargs)
+        self.cttn = nn.PropeMultiheadAttention(hidden_size, num_heads=num_heads, add_bias_kv=True, bias=True, batch_first=True, **block_kwargs)
         self.adaLN_modulation = nn.Sequential(
             nn.SiLU(),
             nn.Linear(hidden_size, 11 * hidden_size, bias=True)
@@ -104,12 +106,22 @@ class CDiTBlock(nn.Module):
         approx_gelu = lambda: nn.GELU(approximate="tanh")
         self.mlp = Mlp(in_features=hidden_size, hidden_features=mlp_hidden_dim, act_layer=approx_gelu, drop=0)
 
-    def forward(self, x, c, x_cond):
+    def forward(self, x, c, x_cond, viewmats, Ks, patch_size, latent_size):
         shift_msa, scale_msa, gate_msa, shift_ca_xcond, scale_ca_xcond, shift_ca_x, scale_ca_x, gate_ca_x, shift_mlp, scale_mlp, gate_mlp = self.adaLN_modulation(c).chunk(11, dim=1)
         x = x + gate_msa.unsqueeze(1) * self.attn(modulate(self.norm1(x), shift_msa, scale_msa))
         x_cond_norm = modulate(self.norm_cond(x_cond), shift_ca_xcond, scale_ca_xcond)
-        # (f"x_cond_norm shape: {x_cond_norm.size()}")
-        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=modulate(self.norm2(x), shift_ca_x, scale_ca_x), key=x_cond_norm, value=x_cond_norm, need_weights=False)[0]
+        x = x + gate_ca_x.unsqueeze(1) * self.cttn(
+            query=modulate(self.norm2(x), shift_ca_x, scale_ca_x),
+            key=x_cond_norm,
+            value=x_cond_norm,
+            need_weights=False,
+            viewmats=viewmats,
+            Ks=Ks,
+            patches_x=patch_size,
+            patches_y=patch_size,
+            image_width=latent_size,
+            image_height=latent_size
+        )[0]
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
         return x
     
