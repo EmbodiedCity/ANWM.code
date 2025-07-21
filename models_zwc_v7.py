@@ -12,6 +12,7 @@
 # 加入了相机位姿编码，对应的修改了attention模块
 import torch
 import torch.nn as nn
+from torch.nn import PropeMultiheadAttention
 import numpy as np
 import math
 from timm.models.vision_transformer import PatchEmbed, Attention, Mlp
@@ -95,7 +96,7 @@ class CDiTBlock(nn.Module):
         self.attn = Attention(hidden_size, num_heads=num_heads, qkv_bias=True, **block_kwargs)
         self.norm2 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
         self.norm_cond = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
-        self.cttn = nn.PropeMultiheadAttention(hidden_size, num_heads=num_heads, add_bias_kv=True, bias=True, batch_first=True, **block_kwargs)
+        self.cttn = PropeMultiheadAttention(hidden_size, num_heads=num_heads, add_bias_kv=False, bias=True, batch_first=True, **block_kwargs)
         self.adaLN_modulation = nn.Sequential(
             nn.SiLU(),
             nn.Linear(hidden_size, 11 * hidden_size, bias=True)
@@ -251,7 +252,7 @@ class CDiT(nn.Module):
         imgs = x.reshape(shape=(x.shape[0], c, h * p, h * p))
         return imgs
 
-    def forward(self, x, t, y, x_cond, rel_t, x_sup):
+    def forward(self, x, t, y, x_cond, rel_t, x_sup, viewmats):
         """
         Forward pass of DiT.
         x: (N, C, H, W) tensor of spatial inputs (images or latent representations of images)
@@ -269,7 +270,7 @@ class CDiT(nn.Module):
         c = t + time_emb + y # if training on unlabeled data, dont add y.
 
         for block in self.blocks:
-            x = block(x, c, x_cond)
+            x = block(x, c, x_cond, viewmats=viewmats, Ks=None, patch_size=14, latent_size=28)
         x = self.final_layer(x, c, x_sup)
         x = self.unpatchify(x)
         return x

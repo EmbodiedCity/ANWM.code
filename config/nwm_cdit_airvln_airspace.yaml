@@ -1,9 +1,9 @@
-run_name: nwm_cdit_airvln_v7
+run_name: nwm_cdit_airvln_v7-1
 
 # training setup
 results_dir: logs
 train: True
-batch_size: 2
+batch_size: 3
 num_workers: 12
 model: CDiT-XL/2
 lr: 8e-5
@@ -19,7 +19,7 @@ distance:
   max_dist_cat: 64
 
 # action output params
-len_traj_pred: 64
+len_traj_pred: 16
 
 # dataset specific parameters
 image_size: 224

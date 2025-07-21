@@ -10,8 +10,9 @@
 
 # 这个版本为加入相机编码版本
 
-from isolated_nwm_infer_v7 import model_forward_wrapper
 import torch
+import torch.nn as nn
+
 # the first flag below was False when we tested this script but True makes A100 training a lot faster:
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
@@ -27,15 +28,17 @@ import os
 import matplotlib.pyplot as plt 
 import yaml
 
-
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, ConcatDataset
 from torch.utils.data.distributed import DistributedSampler
+
 from diffusers.models import AutoencoderKL
 
+from isolated_nwm_infer_v7 import model_forward_wrapper
+
 from distributed import init_distributed
-from models_zwc_v6 import CDiT_models
+from models_zwc_v7 import CDiT_models
 from diffusion import create_diffusion
 from datasets_v3 import TrainingDataset
 from misc import transform
@@ -270,11 +273,12 @@ def main(args):
         sampler.set_epoch(epoch)
         logger.info(f"Beginning epoch {epoch}...")
 
-        for x, y, rel_t, aug in loader:
+        for x, y, rel_t, aug, camera_mats in loader:
             x = x.to(device, non_blocking=True)
             y = y.to(device, non_blocking=True)
             rel_t = rel_t.to(device, non_blocking=True)
-            aug = aug.to(device, non_blocking=True)
+            aug = aug.to(device, non_blocking=True)                     # [B, num_goals, 4, 28, 28]
+            camera_mats = camera_mats.to(device, non_blocking=True)     # [B, num_goals+num_cond, 4, 4]
             
             with torch.amp.autocast('cuda', enabled=bfloat_enable, dtype=torch.bfloat16):
                 with torch.no_grad():
@@ -289,7 +293,7 @@ def main(args):
                     aug = tokenizer.encode(aug).latent_dist.sample().mul_(0.18215)
                     aug = aug.unflatten(0, (B_aug, T_aug))              # [B, num_goals, 4, 28, 28]
                     # print(f'aug latent shape: {aug.size()}')
-                
+
                 num_goals = T - num_cond
                 x_start = x[:, num_cond:].flatten(0, 1)             # [B*num_goals, 4, 28, 28]
                 x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)      # [B*num_goals, num_cond, 4, 28, 28]
@@ -299,8 +303,12 @@ def main(args):
                 y = y.flatten(0, 1)
                 rel_t = rel_t.flatten(0, 1)
                 
+                camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
+                camera_mats_x_cond = camera_mats[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, 4, 4).flatten(0, 1)    # [B*num_goals, num_cond, 4, 4]
+                camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)
+                
                 t = torch.randint(0, diffusion.num_timesteps, (x_start.shape[0],), device=device)
-                model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1))
+                model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1), viewmats=camera_mats_x_cond)
                 loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
                 loss = loss_dict["loss"].mean()
 
@@ -399,15 +407,17 @@ def evaluate(model, vae, diffusion, test_dataloaders, rank, batch_size, num_work
     n_samples = torch.tensor(0).to(device)
 
     # Run for 1 step
-    for x, y, rel_t, aug in loader:
+    for x, y, rel_t, aug, camera_mats in loader:
         x = x.to(device)            # [B, num_goals+cond_num, 3, 224, 224]
         y = y.to(device)            # [B, num_goals+cond_num, 2]
         rel_t = rel_t.to(device).flatten(0, 1)      # [B, num_goals]
         aug = aug.to(device)        # [B, num_goals, 3, 224, 224]
+        camera_mats = camera_mats.to(device)
+        
         with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
             B, T = x.shape[:2]
             num_goals = T - num_cond
-            samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t, x_supervised=aug)
+            samples = model_forward_wrapper((model, diffusion, vae), x, y, num_timesteps=None, latent_size=latent_size, device=device, num_cond=num_cond, num_goals=num_goals, rel_t=rel_t, x_supervised=aug, camera_mats=camera_mats)
             x_start_pixels = x[:, num_cond:].flatten(0, 1)
             x_cond_pixels = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)
             samples = samples * 0.5 + 0.5

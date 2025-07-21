@@ -24,21 +24,31 @@ len_traj_pred: 64
 # dataset specific parameters
 image_size: 224
 datasets:
+  # airvln_16:
+  #   data_folder: data/airvln_16
+  #   train: data_splits/airvln_16/train/ # path to train folder with traj_names.txt
+  #   test: data_splits/airvln_16/test/ # path to test folder with traj_names.txt
+  #   goals_per_obs: 4
+  airvln_1episode:
+    data_folder: data/airvln_1episode
+    train: data_splits/airvln_1episode/train/ # path to train folder with traj_names.txt
+    test: data_splits/airvln_1episode/test/ # path to test folder with traj_names.txt
+    goals_per_obs: 4
   # recon:
   #   data_folder: data/recon
   #   train: data_splits/recon/train/ # path to train folder with traj_names.txt
   #   test: data_splits/recon/test/ # path to test folder with traj_names.txt
   #   goals_per_obs: 4
-  wuhan:
-    data_folder: data/wuhan
-    train: data_splits/wuhan/train/ # path to train folder with traj_names.txt
-    test: data_splits/wuhan/test/ # path to test folder with traj_names.txt
-    goals_per_obs: 4
-  wuhan_auto:
-    data_folder: data/wuhan_auto
-    train: data_splits/wuhan_auto/train/ # path to train folder with traj_names.txt
-    test: data_splits/wuhan_auto/test/ # path to test folder with traj_names.txt
-    goals_per_obs: 4
+  # wuhan:
+  #   data_folder: data/wuhan
+  #   train: data_splits/wuhan/train/ # path to train folder with traj_names.txt
+  #   test: data_splits/wuhan/test/ # path to test folder with traj_names.txt
+  #   goals_per_obs: 4
+  # wuhan_auto:
+  #   data_folder: data/wuhan_auto
+  #   train: data_splits/wuhan_auto/train/ # path to train folder with traj_names.txt
+  #   test: data_splits/wuhan_auto/test/ # path to test folder with traj_names.txt
+  #   goals_per_obs: 4
   # tartan_drive:
   #   data_folder: data/tartan
   #   train: data_splits/tartan_drive/train/

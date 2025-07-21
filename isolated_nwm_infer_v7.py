@@ -63,12 +63,13 @@ def get_dataset_eval(config, dataset_name, eval_type, predefined_index=True):
     return dataset
 
 @torch.no_grad()
-def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, latent_size, device, num_cond, num_goals=1, rel_t=None, progress=False, x_supervised=None):
+def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, latent_size, device, num_cond, num_goals=1, rel_t=None, progress=False, x_supervised=None, camera_mats=None):
     model, diffusion, vae = all_models
     x = curr_obs.to(device)
     y = curr_delta.to(device)
     x_supervised = x_supervised.to(device)
-
+    camera_mats = camera_mats.to(device)        # [B, num_goals+num_conds, 4, 4]
+    
     with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
         B, T = x.shape[:2]
 
@@ -81,7 +82,7 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         aug = x_supervised.flatten(0,1)                 
         aug = vae.encode(aug).latent_dist.sample().mul_(0.18215)
         aug = aug.unflatten(0, (B_aug, T_aug))      # [B, num_goals, 4, 28, 28]
-        print(f"aug ori shape: {x_supervised.size()}, aug shape: {aug.size()}, x shape: {x.size()}")
+        # print(f"aug ori shape: {x_supervised.size()}, aug shape: {aug.size()}, x shape: {x.size()}")
         x = x.flatten(0,1)                          
         x = vae.encode(x).latent_dist.sample().mul_(0.18215).unflatten(0, (B, T))   # [B, num_goals+num_cond, 4, 28, 28]
         
@@ -91,10 +92,13 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         z = torch.randn(B*num_goals, 4, latent_size, latent_size, device=device)
         y = y.flatten(0, 1)
 
-        # print(aug.shape)
-        print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}, y shape: {y.size()}, rel_t shape: {rel_t.size()}")
+        camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
+        camera_mats_x_cond = camera_mats[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, 4, 4).flatten(0, 1)    # [B*num_goals, num_cond, 4, 4]
+        camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)        # [B*num_goals, 5, 4, 4]
+                
+        # print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}, y shape: {y.size()}, rel_t shape: {rel_t.size()}")
 
-        model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1))      
+        model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1),viewmats=camera_mats_x_cond)
         samples = diffusion.p_sample_loop(
                 model.forward, z.shape, z, clip_denoised=False, model_kwargs=model_kwargs, progress=progress, device=device
         )

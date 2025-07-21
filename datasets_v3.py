@@ -8,7 +8,7 @@
 # NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
 # --------------------------------------------------------
 
-# 这个版本为加入了相机编码版本
+# 这个版本为加入了相机编码版本,并且把min_goal_dist,max_goal_dist分别约束到-16, 16
 import cv2
 import numpy as np
 import torch
@@ -132,12 +132,14 @@ class BaseDataset(Dataset):
         return len(self.index_to_data)
     
     def _compute_projected_image(self, traj_data, curr_time, goal_time, rgb_img):
+
         pose_src = traj_data["pose"][curr_time]
         pose_dst = traj_data["pose"][goal_time]
+
         depth_map = traj_data["depth"][curr_time]
         K = traj_data["K"]
         
-        print(f"pose_src shape: {pose_src.shape}, pose_dst shape: {pose_dst.shape}, dep_map shape: {depth_map.shape}")
+        # print(f"pose_src shape: {pose_src.shape}, pose_dst shape: {pose_dst.shape}, dep_map shape: {depth_map.shape}")
         
         projected_images = self.generate_augmented_image(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
         return projected_images
@@ -212,12 +214,17 @@ class TrainingDataset(BaseDataset):
     def __getitem__(self, i: int) -> Tuple[torch.Tensor]:
         try:
             f_curr, curr_time, min_goal_dist, max_goal_dist = self.index_to_data[i]
-            goal_offset = np.random.randint(min_goal_dist, max_goal_dist + 1, size=(self.goals_per_obs))
+            goal_offset = np.random.randint(min_goal_dist//4, max_goal_dist//4 + 1, size=(self.goals_per_obs))
+
             goal_time = (curr_time + goal_offset).astype('int')
             rel_time = (goal_offset).astype('float')/(128.) # TODO: refactor, currently a fixed const
 
             context_times = list(range(curr_time - self.context_size + 1, curr_time + 1))
             context = [(f_curr, t) for t in context_times] + [(f_curr, t) for t in goal_time]
+            context_t = [t for _, t in context]
+            
+            # print(f"curr_time: {curr_time}, context_size: {self.context_size}, min_goal_dist: {min_goal_dist}, max_goal_dist: {max_goal_dist}")
+            
             obs_image = torch.stack([self.transform(Image.open(get_data_path(self.data_folder, f, t))) for f, t in context])
 
             # Load other trajectory data
@@ -226,7 +233,7 @@ class TrainingDataset(BaseDataset):
             
             # aug
             f_img, t_img = context[self.context_size-1]    # curr_time img
-            print(f"context: {context}, f_img: {f_img}, t_img: {t_img}")
+            # print(f"context: {context}, f_img: {f_img}, t_img: {t_img}, curr time: {curr_time}")
 
             rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
             rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
@@ -238,11 +245,52 @@ class TrainingDataset(BaseDataset):
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
+            # Compute camera mats
+            T_wc = curr_traj_data['pose'][context_t]
+            T_wc = torch.as_tensor(T_wc, dtype=torch.float32)
+            T_cw = torch.linalg.inv(T_wc)
+            
+            # print(f"t cw shape: {T_cw.size()}, context_t: {context_t}")
+            
+            # points = [curr_traj_data['point'][t] for _, t in context]
+            # oriens = [[curr_traj_data['pitch'][t], curr_traj_data['roll'][t], curr_traj_data['yaw'][t]] for _, t in context]
+            # poses = np.concatenate((np.array(points), np.array(oriens)), axis=-1)
+            # t_cws = torch.as_tensor(
+            #     np.array([self.coords_converter.trans_cam2world(poses[tt]) for tt in range(len(poses))]), dtype=torch.float32
+            # )
+            # print("t_cws: ", t_cws - T_cw)
+            
+            # ori_poses = np.array([curr_traj_data['pose'][t] for _, t in context])
+            # print("ori_pose: ", ori_poses)
+
+            
+            # # ===================== 保存图像 =====================
+            # vis_root = './visualizations'
+            # sample_dir = os.path.join(vis_root, f'{self.dataset_name}', f'sample_{i}')
+            # os.makedirs(sample_dir, exist_ok=True)
+
+            # # 1. 保存 curr_frame
+            # curr_img_save_path = os.path.join(sample_dir, f'curr_frame_{curr_time}.png')
+            # Image.fromarray(rgb_img).save(curr_img_save_path)
+
+            # # 2. 保存 goal_frame
+            # for idx, (f_curr, t_goal) in enumerate(context[self.context_size:]):
+            #     goal_img_path = get_data_path(self.data_folder, f_curr, t_goal)
+            #     goal_img = Image.open(goal_img_path)
+            #     goal_img.save(os.path.join(sample_dir, f'goal_{idx}_{t_goal}.png'))
+
+            # # 3. 保存 projected goal frame
+            # for idx, proj_img in enumerate(projected_images):
+            #     proj_img_save_path = os.path.join(sample_dir, f'projected_goal_{idx}.png')
+            #     Image.fromarray(proj_img).save(proj_img_save_path)
+            # # ====================================================
+            
             return (
                 torch.as_tensor(obs_image, dtype=torch.float32),
                 torch.as_tensor(goal_pos, dtype=torch.float32),
                 torch.as_tensor(rel_time, dtype=torch.float32),
                 torch.as_tensor(projected_tensor, dtype=torch.float32),
+                torch.as_tensor(T_cw, dtype=torch.float32),
             )
         except Exception as e:
             print(f"Exception in {self.dataset_name}", e)

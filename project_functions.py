@@ -1,8 +1,37 @@
 import cv2
+import math
 from scipy.spatial.transform import Rotation as R
 from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
+
+class Quaternionr:
+    w_val = 0.0
+    x_val = 0.0
+    y_val = 0.0
+    z_val = 0.0
+
+    def __init__(self, x_val = 0.0, y_val = 0.0, z_val = 0.0, w_val = 1.0):
+        self.x_val = x_val
+        self.y_val = y_val
+        self.z_val = z_val
+        self.w_val = w_val
+        
+
+def to_quaternion(pitch, roll, yaw):
+    t0 = math.cos(yaw * 0.5)
+    t1 = math.sin(yaw * 0.5)
+    t2 = math.cos(roll * 0.5)
+    t3 = math.sin(roll * 0.5)
+    t4 = math.cos(pitch * 0.5)
+    t5 = math.sin(pitch * 0.5)
+
+    q = Quaternionr()
+    q.w_val = t0 * t2 * t4 + t1 * t3 * t5 #w
+    q.x_val = t0 * t3 * t4 - t1 * t2 * t5 #x
+    q.y_val = t0 * t2 * t5 + t1 * t3 * t4 #y
+    q.z_val = t1 * t2 * t4 - t0 * t3 * t5 #z
+    return q
 
 
 class CoordsConverter:
@@ -59,7 +88,7 @@ class AirsimCoordsConverter(CoordsConverter):
 
     def coords_ego2world(self, P_ego, ego_pose):
         # P_ego: [x, y, z, 1], ego_pose: [x, y, z, p, r, y]
-        rot_quat = airsim.to_quaternion(*ego_pose[3:])
+        rot_quat = to_quaternion(*ego_pose[3:])
         rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
         shift_mat = np.array(ego_pose[:3])
 
@@ -73,7 +102,7 @@ class AirsimCoordsConverter(CoordsConverter):
 
     def coords_world2cam(self, P_w, ego_pose):
         # P_ego: [x, y, z, 1], ego_pose: [x, y, z, p, r, y]
-        rot_quat = airsim.to_quaternion(*ego_pose[3:])
+        rot_quat = to_quaternion(*ego_pose[3:])
         rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
         shift_mat = np.array(ego_pose[:3])
 
@@ -94,8 +123,8 @@ class AirsimCoordsConverter(CoordsConverter):
         
         return p_img
     
-    def trans_world2cam(self, cam_pose):
-        rot_quat = airsim.to_quaternion(*ego_pose[3:])
+    def trans_world2cam(self, ego_pose):
+        rot_quat = to_quaternion(*ego_pose[3:])
         
         rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
         shift_mat = np.array(ego_pose[:3])
@@ -107,8 +136,8 @@ class AirsimCoordsConverter(CoordsConverter):
         T_wc = T_we.dot(self.T_ec)
         return T_wc
 
-    def trans_cam2world(self, cam_pose):
-        rot_quat = airsim.to_quaternion(*ego_pose[3:])
+    def trans_cam2world(self, ego_pose):
+        rot_quat = to_quaternion(*ego_pose[3:])
         
         rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
         shift_mat = np.array(ego_pose[:3])
@@ -122,6 +151,31 @@ class AirsimCoordsConverter(CoordsConverter):
         
         return T_cw
 
+    def trans_world2ego(self, ego_pose):
+        rot_quat = to_quaternion(*ego_pose[3:])
+        
+        rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
+        shift_mat = np.array(ego_pose[:3])
+
+        T_we = np.eye(4)
+        T_we[:3, :3] = rot_mat
+        T_we[:3, 3] = shift_mat
+
+        return T_we
+
+    def trans_ego2world(self, ego_pose):
+        rot_quat = to_quaternion(*ego_pose[3:])
+        
+        rot_mat = R.from_quat([rot_quat.x_val, rot_quat.y_val, rot_quat.z_val, rot_quat.w_val]).as_matrix()
+        shift_mat = np.array(ego_pose[:3])
+
+        T_we = np.eye(4)
+        T_we[:3, :3] = rot_mat
+        T_we[:3, 3] = shift_mat
+
+        T_ew = np.linalg.inv(T_we)
+        return T_ew
+    
 
 def reproject_depth_to_other_pose(K, depth_map, rgb_img, pose_src, pose_dst):
     """
@@ -136,6 +190,15 @@ def reproject_depth_to_other_pose(K, depth_map, rgb_img, pose_src, pose_dst):
         points_3d_dst: (N, 3) 变换后的 3D 点
         colors: (N, 3) RGB 值
     """
+    # # 打印旋转矩阵
+    # print("[DEBUG] pose_src rotation matrix:", pose_src)
+    # print("[DEBUG] pose_dst rotation matrix:", pose_dst)
+
+    # 提取并打印源和目标的 yaw 角度差异
+    # euler_src = R.from_matrix(pose_src[:3, :3]).as_euler('zyx', degrees=True)
+    # euler_dst = R.from_matrix(pose_dst[:3, :3]).as_euler('zyx', degrees=True)
+    # print("[DEBUG] pose_src euler (yaw, pitch, roll):", euler_src)
+    # print("[DEBUG] pose_dst euler (yaw, pitch, roll):", euler_dst)
     fx, fy = K[0, 0], K[1, 1]
     cx, cy = K[0, 2], K[1, 2]
     H, W = depth_map.shape

@@ -19,7 +19,7 @@ from diffusers.models import AutoencoderKL
 import misc
 import distributed as dist
 from models_zwc_v6 import CDiT_models
-from datasets_v2 import EvalDataset
+from datasets_v3 import EvalDataset
 from PIL import Image
 
 
@@ -81,7 +81,7 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         aug = x_supervised.flatten(0,1)                 
         aug = vae.encode(aug).latent_dist.sample().mul_(0.18215)
         aug = aug.unflatten(0, (B_aug, T_aug))      # [B, num_goals, 4, 28, 28]
-        print(f"aug ori shape: {x_supervised.size()}, aug shape: {aug.size()}, x shape: {x.size()}")
+        # print(f"aug ori shape: {x_supervised.size()}, aug shape: {aug.size()}, x shape: {x.size()}")
         x = x.flatten(0,1)                          
         x = vae.encode(x).latent_dist.sample().mul_(0.18215).unflatten(0, (B, T))   # [B, num_goals+num_cond, 4, 28, 28]
         
@@ -91,8 +91,7 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         z = torch.randn(B*num_goals, 4, latent_size, latent_size, device=device)
         y = y.flatten(0, 1)
 
-        # print(aug.shape)
-        print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}, y shape: {y.size()}, rel_t shape: {rel_t.size()}")
+        # print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}, y shape: {y.size()}, rel_t shape: {rel_t.size()}")
 
         model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1))      
         samples = diffusion.p_sample_loop(

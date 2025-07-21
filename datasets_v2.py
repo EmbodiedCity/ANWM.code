@@ -212,6 +212,7 @@ class TrainingDataset(BaseDataset):
 
             context_times = list(range(curr_time - self.context_size + 1, curr_time + 1))
             true_context = [(f_curr, t) for t in context_times]
+            goal_context = [(f_curr, t) for t in goal_time]
             context = [(f_curr, t) for t in context_times] + [(f_curr, t) for t in goal_time]
 
             obs_image = torch.stack([self.transform(Image.open(get_data_path(self.data_folder, f, t))) for f, t in context])
@@ -232,24 +233,26 @@ class TrainingDataset(BaseDataset):
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
             # ===================== 保存图像 =====================
-            vis_dir = './visualizations'
-            os.makedirs(vis_dir, exist_ok=True)
+            vis_root = './visualizations'
+            sample_dir = os.path.join(vis_root, f'{self.dataset_name}', f'sample_{i}')
+            os.makedirs(sample_dir, exist_ok=True)
 
-            # 1. 保存当前帧
-            curr_img_save_path = os.path.join(vis_dir, f'{self.dataset_name}_idx{i}_curr_frame.png')
-            Image.open(curr_img_path).save(curr_img_save_path)
+            # 1. 保存 curr_frame
+            curr_img_save_path = os.path.join(sample_dir, 'curr_frame.png')
+            Image.fromarray(rgb_img).save(curr_img_save_path)
 
             # 2. 保存 goal_frame
-            for idx, t_goal in enumerate(goal_time):
+            for idx, (f_curr, t_goal) in enumerate(goal_context):
                 goal_img_path = get_data_path(self.data_folder, f_curr, t_goal)
                 goal_img = Image.open(goal_img_path)
-                goal_img.save(os.path.join(vis_dir, f'{self.dataset_name}_idx{i}_goal{idx}.png'))
+                goal_img.save(os.path.join(sample_dir, f'goal_{idx}.png'))
 
             # 3. 保存 projected goal frame
             for idx, proj_img in enumerate(projected_images):
-                proj_img_save_path = os.path.join(vis_dir, f'{self.dataset_name}_idx{i}_projected_goal{idx}.png')
+                proj_img_save_path = os.path.join(sample_dir, f'projected_goal_{idx}.png')
                 Image.fromarray(proj_img).save(proj_img_save_path)
-            # ==================================================
+            # ====================================================
+
             return (
                 torch.as_tensor(obs_image, dtype=torch.float32),
                 torch.as_tensor(goal_pos, dtype=torch.float32),

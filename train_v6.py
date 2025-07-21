@@ -35,7 +35,7 @@ from diffusers.models import AutoencoderKL
 from distributed import init_distributed
 from models_zwc_v6 import CDiT_models
 from diffusion import create_diffusion
-from datasets_v2 import TrainingDataset
+from datasets_v3 import TrainingDataset
 from misc import transform
 
 #################################################################################
@@ -268,7 +268,7 @@ def main(args):
         sampler.set_epoch(epoch)
         logger.info(f"Beginning epoch {epoch}...")
 
-        for x, y, rel_t, aug in loader:
+        for x, y, rel_t, aug, _ in loader:
             x = x.to(device, non_blocking=True)
             y = y.to(device, non_blocking=True)
             rel_t = rel_t.to(device, non_blocking=True)
@@ -397,7 +397,7 @@ def evaluate(model, vae, diffusion, test_dataloaders, rank, batch_size, num_work
     n_samples = torch.tensor(0).to(device)
 
     # Run for 1 step
-    for x, y, rel_t, aug in loader:
+    for x, y, rel_t, aug, _ in loader:
         x = x.to(device)            # [B, num_goals+cond_num, 3, 224, 224]
         y = y.to(device)            # [B, num_goals+cond_num, 2]
         rel_t = rel_t.to(device).flatten(0, 1)      # [B, num_goals]
