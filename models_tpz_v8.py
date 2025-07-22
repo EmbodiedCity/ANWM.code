@@ -126,14 +126,14 @@ class CDiTBlock(nn.Module):
         v = v.view(B, T, H, Hd).transpose(1, 2)
 
         # Debug
-        print("DEBUG: x_cond shape:", x_cond.shape)
-        print("viewmats:", viewmats.shape if viewmats is not None else None)
-        print("patches_x * patches_y = ", patch_size * patch_size)
-        print("seqlen = ", x_cond.shape[1])
-        print("cameras = ", viewmats.shape[1])
-        print("Q", q.shape)
-        print("K", k.shape)
-        print("V", v.shape)
+        # print("DEBUG: x_cond shape:", x_cond.shape)
+        # print("viewmats:", viewmats.shape if viewmats is not None else None)
+        # print("patches_x * patches_y = ", patch_size * patch_size)
+        # print("seqlen = ", x_cond.shape[1])
+        # print("cameras = ", viewmats.shape[1])
+        # print("Q", q.shape)
+        # print("K", k.shape)
+        # print("V", v.shape)
 
         # ProPE attention
         attn_out = prope_dot_product_attention(
@@ -146,16 +146,14 @@ class CDiTBlock(nn.Module):
             image_height=latent_size,
         )
 
-        # (B, H, T, Hd) → (B, T, D)
-        attn_out = attn_out.transpose(1, 2).reshape(B, T, D)
-        # x - [B*num_goals, 196, 1152] + [1, 196, 1152]
-        # 改法1：把 x 扩成和 x_cond 一样的 sequence length
-        patch_seq_len = x.shape[1]  # 196
-        cameras = viewmats.shape[1]
-        x = x.repeat(1, cameras, 1)  # [B, 196, D] → [B, 980, D]
-        x = x + gate_ca_x.unsqueeze(1) * attn_out + 1e-6 * attn_out
-        x = x.view(B, cameras, patch_seq_len, D).mean(dim=1)
-        # x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_ca_norm, key=x_cond_norm, value=x_cond_norm, need_weights=False)[0]
+        # (B, H, T, Hd) → (B, T, H, Hd) → (B, T, D)
+        # Hd: 每个 head 的维度，满足 Hd * H = D
+        # print(f"[DEBUG] attn_out shape before transpose: {attn_out.shape}") 
+        attn_out = attn_out.transpose(1, 2).flatten(2, 3)
+        # print(f"[DEBUG] attn_out shape after transpose: {attn_out.shape}") 
+
+        # 用 PRoPE 得到的多视角特征 attn_out 做 cross-attention
+        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_ca_norm, key=attn_out, value=attn_out, need_weights=False)[0]
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
         return x
     

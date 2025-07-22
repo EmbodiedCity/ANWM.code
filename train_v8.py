@@ -144,7 +144,7 @@ def main(args):
 
     bfloat_enable = bool(hasattr(args, 'bfloat16') and args.bfloat16)
     if bfloat_enable:
-        scaler = torch.cuda.amp.GradScaler()
+        scaler = torch.amp.GradScaler('cuda')
 
     # load existing checkpoint
     latest_path = os.path.join(checkpoint_dir, "latest.pth.tar")

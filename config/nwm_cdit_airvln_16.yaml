@@ -3,7 +3,7 @@ run_name: nwm_cdit_airvln_v8
 # training setup
 results_dir: logs
 train: True
-batch_size: 3
+batch_size: 1
 num_workers: 12
 model: CDiT-XL/2
 lr: 8e-5
@@ -24,16 +24,16 @@ len_traj_pred: 16   # ori is 64, change to 16
 # dataset specific parameters
 image_size: 224
 datasets:
-  # airvln_16:
-  #   data_folder: data/airvln_16
-  #   train: data_splits/airvln_16/train/ # path to train folder with traj_names.txt
-  #   test: data_splits/airvln_16/test/ # path to test folder with traj_names.txt
-  #   goals_per_obs: 4
-  airvln_1episode:
-    data_folder: data/airvln_1episode
-    train: data_splits/airvln_1episode/train/ # path to train folder with traj_names.txt
-    test: data_splits/airvln_1episode/test/ # path to test folder with traj_names.txt
+  airvln_16:
+    data_folder: data/airvln_16
+    train: data_splits/airvln_16/train/ # path to train folder with traj_names.txt
+    test: data_splits/airvln_16/test/ # path to test folder with traj_names.txt
     goals_per_obs: 4
+  # airvln_1episode:
+  #   data_folder: data/airvln_1episode
+  #   train: data_splits/airvln_1episode/train/ # path to train folder with traj_names.txt
+  #   test: data_splits/airvln_1episode/test/ # path to test folder with traj_names.txt
+  #   goals_per_obs: 4
   # airvln_airspace:
   #   data_folder: data/airvln_airspace
   #   train: data_splits/airvln_airspace/train/ # path to train folder with traj_names.txt
