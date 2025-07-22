@@ -84,7 +84,10 @@ def evaluate(args, dataset_name, eval_type, metric_logger, loss_fns, gt_dir, exp
         eval_name = eval_type
         image_idxs = secs.copy()
         
-    eps = os.listdir(gt_dir)
+    # eps = os.listdir(gt_dir)
+    # Make an intersection between GT and EXP episodes:
+    # Only keep episodes that exist in both gt_dir and exp_dir
+    eps = list(set(os.listdir(gt_dir)).intersection(set(os.listdir(exp_dir))))
     
     for batch_start in tqdm(range(0, len(eps), args.batch_size), total=(len(eps) + args.batch_size - 1) // args.batch_size):
         batch_eps = eps[batch_start:batch_start + args.batch_size]
