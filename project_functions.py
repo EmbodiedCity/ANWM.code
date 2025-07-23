@@ -176,7 +176,6 @@ class AirsimCoordsConverter(CoordsConverter):
         T_ew = np.linalg.inv(T_we)
         return T_ew
     
-
 def reproject_depth_to_other_pose(K, depth_map, rgb_img, pose_src, pose_dst):
     """
     输入：
@@ -190,24 +189,22 @@ def reproject_depth_to_other_pose(K, depth_map, rgb_img, pose_src, pose_dst):
         points_3d_dst: (N, 3) 变换后的 3D 点
         colors: (N, 3) RGB 值
     """
-    # # 打印旋转矩阵
-    # print("[DEBUG] pose_src rotation matrix:", pose_src)
-    # print("[DEBUG] pose_dst rotation matrix:", pose_dst)
-
-    # 提取并打印源和目标的 yaw 角度差异
-    # euler_src = R.from_matrix(pose_src[:3, :3]).as_euler('zyx', degrees=True)
-    # euler_dst = R.from_matrix(pose_dst[:3, :3]).as_euler('zyx', degrees=True)
-    # print("[DEBUG] pose_src euler (yaw, pitch, roll):", euler_src)
-    # print("[DEBUG] pose_dst euler (yaw, pitch, roll):", euler_dst)
     fx, fy = K[0, 0], K[1, 1]
     cx, cy = K[0, 2], K[1, 2]
     H, W = depth_map.shape
+
+    print("[DEBUG] depth_map shape:", depth_map.shape)
+    # print("[DEBUG] rgb_img:", rgb_img)
+    print("[DEBUG] rgb_img shape:", rgb_img.shape)
+    assert rgb_img.shape == (H, W, 3), f"[ERROR] RGB shape expected {(H,W,3)}, got {rgb_img.shape}"
 
     u, v = np.meshgrid(np.arange(W), np.arange(H))
     u = u.reshape(-1)
     v = v.reshape(-1)
     z = depth_map.reshape(-1)
     valid = z > 0
+
+    print("[DEBUG] valid depth ratio: %.4f" % (np.sum(valid) / z.shape[0]))
 
     u = u[valid]
     v = v[valid]
@@ -231,9 +228,75 @@ def reproject_depth_to_other_pose(K, depth_map, rgb_img, pose_src, pose_dst):
     points_3d_dst = points_dst_cam[:, :3]
 
     # 对应颜色
-    colors = rgb_img.reshape(-1, 3)[valid]
+    print(f'[DEBUG] U, V: {u}, {v}')
+    colors = rgb_img[v, u] 
+    print("[DEBUG] colors dtype:", colors.dtype)
+    print("[DEBUG] colors shape:", colors.shape)
+    print("[DEBUG] colors min/max:", colors.min(), colors.max())
+    print("[DEBUG] colors R min/max:", colors[:,0].min(), colors[:,0].max())
+    print("[DEBUG] colors G min/max:", colors[:,1].min(), colors[:,1].max())
+    print("[DEBUG] colors B min/max:", colors[:,2].min(), colors[:,2].max())
+    print(colors[10000:10100])  # 看前10个RGB值是否接近
 
     return points_3d_dst, colors
+
+# def reproject_depth_to_other_pose(K, depth_map, rgb_img, pose_src, pose_dst):
+#     """
+#     输入：
+#         K: 内参矩阵 (3, 3)
+#         depth_map: 深度图 (H, W)
+#         rgb_img: RGB 图像 (H, W, 3)
+#         pose_src: 源相机位姿 (4, 4)
+#         pose_dst: 目标相机位姿 (4, 4)
+
+#     输出：
+#         points_3d_dst: (N, 3) 变换后的 3D 点
+#         colors: (N, 3) RGB 值
+#     """
+#     # # 打印旋转矩阵
+#     # print("[DEBUG] pose_src rotation matrix:", pose_src)
+#     # print("[DEBUG] pose_dst rotation matrix:", pose_dst)
+
+#     # 提取并打印源和目标的 yaw 角度差异
+#     # euler_src = R.from_matrix(pose_src[:3, :3]).as_euler('zyx', degrees=True)
+#     # euler_dst = R.from_matrix(pose_dst[:3, :3]).as_euler('zyx', degrees=True)
+#     # print("[DEBUG] pose_src euler (yaw, pitch, roll):", euler_src)
+#     # print("[DEBUG] pose_dst euler (yaw, pitch, roll):", euler_dst)
+#     fx, fy = K[0, 0], K[1, 1]
+#     cx, cy = K[0, 2], K[1, 2]
+#     H, W = depth_map.shape
+
+#     u, v = np.meshgrid(np.arange(W), np.arange(H))
+#     u = u.reshape(-1)
+#     v = v.reshape(-1)
+#     z = depth_map.reshape(-1)
+#     valid = z > 0
+
+#     u = u[valid]
+#     v = v[valid]
+#     z = z[valid]
+
+#     x = (u - cx) * z / fx
+#     y = (v - cy) * z / fy
+#     points_cam = np.stack([x, y, z], axis=1)  # shape: (N, 3)
+
+#     # 转换到齐次坐标 (N, 4)
+#     ones = np.ones((points_cam.shape[0], 1))
+#     points_cam_hom = np.concatenate([points_cam, ones], axis=1)
+
+#     # 从源位姿 -> 世界坐标
+#     points_world = (pose_src @ points_cam_hom.T).T  # shape: (N, 4)
+
+#     # 从世界坐标 -> 目标相机坐标
+#     points_dst_cam = (np.linalg.inv(pose_dst) @ points_world.T).T  # shape: (N, 4)
+
+#     # 去除齐次项
+#     points_3d_dst = points_dst_cam[:, :3]
+
+#     # 对应颜色
+#     colors = rgb_img.reshape(-1, 3)[valid]
+
+#     return points_3d_dst, colors
 
 def reproject_depth_to_other_pose_2seq(K, depth_maps, rgb_imgs, poses_src, poses_dst):
     """
