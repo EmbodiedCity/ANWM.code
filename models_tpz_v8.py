@@ -110,30 +110,33 @@ class CDiTBlock(nn.Module):
 
     def forward(self, x, c, x_cond, viewmats, Ks, patch_size, latent_size):
         shift_msa, scale_msa, gate_msa, shift_ca_xcond, scale_ca_xcond, shift_ca_x, scale_ca_x, gate_ca_x, shift_mlp, scale_mlp, gate_mlp = self.adaLN_modulation(c).chunk(11, dim=1)
+        # with torch.no_grad():
+        #     print("gate_msa:", gate_msa.abs().mean().item(),
+        #         "gate_ca_x:", gate_ca_x.abs().mean().item(),
+        #         "gate_mlp:", gate_mlp.abs().mean().item())
+
         x = x + gate_msa.unsqueeze(1) * self.attn(modulate(self.norm1(x), shift_msa, scale_msa))
         x_ca_norm = modulate(self.norm2(x), shift_ca_x, scale_ca_x)
         x_cond_norm = modulate(self.norm_cond(x_cond), shift_ca_xcond, scale_ca_xcond)
+        # print(f"x.shape: {x.shape}")
+        # print(f"x_cond.shape: {x_cond.shape}")
+        # print(f"x_ca_norm.shape: {x_ca_norm.shape}")
+        # print(f"x_cond_norm.shape: {x_cond_norm.shape}")
+
+        x_all = torch.cat([x_cond_norm, x_ca_norm], dim=1)
+        viewmats = torch.cat([viewmats, viewmats[:, -1:]], dim=1)
+        # print(f"x_all.shape: {x_all.shape}")
         # [B, T, D] → [B, num_heads, T, head_dim]
-        B, T, D = x_cond.shape
+        B, T, D = x_all.shape
         H = self.attn.num_heads  # num_heads
         Hd = D // H
-        q = self.q_proj(x_cond_norm)
-        k = self.k_proj(x_cond_norm)
-        v = self.v_proj(x_cond_norm)
-
+        q = self.q_proj(x_all)
+        k = self.k_proj(x_all)
+        v = self.v_proj(x_all)
+        # [B, T, D] → [B, T, H, Hd] → [B, H, T, Hd]
         q = q.view(B, T, H, Hd).transpose(1, 2)
         k = k.view(B, T, H, Hd).transpose(1, 2)
         v = v.view(B, T, H, Hd).transpose(1, 2)
-
-        # Debug
-        # print("DEBUG: x_cond shape:", x_cond.shape)
-        # print("viewmats:", viewmats.shape if viewmats is not None else None)
-        # print("patches_x * patches_y = ", patch_size * patch_size)
-        # print("seqlen = ", x_cond.shape[1])
-        # print("cameras = ", viewmats.shape[1])
-        # print("Q", q.shape)
-        # print("K", k.shape)
-        # print("V", v.shape)
 
         # ProPE attention
         attn_out = prope_dot_product_attention(
@@ -146,14 +149,20 @@ class CDiTBlock(nn.Module):
             image_height=latent_size,
         )
 
-        # (B, H, T, Hd) → (B, T, H, Hd) → (B, T, D)
+        # [B, H, T, Hd] → [B, T, H, Hd] → [B, T, D]
         # Hd: 每个 head 的维度，满足 Hd * H = D
-        # print(f"[DEBUG] attn_out shape before transpose: {attn_out.shape}") 
+        # .flatten(2, 3) = .view(B, T, D)
         attn_out = attn_out.transpose(1, 2).flatten(2, 3)
-        # print(f"[DEBUG] attn_out shape after transpose: {attn_out.shape}") 
-
+        # print("attn_out.shape after transpose and flatten:", attn_out.shape)
+        x_cond_T = x_cond.shape[1]
+        x_cond_encoded = attn_out[:, :x_cond_T]
+        x_encoded = attn_out[:, x_cond_T:]
+        # print("x_cond_T:", x_cond_T)
+        # print("x_cond_encoded.shape:", x_cond_encoded.shape)
+        # print("x_encoded.shape:", x_encoded.shape)
         # 用 PRoPE 得到的多视角特征 attn_out 做 cross-attention
-        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_ca_norm, key=attn_out, value=attn_out, need_weights=False)[0]
+        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_ca_norm, key=x_cond_encoded, value=x_cond_encoded, need_weights=False)[0]
+        # print("x.shape after cross-attn:", x.shape)
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
         return x
     

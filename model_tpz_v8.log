@@ -1,192 +1,52 @@
-W0722 19:43:38.760000 3901568 site-packages/torch/distributed/run.py:793] 
-W0722 19:43:38.760000 3901568 site-packages/torch/distributed/run.py:793] *****************************************
-W0722 19:43:38.760000 3901568 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0722 19:43:38.760000 3901568 site-packages/torch/distributed/run.py:793] *****************************************
-[[34m2025-07-22 19:43:45[0m] Experiment directory created at logs/nwm_cdit_airvln_v8
-[[34m2025-07-22 19:44:19[0m] CDiT Parameters: 1,131,616,544
-[[34m2025-07-22 20:00:02[0m] Dataset contains 337,818 images
-[[34m2025-07-22 20:00:02[0m] Training for 300 epochs...
-[[34m2025-07-22 20:00:02[0m] Beginning epoch 0...
-[[34m2025-07-22 20:01:29[0m] (step=0000100) Train Loss: 0.3591, Train Steps/Sec: 1.14, Samples/Sec: 9.10
-[[34m2025-07-22 20:02:49[0m] (step=0000200) Train Loss: 0.2250, Train Steps/Sec: 1.27, Samples/Sec: 10.12
-[[34m2025-07-22 20:04:07[0m] (step=0000300) Train Loss: 0.2182, Train Steps/Sec: 1.28, Samples/Sec: 10.25
-[[34m2025-07-22 20:05:25[0m] (step=0000400) Train Loss: 0.2054, Train Steps/Sec: 1.27, Samples/Sec: 10.15
-[[34m2025-07-22 20:06:43[0m] (step=0000500) Train Loss: 0.2159, Train Steps/Sec: 1.28, Samples/Sec: 10.27
-[[34m2025-07-22 20:08:01[0m] (step=0000600) Train Loss: 0.2173, Train Steps/Sec: 1.28, Samples/Sec: 10.24
-[[34m2025-07-22 20:09:19[0m] (step=0000700) Train Loss: 0.2065, Train Steps/Sec: 1.29, Samples/Sec: 10.29
-[[34m2025-07-22 20:10:39[0m] (step=0000800) Train Loss: 0.2033, Train Steps/Sec: 1.26, Samples/Sec: 10.08
-[[34m2025-07-22 20:11:56[0m] (step=0000900) Train Loss: 0.2101, Train Steps/Sec: 1.29, Samples/Sec: 10.32
-[[34m2025-07-22 20:13:14[0m] (step=0001000) Train Loss: 0.2157, Train Steps/Sec: 1.28, Samples/Sec: 10.28
-[[34m2025-07-22 20:14:33[0m] (step=0001100) Train Loss: 0.2152, Train Steps/Sec: 1.27, Samples/Sec: 10.15
-[[34m2025-07-22 20:15:52[0m] (step=0001200) Train Loss: 0.1932, Train Steps/Sec: 1.26, Samples/Sec: 10.10
-[[34m2025-07-22 20:17:10[0m] (step=0001300) Train Loss: 0.1973, Train Steps/Sec: 1.28, Samples/Sec: 10.26
-[[34m2025-07-22 20:18:27[0m] (step=0001400) Train Loss: 0.1976, Train Steps/Sec: 1.30, Samples/Sec: 10.44
-[[34m2025-07-22 20:19:44[0m] (step=0001500) Train Loss: 0.1920, Train Steps/Sec: 1.29, Samples/Sec: 10.30
-[[34m2025-07-22 20:21:02[0m] (step=0001600) Train Loss: 0.1875, Train Steps/Sec: 1.29, Samples/Sec: 10.35
-[[34m2025-07-22 20:22:18[0m] (step=0001700) Train Loss: 0.2125, Train Steps/Sec: 1.31, Samples/Sec: 10.49
-[[34m2025-07-22 20:23:37[0m] (step=0001800) Train Loss: 0.2137, Train Steps/Sec: 1.27, Samples/Sec: 10.13
-[[34m2025-07-22 20:25:00[0m] (step=0001900) Train Loss: 0.2153, Train Steps/Sec: 1.20, Samples/Sec: 9.61
-[[34m2025-07-22 20:26:18[0m] (step=0002000) Train Loss: 0.1990, Train Steps/Sec: 1.28, Samples/Sec: 10.26
-[[34m2025-07-22 20:27:38[0m] (step=0002100) Train Loss: 0.1892, Train Steps/Sec: 1.26, Samples/Sec: 10.09
-[[34m2025-07-22 20:28:56[0m] (step=0002200) Train Loss: 0.1864, Train Steps/Sec: 1.27, Samples/Sec: 10.19
-[[34m2025-07-22 20:30:15[0m] (step=0002300) Train Loss: 0.2164, Train Steps/Sec: 1.26, Samples/Sec: 10.08
-[[34m2025-07-22 20:31:33[0m] (step=0002400) Train Loss: 0.1956, Train Steps/Sec: 1.29, Samples/Sec: 10.33
-[[34m2025-07-22 20:32:50[0m] (step=0002500) Train Loss: 0.1824, Train Steps/Sec: 1.31, Samples/Sec: 10.44
-[[34m2025-07-22 20:34:07[0m] (step=0002600) Train Loss: 0.2039, Train Steps/Sec: 1.29, Samples/Sec: 10.29
-[[34m2025-07-22 20:35:22[0m] (step=0002700) Train Loss: 0.2147, Train Steps/Sec: 1.34, Samples/Sec: 10.74
-[[34m2025-07-22 20:36:47[0m] (step=0002800) Train Loss: 0.1935, Train Steps/Sec: 1.17, Samples/Sec: 9.37
-[[34m2025-07-22 20:37:55[0m] (step=0002900) Train Loss: 0.1861, Train Steps/Sec: 1.47, Samples/Sec: 11.74
-[[34m2025-07-22 20:39:11[0m] (step=0003000) Train Loss: 0.1896, Train Steps/Sec: 1.33, Samples/Sec: 10.60
-[[34m2025-07-22 20:40:29[0m] (step=0003100) Train Loss: 0.2045, Train Steps/Sec: 1.29, Samples/Sec: 10.28
-[[34m2025-07-22 20:41:48[0m] (step=0003200) Train Loss: 0.1835, Train Steps/Sec: 1.27, Samples/Sec: 10.13
-[[34m2025-07-22 20:43:06[0m] (step=0003300) Train Loss: 0.1797, Train Steps/Sec: 1.27, Samples/Sec: 10.16
-[[34m2025-07-22 20:44:25[0m] (step=0003400) Train Loss: 0.1868, Train Steps/Sec: 1.27, Samples/Sec: 10.19
-[[34m2025-07-22 20:45:43[0m] (step=0003500) Train Loss: 0.1912, Train Steps/Sec: 1.27, Samples/Sec: 10.20
-[[34m2025-07-22 20:47:01[0m] (step=0003600) Train Loss: 0.1870, Train Steps/Sec: 1.29, Samples/Sec: 10.31
-[[34m2025-07-22 20:48:17[0m] (step=0003700) Train Loss: 0.1764, Train Steps/Sec: 1.31, Samples/Sec: 10.50
-[[34m2025-07-22 20:49:34[0m] (step=0003800) Train Loss: 0.1992, Train Steps/Sec: 1.30, Samples/Sec: 10.40
-[[34m2025-07-22 20:50:50[0m] (step=0003900) Train Loss: 0.1935, Train Steps/Sec: 1.31, Samples/Sec: 10.50
-[[34m2025-07-22 20:52:08[0m] (step=0004000) Train Loss: 0.1875, Train Steps/Sec: 1.29, Samples/Sec: 10.29
-[[34m2025-07-22 20:53:23[0m] (step=0004100) Train Loss: 0.1883, Train Steps/Sec: 1.33, Samples/Sec: 10.65
-[[34m2025-07-22 20:54:42[0m] (step=0004200) Train Loss: 0.2052, Train Steps/Sec: 1.26, Samples/Sec: 10.12
-[[34m2025-07-22 20:56:02[0m] (step=0004300) Train Loss: 0.2173, Train Steps/Sec: 1.25, Samples/Sec: 10.03
-[[34m2025-07-22 20:57:20[0m] (step=0004400) Train Loss: 0.1933, Train Steps/Sec: 1.28, Samples/Sec: 10.23
-[[34m2025-07-22 20:58:37[0m] (step=0004500) Train Loss: 0.1925, Train Steps/Sec: 1.31, Samples/Sec: 10.44
-[[34m2025-07-22 20:59:55[0m] (step=0004600) Train Loss: 0.1953, Train Steps/Sec: 1.28, Samples/Sec: 10.21
-[[34m2025-07-22 21:01:13[0m] (step=0004700) Train Loss: 0.1550, Train Steps/Sec: 1.29, Samples/Sec: 10.34
-[[34m2025-07-22 21:02:30[0m] (step=0004800) Train Loss: 0.1663, Train Steps/Sec: 1.29, Samples/Sec: 10.34
-[[34m2025-07-22 21:03:47[0m] (step=0004900) Train Loss: 0.1786, Train Steps/Sec: 1.30, Samples/Sec: 10.42
-[[34m2025-07-22 21:05:06[0m] (step=0005000) Train Loss: 0.1643, Train Steps/Sec: 1.26, Samples/Sec: 10.11
-[[34m2025-07-22 21:06:24[0m] (step=0005100) Train Loss: 0.1799, Train Steps/Sec: 1.28, Samples/Sec: 10.22
-[[34m2025-07-22 21:07:44[0m] (step=0005200) Train Loss: 0.2003, Train Steps/Sec: 1.25, Samples/Sec: 10.01
-[[34m2025-07-22 21:09:04[0m] (step=0005300) Train Loss: 0.1921, Train Steps/Sec: 1.26, Samples/Sec: 10.08
-[[34m2025-07-22 21:10:22[0m] (step=0005400) Train Loss: 0.1876, Train Steps/Sec: 1.27, Samples/Sec: 10.14
-[[34m2025-07-22 21:11:43[0m] (step=0005500) Train Loss: 0.1778, Train Steps/Sec: 1.24, Samples/Sec: 9.94
-[[34m2025-07-22 21:13:02[0m] (step=0005600) Train Loss: 0.1866, Train Steps/Sec: 1.26, Samples/Sec: 10.10
-[[34m2025-07-22 21:14:21[0m] (step=0005700) Train Loss: 0.1898, Train Steps/Sec: 1.26, Samples/Sec: 10.11
-[[34m2025-07-22 21:15:39[0m] (step=0005800) Train Loss: 0.2018, Train Steps/Sec: 1.28, Samples/Sec: 10.27
-[[34m2025-07-22 21:16:53[0m] (step=0005900) Train Loss: 0.1933, Train Steps/Sec: 1.34, Samples/Sec: 10.76
-[[34m2025-07-22 21:18:07[0m] (step=0006000) Train Loss: 0.1982, Train Steps/Sec: 1.35, Samples/Sec: 10.81
-[[34m2025-07-22 21:19:24[0m] (step=0006100) Train Loss: 0.1717, Train Steps/Sec: 1.31, Samples/Sec: 10.45
-[[34m2025-07-22 21:20:41[0m] (step=0006200) Train Loss: 0.1695, Train Steps/Sec: 1.29, Samples/Sec: 10.35
-[[34m2025-07-22 21:21:59[0m] (step=0006300) Train Loss: 0.1757, Train Steps/Sec: 1.28, Samples/Sec: 10.27
-[[34m2025-07-22 21:23:14[0m] (step=0006400) Train Loss: 0.1939, Train Steps/Sec: 1.33, Samples/Sec: 10.63
-[[34m2025-07-22 21:24:32[0m] (step=0006500) Train Loss: 0.1792, Train Steps/Sec: 1.28, Samples/Sec: 10.26
-[[34m2025-07-22 21:25:47[0m] (step=0006600) Train Loss: 0.1867, Train Steps/Sec: 1.33, Samples/Sec: 10.66
-[[34m2025-07-22 21:27:04[0m] (step=0006700) Train Loss: 0.1781, Train Steps/Sec: 1.31, Samples/Sec: 10.44
-[[34m2025-07-22 21:28:21[0m] (step=0006800) Train Loss: 0.1689, Train Steps/Sec: 1.30, Samples/Sec: 10.42
-[[34m2025-07-22 21:29:38[0m] (step=0006900) Train Loss: 0.1664, Train Steps/Sec: 1.30, Samples/Sec: 10.44
-[[34m2025-07-22 21:30:53[0m] (step=0007000) Train Loss: 0.1666, Train Steps/Sec: 1.32, Samples/Sec: 10.60
-[[34m2025-07-22 21:32:10[0m] (step=0007100) Train Loss: 0.1860, Train Steps/Sec: 1.31, Samples/Sec: 10.45
-[[34m2025-07-22 21:33:28[0m] (step=0007200) Train Loss: 0.1971, Train Steps/Sec: 1.28, Samples/Sec: 10.25
-[[34m2025-07-22 21:34:45[0m] (step=0007300) Train Loss: 0.1835, Train Steps/Sec: 1.30, Samples/Sec: 10.39
-[[34m2025-07-22 21:36:01[0m] (step=0007400) Train Loss: 0.1783, Train Steps/Sec: 1.31, Samples/Sec: 10.45
-[[34m2025-07-22 21:37:19[0m] (step=0007500) Train Loss: 0.1810, Train Steps/Sec: 1.29, Samples/Sec: 10.30
-[[34m2025-07-22 21:38:34[0m] (step=0007600) Train Loss: 0.1829, Train Steps/Sec: 1.33, Samples/Sec: 10.61
-[[34m2025-07-22 21:39:51[0m] (step=0007700) Train Loss: 0.1896, Train Steps/Sec: 1.30, Samples/Sec: 10.43
-[[34m2025-07-22 21:41:09[0m] (step=0007800) Train Loss: 0.1786, Train Steps/Sec: 1.28, Samples/Sec: 10.27
-[[34m2025-07-22 21:42:27[0m] (step=0007900) Train Loss: 0.1876, Train Steps/Sec: 1.27, Samples/Sec: 10.18
-[[34m2025-07-22 21:43:45[0m] (step=0008000) Train Loss: 0.1853, Train Steps/Sec: 1.29, Samples/Sec: 10.33
-[[34m2025-07-22 21:45:05[0m] (step=0008100) Train Loss: 0.1771, Train Steps/Sec: 1.26, Samples/Sec: 10.04
-[[34m2025-07-22 21:46:22[0m] (step=0008200) Train Loss: 0.1561, Train Steps/Sec: 1.30, Samples/Sec: 10.38
-[[34m2025-07-22 21:47:40[0m] (step=0008300) Train Loss: 0.1674, Train Steps/Sec: 1.27, Samples/Sec: 10.15
-[[34m2025-07-22 21:48:57[0m] (step=0008400) Train Loss: 0.1748, Train Steps/Sec: 1.30, Samples/Sec: 10.40
-[[34m2025-07-22 21:50:16[0m] (step=0008500) Train Loss: 0.1919, Train Steps/Sec: 1.27, Samples/Sec: 10.18
-[[34m2025-07-22 21:51:33[0m] (step=0008600) Train Loss: 0.1865, Train Steps/Sec: 1.30, Samples/Sec: 10.41
-[[34m2025-07-22 21:52:50[0m] (step=0008700) Train Loss: 0.1799, Train Steps/Sec: 1.30, Samples/Sec: 10.43
-[[34m2025-07-22 21:54:09[0m] (step=0008800) Train Loss: 0.1726, Train Steps/Sec: 1.27, Samples/Sec: 10.13
-[[34m2025-07-22 21:55:28[0m] (step=0008900) Train Loss: 0.1859, Train Steps/Sec: 1.25, Samples/Sec: 10.03
-[[34m2025-07-22 21:56:46[0m] (step=0009000) Train Loss: 0.1998, Train Steps/Sec: 1.29, Samples/Sec: 10.34
-[[34m2025-07-22 21:57:58[0m] (step=0009100) Train Loss: 0.1848, Train Steps/Sec: 1.39, Samples/Sec: 11.12
-[[34m2025-07-22 21:58:57[0m] (step=0009200) Train Loss: 0.1744, Train Steps/Sec: 1.69, Samples/Sec: 13.48
-[[34m2025-07-22 21:59:55[0m] (step=0009300) Train Loss: 0.1748, Train Steps/Sec: 1.73, Samples/Sec: 13.82
-[[34m2025-07-22 22:01:06[0m] (step=0009400) Train Loss: 0.1930, Train Steps/Sec: 1.40, Samples/Sec: 11.23
-[[34m2025-07-22 22:02:23[0m] (step=0009500) Train Loss: 0.1891, Train Steps/Sec: 1.30, Samples/Sec: 10.38
-[[34m2025-07-22 22:03:40[0m] (step=0009600) Train Loss: 0.1741, Train Steps/Sec: 1.31, Samples/Sec: 10.45
-[[34m2025-07-22 22:04:56[0m] (step=0009700) Train Loss: 0.1823, Train Steps/Sec: 1.31, Samples/Sec: 10.47
-[[34m2025-07-22 22:06:12[0m] (step=0009800) Train Loss: 0.1649, Train Steps/Sec: 1.32, Samples/Sec: 10.52
-[[34m2025-07-22 22:07:31[0m] (step=0009900) Train Loss: 0.1677, Train Steps/Sec: 1.27, Samples/Sec: 10.16
-[[34m2025-07-22 22:08:49[0m] (step=0010000) Train Loss: 0.1792, Train Steps/Sec: 1.29, Samples/Sec: 10.28
-Using cache found in ./models/facebookresearch_dino_main
-/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:143: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
-  WeightNorm.apply(module, name, dim)
-/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/peft/tuners/tuners_utils.py:190: UserWarning: Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
-  warnings.warn(
-[[34m2025-07-22 22:09:16[0m] Saved checkpoint to logs/nwm_cdit_airvln_v8/checkpoints/latest.pth.tar
-Using cache found in ./models/facebookresearch_dino_main
-/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/utils/weight_norm.py:143: FutureWarning: `torch.nn.utils.weight_norm` is deprecated in favor of `torch.nn.utils.parametrizations.weight_norm`.
-  WeightNorm.apply(module, name, dim)
-/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/peft/tuners/tuners_utils.py:190: UserWarning: Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
-  warnings.warn(
-[[34m2025-07-22 22:12:43[0m] (step=0010000) Perceptual Loss: 0.8137, Eval Time: 206.55
-[[34m2025-07-22 22:14:03[0m] (step=0010100) Train Loss: 0.1772, Train Steps/Sec: 0.32, Samples/Sec: 2.54
-[[34m2025-07-22 22:15:22[0m] (step=0010200) Train Loss: 0.1695, Train Steps/Sec: 1.27, Samples/Sec: 10.19
-[[34m2025-07-22 22:16:41[0m] (step=0010300) Train Loss: 0.1603, Train Steps/Sec: 1.25, Samples/Sec: 10.02
-[[34m2025-07-22 22:18:02[0m] (step=0010400) Train Loss: 0.1686, Train Steps/Sec: 1.25, Samples/Sec: 9.97
-[[34m2025-07-22 22:19:21[0m] (step=0010500) Train Loss: 0.1777, Train Steps/Sec: 1.26, Samples/Sec: 10.10
-[[34m2025-07-22 22:20:40[0m] (step=0010600) Train Loss: 0.1849, Train Steps/Sec: 1.26, Samples/Sec: 10.05
-[[34m2025-07-22 22:22:00[0m] (step=0010700) Train Loss: 0.1883, Train Steps/Sec: 1.26, Samples/Sec: 10.08
-[[34m2025-07-22 22:23:18[0m] (step=0010800) Train Loss: 0.1803, Train Steps/Sec: 1.28, Samples/Sec: 10.21
-[[34m2025-07-22 22:24:37[0m] (step=0010900) Train Loss: 0.1799, Train Steps/Sec: 1.28, Samples/Sec: 10.21
-[[34m2025-07-22 22:25:54[0m] (step=0011000) Train Loss: 0.1779, Train Steps/Sec: 1.29, Samples/Sec: 10.34
-[[34m2025-07-22 22:27:12[0m] (step=0011100) Train Loss: 0.1657, Train Steps/Sec: 1.28, Samples/Sec: 10.26
-[[34m2025-07-22 22:28:31[0m] (step=0011200) Train Loss: 0.1691, Train Steps/Sec: 1.27, Samples/Sec: 10.17
-[[34m2025-07-22 22:29:48[0m] (step=0011300) Train Loss: 0.1720, Train Steps/Sec: 1.29, Samples/Sec: 10.30
-[[34m2025-07-22 22:31:07[0m] (step=0011400) Train Loss: 0.1698, Train Steps/Sec: 1.28, Samples/Sec: 10.23
-[[34m2025-07-22 22:32:25[0m] (step=0011500) Train Loss: 0.1476, Train Steps/Sec: 1.27, Samples/Sec: 10.15
-[[34m2025-07-22 22:33:44[0m] (step=0011600) Train Loss: 0.1719, Train Steps/Sec: 1.28, Samples/Sec: 10.21
-[[34m2025-07-22 22:35:03[0m] (step=0011700) Train Loss: 0.1708, Train Steps/Sec: 1.25, Samples/Sec: 10.04
-[[34m2025-07-22 22:36:22[0m] (step=0011800) Train Loss: 0.1811, Train Steps/Sec: 1.27, Samples/Sec: 10.18
-[[34m2025-07-22 22:37:43[0m] (step=0011900) Train Loss: 0.1633, Train Steps/Sec: 1.24, Samples/Sec: 9.93
-[[34m2025-07-22 22:39:03[0m] (step=0012000) Train Loss: 0.1862, Train Steps/Sec: 1.25, Samples/Sec: 9.98
-[[34m2025-07-22 22:40:23[0m] (step=0012100) Train Loss: 0.1581, Train Steps/Sec: 1.25, Samples/Sec: 10.01
-W0722 22:41:18.732000 3901568 site-packages/torch/distributed/elastic/agent/server/api.py:704] Received Signals.SIGINT death signal, shutting down workers
-W0722 22:41:18.734000 3901568 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3901639 closing signal SIGINT
-W0722 22:41:18.734000 3901568 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3901640 closing signal SIGINT
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/data1/tpz/nwm-main/train_v8.py", line 462, in <module>
-[rank0]:     main(args)
-[rank0]:   File "/data1/tpz/nwm-main/train_v8.py", line 320, in main
-[rank0]:     scaler.scale(loss).backward()
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/_tensor.py", line 581, in backward
-[rank0]:     torch.autograd.backward(
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/autograd/__init__.py", line 347, in backward
-[rank0]:     _engine_run_backward(
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/autograd/graph.py", line 825, in _engine_run_backward
-[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
-[rank0]: KeyboardInterrupt
-[rank1]: Traceback (most recent call last):
-[rank1]:   File "/data1/tpz/nwm-main/train_v8.py", line 462, in <module>
-[rank1]:     main(args)
-[rank1]:   File "/data1/tpz/nwm-main/train_v8.py", line 320, in main
-[rank1]:     scaler.scale(loss).backward()
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/_tensor.py", line 581, in backward
-[rank1]:     torch.autograd.backward(
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/autograd/__init__.py", line 347, in backward
-[rank1]:     _engine_run_backward(
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/autograd/graph.py", line 825, in _engine_run_backward
-[rank1]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
-[rank1]: KeyboardInterrupt
-[rank0]:[W722 22:41:19.011857711 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm3/bin/torchrun", line 8, in <module>
-    sys.exit(main())
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
-    return f(*args, **kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
-    run(args)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
-    elastic_launch(
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
-    return launch_agent(self._config, self._entrypoint, list(args))
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
-    result = agent.run()
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
-    result = f(*args, **kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
-    result = self._invoke_run(role)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 855, in _invoke_run
-    time.sleep(monitor_interval)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
-    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
-torch.distributed.elastic.multiprocessing.api.SignalException: Process 3901568 got signal: 2
+W0723 14:53:30.461000 417686 site-packages/torch/distributed/run.py:793] 
+W0723 14:53:30.461000 417686 site-packages/torch/distributed/run.py:793] *****************************************
+W0723 14:53:30.461000 417686 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0723 14:53:30.461000 417686 site-packages/torch/distributed/run.py:793] *****************************************
+[[34m2025-07-23 14:53:36[0m] Experiment directory created at logs/nwm_cdit_airvln_v8
+[[34m2025-07-23 14:54:07[0m] CDiT Parameters: 1,131,616,544
+[[34m2025-07-23 15:14:57[0m] Dataset contains 337,818 images
+[[34m2025-07-23 15:14:57[0m] Training for 300 epochs...
+[[34m2025-07-23 15:14:57[0m] Beginning epoch 0...
+[[34m2025-07-23 15:16:28[0m] (step=0000100) Train Loss: 0.6859, Train Steps/Sec: 1.10, Samples/Sec: 8.82
+[[34m2025-07-23 15:17:51[0m] (step=0000200) Train Loss: 0.6437, Train Steps/Sec: 1.20, Samples/Sec: 9.62
+[[34m2025-07-23 15:19:11[0m] (step=0000300) Train Loss: 0.5811, Train Steps/Sec: 1.24, Samples/Sec: 9.91
+[[34m2025-07-23 15:20:32[0m] (step=0000400) Train Loss: 0.7811, Train Steps/Sec: 1.23, Samples/Sec: 9.88
+[[34m2025-07-23 15:21:53[0m] (step=0000500) Train Loss: 1.0265, Train Steps/Sec: 1.24, Samples/Sec: 9.95
+[[34m2025-07-23 15:23:13[0m] (step=0000600) Train Loss: 0.9511, Train Steps/Sec: 1.24, Samples/Sec: 9.96
+[[34m2025-07-23 15:24:33[0m] (step=0000700) Train Loss: 0.7723, Train Steps/Sec: 1.25, Samples/Sec: 9.97
+[[34m2025-07-23 15:25:54[0m] (step=0000800) Train Loss: 0.7770, Train Steps/Sec: 1.24, Samples/Sec: 9.94
+[[34m2025-07-23 15:27:15[0m] (step=0000900) Train Loss: 0.6712, Train Steps/Sec: 1.24, Samples/Sec: 9.91
+[[34m2025-07-23 15:28:36[0m] (step=0001000) Train Loss: 0.5796, Train Steps/Sec: 1.23, Samples/Sec: 9.86
+[[34m2025-07-23 15:29:57[0m] (step=0001100) Train Loss: 0.5346, Train Steps/Sec: 1.23, Samples/Sec: 9.84
+[[34m2025-07-23 15:31:17[0m] (step=0001200) Train Loss: 0.5289, Train Steps/Sec: 1.25, Samples/Sec: 9.97
+[[34m2025-07-23 15:32:37[0m] (step=0001300) Train Loss: 0.4208, Train Steps/Sec: 1.25, Samples/Sec: 10.00
+[[34m2025-07-23 15:33:57[0m] (step=0001400) Train Loss: 0.4294, Train Steps/Sec: 1.25, Samples/Sec: 9.99
+[[34m2025-07-23 15:35:18[0m] (step=0001500) Train Loss: 0.3615, Train Steps/Sec: 1.25, Samples/Sec: 9.97
+[[34m2025-07-23 15:36:39[0m] (step=0001600) Train Loss: 0.3565, Train Steps/Sec: 1.24, Samples/Sec: 9.89
+[[34m2025-07-23 15:37:59[0m] (step=0001700) Train Loss: 0.4092, Train Steps/Sec: 1.24, Samples/Sec: 9.94
+[[34m2025-07-23 15:39:20[0m] (step=0001800) Train Loss: 0.3731, Train Steps/Sec: 1.24, Samples/Sec: 9.92
+[[34m2025-07-23 15:40:40[0m] (step=0001900) Train Loss: 0.3664, Train Steps/Sec: 1.24, Samples/Sec: 9.94
+[[34m2025-07-23 15:42:01[0m] (step=0002000) Train Loss: 0.3381, Train Steps/Sec: 1.24, Samples/Sec: 9.93
+[[34m2025-07-23 15:43:21[0m] (step=0002100) Train Loss: 0.3195, Train Steps/Sec: 1.25, Samples/Sec: 9.97
+[[34m2025-07-23 15:44:43[0m] (step=0002200) Train Loss: 0.3437, Train Steps/Sec: 1.23, Samples/Sec: 9.83
+[[34m2025-07-23 15:46:04[0m] (step=0002300) Train Loss: 0.4463, Train Steps/Sec: 1.23, Samples/Sec: 9.81
+[[34m2025-07-23 15:47:25[0m] (step=0002400) Train Loss: 0.3121, Train Steps/Sec: 1.24, Samples/Sec: 9.95
+[[34m2025-07-23 15:48:45[0m] (step=0002500) Train Loss: 0.3185, Train Steps/Sec: 1.25, Samples/Sec: 9.96
+[[34m2025-07-23 15:50:06[0m] (step=0002600) Train Loss: 0.3147, Train Steps/Sec: 1.24, Samples/Sec: 9.92
+[[34m2025-07-23 15:51:26[0m] (step=0002700) Train Loss: 0.3093, Train Steps/Sec: 1.23, Samples/Sec: 9.88
+[[34m2025-07-23 15:52:48[0m] (step=0002800) Train Loss: 0.2794, Train Steps/Sec: 1.23, Samples/Sec: 9.87
+[[34m2025-07-23 15:54:08[0m] (step=0002900) Train Loss: 0.2736, Train Steps/Sec: 1.24, Samples/Sec: 9.91
+[[34m2025-07-23 15:55:29[0m] (step=0003000) Train Loss: 0.2751, Train Steps/Sec: 1.24, Samples/Sec: 9.93
+[[34m2025-07-23 15:56:50[0m] (step=0003100) Train Loss: 0.2869, Train Steps/Sec: 1.23, Samples/Sec: 9.85
+[[34m2025-07-23 15:58:10[0m] (step=0003200) Train Loss: 0.2783, Train Steps/Sec: 1.24, Samples/Sec: 9.95
+[[34m2025-07-23 15:59:32[0m] (step=0003300) Train Loss: 0.2564, Train Steps/Sec: 1.22, Samples/Sec: 9.77
+[[34m2025-07-23 16:00:53[0m] (step=0003400) Train Loss: 0.2606, Train Steps/Sec: 1.24, Samples/Sec: 9.92
+[[34m2025-07-23 16:02:13[0m] (step=0003500) Train Loss: 0.2681, Train Steps/Sec: 1.25, Samples/Sec: 9.97
+[[34m2025-07-23 16:03:34[0m] (step=0003600) Train Loss: 0.2341, Train Steps/Sec: 1.24, Samples/Sec: 9.92
+[[34m2025-07-23 16:04:54[0m] (step=0003700) Train Loss: 0.2333, Train Steps/Sec: 1.24, Samples/Sec: 9.94
+[[34m2025-07-23 16:06:14[0m] (step=0003800) Train Loss: 0.2577, Train Steps/Sec: 1.25, Samples/Sec: 10.01
+[[34m2025-07-23 16:07:35[0m] (step=0003900) Train Loss: 0.2339, Train Steps/Sec: 1.23, Samples/Sec: 9.87
+[[34m2025-07-23 16:08:56[0m] (step=0004000) Train Loss: 0.2193, Train Steps/Sec: 1.23, Samples/Sec: 9.88
+[[34m2025-07-23 16:10:12[0m] (step=0004100) Train Loss: 0.2478, Train Steps/Sec: 1.31, Samples/Sec: 10.52
+[[34m2025-07-23 16:11:28[0m] (step=0004200) Train Loss: 0.2454, Train Steps/Sec: 1.33, Samples/Sec: 10.63
+[[34m2025-07-23 16:12:45[0m] (step=0004300) Train Loss: 0.2558, Train Steps/Sec: 1.30, Samples/Sec: 10.41

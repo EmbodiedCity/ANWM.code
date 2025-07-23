@@ -312,17 +312,61 @@ def main(args):
                 loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
                 loss = loss_dict["loss"].mean()
 
-            if not bfloat_enable:
-                opt.zero_grad()
-                loss.backward()
-                opt.step()
-            else:
+            opt.zero_grad(set_to_none=True)
+
+            if bfloat_enable:                      # AMP / bfloat16 分支
                 scaler.scale(loss).backward()
+                # **关键**：unscale 把缩放后的梯度写回 param.grad
+                scaler.unscale_(opt)
+                # —— 如需梯度裁剪，在 unscale 之后、step 之前做 ——
                 if config.get('grad_clip_val', 0) > 0:
-                    scaler.unscale_(opt)
-                    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
+                    torch.nn.utils.clip_grad_norm_(
+                        model.parameters(),
+                        max_norm=config['grad_clip_val']
+                    )
+            else:                                  # 纯 FP32 分支
+                loss.backward()
+                if config.get('grad_clip_val', 0) > 0:
+                    torch.nn.utils.clip_grad_norm_(
+                        model.parameters(),
+                        max_norm=config['grad_clip_val']
+                    )
+
+            # ------------------- 4) 梯度探针 ----------------------
+            keywords = [
+                # ".attn.qkv.weight", ".attn.proj.weight",
+                # ".mlp.fc1.weight", ".mlp.fc2.weight",
+                "adaLN_modulation", "gate", "blocks.0", "x_embedder.proj.weight"
+            ]
+            # 打印几层代表性的 grad_norm，看是否非零
+            with torch.no_grad():
+                for n, p in model.module.named_parameters():   # DDP → .module
+                    if p.grad is None:
+                        continue
+                    # 按需修改关键词；建议先看 gate / 第 0 个 block
+                    if any(k in n for k in
+                        keywords):
+                        print(f"{n:<60} grad_norm={p.grad.norm():.3e}")
+                # 只跑前 N 步就停止调试
+                # if train_steps >= 20:  break
+
+            # ------------------- 5) 参数更新 ----------------------
+            if bfloat_enable:
                 scaler.step(opt)
                 scaler.update()
+            else:
+                opt.step()
+            # if not bfloat_enable:
+            #     opt.zero_grad()
+            #     loss.backward()
+            #     opt.step()
+            # else:
+            #     scaler.scale(loss).backward()
+            #     if config.get('grad_clip_val', 0) > 0:
+            #         scaler.unscale_(opt)
+            #         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
+            #     scaler.step(opt)
+            #     scaler.update()
             
             update_ema(ema, model.module)
 

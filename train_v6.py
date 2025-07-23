@@ -293,7 +293,7 @@ def main(args):
                 x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)      # [B*num_goals, num_cond, 4, 28, 28]
                 y_cond = aug.unsqueeze(2).flatten(0, 1)             # [B*num_goals, 1, 4, 28, 28]
                 x_cond = torch.cat((x_cond, y_cond), dim=1)                    # [B*num_goals, num_cond+1, 4, 28, 28]                      
-               #  print(f"x_cond shape: {x_cond.size()}")
+                #  print(f"x_cond shape: {x_cond.size()}")
                 y = y.flatten(0, 1)
                 rel_t = rel_t.flatten(0, 1)
                 
