@@ -161,7 +161,7 @@ class CDiTBlock(nn.Module):
         # print("x_cond_encoded.shape:", x_cond_encoded.shape)
         # print("x_encoded.shape:", x_encoded.shape)
         # 用 PRoPE 得到的多视角特征 attn_out 做 cross-attention
-        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_ca_norm, key=x_cond_encoded, value=x_cond_encoded, need_weights=False)[0]
+        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_encoded, key=x_cond_encoded, value=x_cond_encoded, need_weights=False)[0]
         # print("x.shape after cross-attn:", x.shape)
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
         return x
