@@ -344,12 +344,20 @@ class EvalDataset(BaseDataset):
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
             # print(f"projected_images shape: {projected_images.shape}, projected_tensor shape: {projected_tensor.size()}")
+            # Compute T
+            T_wc_ctx = curr_traj_data['pose'][context_times]             # (context_size, 4, 4)
+            T_wc_pred = curr_traj_data['pose'][pred_times]               # (len_traj_pred, 4, 4)
+            T_cw_ctx = torch.linalg.inv(torch.as_tensor(T_wc_ctx, dtype=torch.float32))   # (context_size, 4, 4)
+            T_cw_pred = torch.linalg.inv(torch.as_tensor(T_wc_pred, dtype=torch.float32)) # (len_traj_pred, 4, 4)
+
             return (
                 torch.tensor([i], dtype=torch.float32), # for logging purposes
                 torch.as_tensor(obs_image, dtype=torch.float32),
                 torch.as_tensor(pred_image, dtype=torch.float32),
                 torch.as_tensor(delta, dtype=torch.float32),
                 torch.as_tensor(projected_tensor, dtype=torch.float32),
+                torch.as_tensor(T_cw_ctx, dtype=torch.float32), #obs
+                torch.as_tensor(T_cw_pred, dtype=torch.float32), #pred
             )
         except Exception as e:
             print(f"Exception in {self.dataset_name}", e)

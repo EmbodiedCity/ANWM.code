@@ -116,14 +116,10 @@ class CDiTBlock(nn.Module):
         #         "gate_mlp:", gate_mlp.abs().mean().item())
 
         x = x + gate_msa.unsqueeze(1) * self.attn(modulate(self.norm1(x), shift_msa, scale_msa))
-        x_ca_norm = modulate(self.norm2(x), shift_ca_x, scale_ca_x)
-        x_cond_norm = modulate(self.norm_cond(x_cond), shift_ca_xcond, scale_ca_xcond)
+
         # print(f"x.shape: {x.shape}")
         # print(f"x_cond.shape: {x_cond.shape}")
-        # print(f"x_ca_norm.shape: {x_ca_norm.shape}")
-        # print(f"x_cond_norm.shape: {x_cond_norm.shape}")
-
-        x_all = torch.cat([x_cond_norm, x_ca_norm], dim=1)
+        x_all = torch.cat([x_cond, x], dim=1)
         viewmats = torch.cat([viewmats, viewmats[:, -1:]], dim=1)
         # print(f"x_all.shape: {x_all.shape}")
         # [B, T, D] → [B, num_heads, T, head_dim]
@@ -160,8 +156,12 @@ class CDiTBlock(nn.Module):
         # print("x_cond_T:", x_cond_T)
         # print("x_cond_encoded.shape:", x_cond_encoded.shape)
         # print("x_encoded.shape:", x_encoded.shape)
+        x_ca_norm = modulate(self.norm2(x_encoded), shift_ca_x, scale_ca_x)
+        x_cond_norm = modulate(self.norm_cond(x_cond_encoded), shift_ca_xcond, scale_ca_xcond)
+        # print(f"x_ca_norm.shape: {x_ca_norm.shape}")
+        # print(f"x_cond_norm.shape: {x_cond_norm.shape}")
         # 用 PRoPE 得到的多视角特征 attn_out 做 cross-attention
-        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_encoded, key=x_cond_encoded, value=x_cond_encoded, need_weights=False)[0]
+        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=x_ca_norm, key=x_cond_norm, value=x_cond_norm, need_weights=False)[0]
         # print("x.shape after cross-attn:", x.shape)
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
         return x
