@@ -21,6 +21,19 @@ IMAGE_ASPECT_RATIO = (4 / 3)  # all images are centered cropped to a 4:3 aspect 
 with open("config/data_config.yaml", "r") as f:
     data_config = yaml.safe_load(f)
 
+def fig_to_rgb_array(fig):
+    """Convert a Matplotlib Figure to an HxWx3 uint8 RGB array (backend-agnostic)."""
+    fig.canvas.draw()
+    w, h = fig.canvas.get_width_height()
+    try:
+        # 老版本（如 3.7）可能仍有 tostring_rgb
+        buf = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        arr = buf.reshape(h, w, 3)
+    except AttributeError:
+        # 新版本：用 buffer_rgba，再去掉 alpha
+        buf = np.frombuffer(fig.canvas.buffer_rgba(), dtype=np.uint8)
+        arr = buf.reshape(h, w, 4)[..., :3]
+    return arr
 
 def get_action_torch(diffusion_output, action_stats):
     ndeltas = diffusion_output

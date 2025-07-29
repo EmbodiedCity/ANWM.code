@@ -235,7 +235,7 @@ class WM_Planning_Evaluator:
         # Loading Model
         print("loading")
         model = CDiT_models[self.config['model']](
-            context_size=self.num_cond,
+            context_size=self.num_cond+1,
             input_size=latent_size,
         )
 
@@ -265,7 +265,7 @@ class WM_Planning_Evaluator:
         sigma[:, ] = torch.tensor(data_hyperparams[self.args.datasets]['var_scale']) 
         return mu, sigma
         
-    def generate_actions(self, dataset_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, len_traj_pred, aug_image):
+    def generate_actions(self, dataset_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, len_traj_pred, aug_image, camera_mats):
         idx_string = "_".join(map(str, idxs.flatten().int().tolist())) 
         image_plot_dir = os.path.join(dataset_save_output_dir, 'plots')
         os.makedirs(image_plot_dir, exist_ok=True)
@@ -290,12 +290,14 @@ class WM_Planning_Evaluator:
 
                 cur_obs_image = obs_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1) 
                 cur_goal_image = goal_image[traj].unsqueeze(0).repeat(self.args.num_samples, 1, 1, 1, 1).squeeze(1)
+                cur_aug_image = aug_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1)   # (num_samples, 1, C, H, W)
+                cur_cam = camera_mats[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1)          # (num_samples, num_cond+1, 4, 4)
                 
                 # WM is stochastic, so we can repeat the evaluation of each trajectory and average to reduce variance
                 if self.num_repeat_eval * self.num_samples > 120:
                     cur_losses = []
                     for r in range(self.num_repeat_eval):
-                        preds = self.autoregressive_rollout(cur_obs_image, deltas, self.args.rollout_stride, aug_image=aug_image)
+                        preds = self.autoregressive_rollout(cur_obs_image, deltas, self.args.rollout_stride, aug_image=cur_aug_image, camera_mats=cur_cam)
                         preds = preds[:, -1] # take the last predicted image
                         loss = self.loss_fn(preds.to(self.device), cur_goal_image.to(self.device)).flatten(0)
                         cur_losses.append(loss)
@@ -305,8 +307,10 @@ class WM_Planning_Evaluator:
                     expanded_deltas = deltas.repeat(self.num_repeat_eval, 1, 1) 
                     expanded_obs_image = cur_obs_image.repeat(self.num_repeat_eval, 1, 1, 1, 1) 
                     expanded_goal_image = cur_goal_image.repeat(self.num_repeat_eval, 1, 1, 1) 
+                    expanded_aug = cur_aug_image.repeat(self.num_repeat_eval, 1, 1, 1, 1)
+                    expanded_cams = cur_cam.repeat(self.num_repeat_eval, 1, 1, 1)  
 
-                    preds = self.autoregressive_rollout(expanded_obs_image, expanded_deltas, self.args.rollout_stride, aug_image=aug_image)
+                    preds = self.autoregressive_rollout(expanded_obs_image, expanded_deltas, self.args.rollout_stride, aug_image=expanded_aug, camera_mats=expanded_cams)
                     preds = preds[:, -1]
 
                     loss = self.loss_fn(preds.to(self.device), expanded_goal_image.to(self.device)).flatten(0)
@@ -335,7 +339,7 @@ class WM_Planning_Evaluator:
         deltas = torch.cat((deltas, delta_yaw.to(deltas.device)), dim=-1)
         deltas[:, -1, -1] += mu[:, -1] * np.pi
 
-        preds = self.autoregressive_rollout(obs_image, deltas, self.args.rollout_stride, aug_image=aug_image)
+        preds = self.autoregressive_rollout(obs_image, deltas, self.args.rollout_stride, aug_image=aug_image, camera_mats=camera_mats)
         preds_completed = preds
         preds = preds[:, -1] # take the last predicted image
 
@@ -375,7 +379,7 @@ class WM_Planning_Evaluator:
                         output_dir=plot_name
                     )
     
-    def autoregressive_rollout(self, obs_image, deltas, rollout_stride, aug_image):
+    def autoregressive_rollout(self, obs_image, deltas, rollout_stride, aug_image, camera_mats):
         deltas = deltas.unflatten(1, (-1, rollout_stride)).sum(2)
         preds = []
         curr_obs = obs_image.clone().to(self.device)
@@ -383,7 +387,7 @@ class WM_Planning_Evaluator:
         for i in range(deltas.shape[1]):
             curr_delta = deltas[:, i:i+1]
             all_models = self.model, self.diffusion, self.vae
-            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, self.args.rollout_stride, self.latent_size, num_cond=self.num_cond, device=self.device, x_supervised=aug_image)
+            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, self.args.rollout_stride, self.latent_size, num_cond=self.num_cond, device=self.device, x_supervised=aug_image, camera_mats=camera_mats)
             x_pred_pixels = x_pred_pixels.unsqueeze(1)
             
             curr_obs = torch.cat((curr_obs, x_pred_pixels), dim=1) # append current prediction
@@ -421,10 +425,12 @@ class WM_Planning_Evaluator:
                 os.makedirs(eval_save_output_dir, exist_ok=True)
             
             curr_data_loader = self.datasets[dataset_name]
-            for (idxs, obs_image, goal_image, gt_actions, goal_pos, aug_image) in metric_logger.log_every(curr_data_loader, 1, header):
+            for (idxs, obs_image, goal_image, gt_actions, goal_pos, aug_image, camera_ctx, camera_goal) in metric_logger.log_every(curr_data_loader, 1, header):
                 obs_image = obs_image[:, -self.num_cond:]
+                camera_ctx  = camera_ctx[:, -self.num_cond:]
+                camera_mats = torch.cat([camera_ctx, camera_goal], dim=1)  # (B, num_cond+1, 4, 4)
                 with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
-                    pred_actions, pred_yaw = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image)
+                    pred_actions, pred_yaw = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image, camera_mats=camera_mats)
                 for i in range(len(obs_image)):
                     pred_traj_i = self.actions_to_traj(pred_actions[i, :, :3])
                     gt_traj_i = self.actions_to_traj(gt_actions[i, :, :3])

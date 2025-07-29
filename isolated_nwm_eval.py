@@ -87,7 +87,22 @@ def evaluate(args, dataset_name, eval_type, metric_logger, loss_fns, gt_dir, exp
     # eps = os.listdir(gt_dir)
     # Make an intersection between GT and EXP episodes:
     # Only keep episodes that exist in both gt_dir and exp_dir
-    eps = list(set(os.listdir(gt_dir)).intersection(set(os.listdir(exp_dir))))
+    all_eps = list(set(os.listdir(gt_dir)).intersection(set(os.listdir(exp_dir))))
+    eps = []
+    for ep in all_eps:
+        missing = False
+        for idx in image_idxs:
+            frame_idx = int(idx)
+            exp_img_path = os.path.join(exp_dir, ep, f"{frame_idx}.png")
+            if not os.path.exists(exp_img_path):
+                print(f"[Missing] {exp_img_path}")
+                missing = True
+                break
+        if not missing:
+            eps.append(ep)
+        else:
+            print(f"[Skip] {ep} missing frames for {eval_name}")
+
     
     for batch_start in tqdm(range(0, len(eps), args.batch_size), total=(len(eps) + args.batch_size - 1) // args.batch_size):
         batch_eps = eps[batch_start:batch_start + args.batch_size]

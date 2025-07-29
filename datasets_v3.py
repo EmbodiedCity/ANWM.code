@@ -415,6 +415,11 @@ class TrajectoryEvalDataset(BaseDataset):
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
+            T_wc_ctx = curr_traj_data['pose'][context_times]
+            T_cw_ctx = torch.linalg.inv(torch.as_tensor(T_wc_ctx, dtype=torch.float32))
+            T_wc_goal = curr_traj_data['pose'][[goal_time]]
+            T_cw_goal = torch.linalg.inv(torch.as_tensor(T_wc_goal, dtype=torch.float32))
+
             return (
                 torch.tensor([i], dtype=torch.float32), # for logging purposes
                 torch.as_tensor(obs_image, dtype=torch.float32),
@@ -422,6 +427,8 @@ class TrajectoryEvalDataset(BaseDataset):
                 torch.as_tensor(actions, dtype=torch.float32),
                 torch.as_tensor(goal_pos, dtype=torch.float32),
                 torch.as_tensor(projected_tensor, dtype=torch.float32),
+                torch.as_tensor(T_cw_ctx, dtype=torch.float32),
+                torch.as_tensor(T_cw_goal, dtype=torch.float32),
             )
         except Exception as e:
             print(f"Exception in {self.dataset_name}", e)
