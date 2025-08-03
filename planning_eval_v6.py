@@ -307,7 +307,6 @@ class WM_Planning_Evaluator:
                     expanded_obs_image = cur_obs_image.repeat(self.num_repeat_eval, 1, 1, 1, 1) 
                     expanded_goal_image = cur_goal_image.repeat(self.num_repeat_eval, 1, 1, 1) 
                     expanded_aug = cur_aug_image.repeat(self.num_repeat_eval, 1, 1, 1, 1)
-                    expanded_cams = cur_cam.repeat(self.num_repeat_eval, 1, 1, 1)  
 
                     preds = self.autoregressive_rollout(expanded_obs_image, expanded_deltas, self.args.rollout_stride, aug_image=expanded_aug)
                     preds = preds[:, -1]
