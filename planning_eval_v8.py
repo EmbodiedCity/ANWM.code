@@ -214,7 +214,7 @@ class WM_Planning_Evaluator:
         self.dataset_names = self.args.datasets.split(',')
         self.datasets = {}
         for dataset_name in self.dataset_names:
-            dataset_val = get_dataset_eval(self.config, dataset_name, predefined_index=False)
+            dataset_val = get_dataset_eval(self.config, dataset_name, predefined_index=True)
             
             if len(dataset_val) % num_tasks != 0:
                 print('Warning: Enabling distributed evaluation with an eval dataset not divisible by process number. '
