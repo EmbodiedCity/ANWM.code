@@ -17,7 +17,7 @@ import torchvision.utils as vutils
 import matplotlib.pyplot as plt
 
 from diffusers.models import AutoencoderKL
-from trajectory_generation import trajectory_generation
+from noise_trajectory_generation import trajectory_generation_random as trajectory_generation
 
 ### evo evaluation library ###
 from evo.core.trajectory import PoseTrajectory3D
