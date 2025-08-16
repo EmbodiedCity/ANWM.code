@@ -8,7 +8,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from sdtw import SoftDTW
+from soft_dtw import SoftDTW
 from scipy.spatial.distance import euclidean
 
 action_space = {

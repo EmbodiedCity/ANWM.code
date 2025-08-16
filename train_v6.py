@@ -33,7 +33,7 @@ from torch.utils.data.distributed import DistributedSampler
 from diffusers.models import AutoencoderKL
 
 from distributed import init_distributed
-from models_zwc_v6_1 import CDiT_models
+from models_tpz_v6_2 import CDiT_models
 from diffusion import create_diffusion
 from datasets_v3 import TrainingDataset
 from misc import transform

@@ -9,11 +9,12 @@
 # MAE: https://github.com/facebookresearch/mae/blob/main/models_mae.py
 # --------------------------------------------------------
 
-# 继承自v6，卸载final layer增强输入
+# 继承自v6，加mask屏蔽黑色
+import math
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
-import math
+import torch.nn.functional as F
 from timm.models.vision_transformer import PatchEmbed, Attention, Mlp
 
 
@@ -48,11 +49,10 @@ class TimestepEmbedder(nn.Module):
         :param max_period: controls the minimum frequency of the embeddings.
         :return: an (N, D) Tensor of positional embeddings.
         """
-        # https://github.com/openai/glide-text2im/blob/main/glide_text2im/nn.py
         half = dim // 2
         freqs = torch.exp(
-            -math.log(max_period) * torch.arange(start=0, end=half, dtype=torch.float32) / half
-        ).to(device=t.device)
+            -math.log(max_period) * torch.arange(start=0, end=half, dtype=torch.float32, device=t.device) / half
+        )
         args = t.float() * freqs[None]
         embedding = torch.cat([torch.cos(args), torch.sin(args)], dim=-1)
         if dim % 2:
@@ -64,23 +64,30 @@ class TimestepEmbedder(nn.Module):
         t_emb = self.mlp(t_freq)
         return t_emb
 
+
 class ActionEmbedder(nn.Module):
     """
     Embeds action xy into vector representations.
     """
     def __init__(self, hidden_size, frequency_embedding_size=256):
         super().__init__()
-        hsize = hidden_size//4
+        hsize = hidden_size // 4
         self.x_emb = TimestepEmbedder(hsize, frequency_embedding_size)
         self.y_emb = TimestepEmbedder(hsize, frequency_embedding_size)
         self.z_emb = TimestepEmbedder(hsize, frequency_embedding_size)
-        self.angle_emb = TimestepEmbedder(hidden_size -3*hsize, frequency_embedding_size)
+        self.angle_emb = TimestepEmbedder(hidden_size - 3 * hsize, frequency_embedding_size)
 
     def forward(self, xyza):
-        return torch.cat([self.x_emb(xyza[...,0:1]), self.y_emb(xyza[...,1:2]), self.z_emb(xyza[...,2:3]), self.angle_emb(xyza[...,3:4])], dim=-1)
+        return torch.cat([
+            self.x_emb(xyza[..., 0:1]),
+            self.y_emb(xyza[..., 1:2]),
+            self.z_emb(xyza[..., 2:3]),
+            self.angle_emb(xyza[..., 3:4])
+        ], dim=-1)
+
 
 #################################################################################
-#                                 Core CDiT Model                                #
+#                                 Core CDiT Model                               #
 #################################################################################
 
 class CDiTBlock(nn.Module):
@@ -93,26 +100,41 @@ class CDiTBlock(nn.Module):
         self.attn = Attention(hidden_size, num_heads=num_heads, qkv_bias=True, **block_kwargs)
         self.norm2 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
         self.norm_cond = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
-        self.cttn = nn.MultiheadAttention(hidden_size, num_heads=num_heads, add_bias_kv=False, bias=True, batch_first=True, **block_kwargs)
+        self.cttn = nn.MultiheadAttention(
+            hidden_size, num_heads=num_heads, add_bias_kv=False, bias=True, batch_first=True, **block_kwargs
+        )
         self.adaLN_modulation = nn.Sequential(
             nn.SiLU(),
             nn.Linear(hidden_size, 11 * hidden_size, bias=True)
         )
-
         self.norm3 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
         mlp_hidden_dim = int(hidden_size * mlp_ratio)
         approx_gelu = lambda: nn.GELU(approximate="tanh")
         self.mlp = Mlp(in_features=hidden_size, hidden_features=mlp_hidden_dim, act_layer=approx_gelu, drop=0)
 
-    def forward(self, x, c, x_cond):
-        shift_msa, scale_msa, gate_msa, shift_ca_xcond, scale_ca_xcond, shift_ca_x, scale_ca_x, gate_ca_x, shift_mlp, scale_mlp, gate_mlp = self.adaLN_modulation(c).chunk(11, dim=1)
+    def forward(self, x, c, x_cond, xcond_key_padding_mask: torch.Tensor = None):
+        (
+            shift_msa, scale_msa, gate_msa,
+            shift_ca_xcond, scale_ca_xcond,
+            shift_ca_x,    scale_ca_x,    gate_ca_x,
+            shift_mlp,     scale_mlp,     gate_mlp
+        ) = self.adaLN_modulation(c).chunk(11, dim=1)
+
+        # 自注意力
         x = x + gate_msa.unsqueeze(1) * self.attn(modulate(self.norm1(x), shift_msa, scale_msa))
+
+        # 交叉注意力（带 mask）
         x_cond_norm = modulate(self.norm_cond(x_cond), shift_ca_xcond, scale_ca_xcond)
-        # (f"x_cond_norm shape: {x_cond_norm.size()}")
-        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=modulate(self.norm2(x), shift_ca_x, scale_ca_x), key=x_cond_norm, value=x_cond_norm, need_weights=False)[0]
+        q = modulate(self.norm2(x), shift_ca_x, scale_ca_x)
+        x = x + gate_ca_x.unsqueeze(1) * self.cttn(
+            query=q, key=x_cond_norm, value=x_cond_norm,
+            need_weights=False, key_padding_mask=xcond_key_padding_mask
+        )[0]
+
+        # MLP
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
         return x
-    
+
 
 class FinalLayer(nn.Module):
     """
@@ -157,14 +179,19 @@ class CDiT(nn.Module):
         self.out_channels = in_channels * 2 if learn_sigma else in_channels
         self.patch_size = patch_size
         self.num_heads = num_heads
+
         self.x_embedder = PatchEmbed(input_size, patch_size, in_channels, hidden_size, bias=True)
         self.t_embedder = TimestepEmbedder(hidden_size)
         self.y_embedder = ActionEmbedder(hidden_size)
-        num_patches = self.x_embedder.num_patches
-        self.pos_embed = nn.Parameter(torch.zeros(self.context_size + 1, num_patches, hidden_size), requires_grad=True) # for context and for predicted frame
+
+        num_patches = self.x_embedder.num_patches  # 单帧 token 数 P
+        # pos_embed: [context_size + 1 (T 条件帧 + 1 目标帧), P, D]
+        self.pos_embed = nn.Parameter(torch.zeros(self.context_size + 1, num_patches, hidden_size), requires_grad=True)
+
         self.blocks = nn.ModuleList([CDiTBlock(hidden_size, num_heads, mlp_ratio=mlp_ratio) for _ in range(depth)])
         self.final_layer = FinalLayer(hidden_size, patch_size, self.out_channels)
         self.time_embedder = TimestepEmbedder(hidden_size)
+
         self.initialize_weights()
 
     def initialize_weights(self):
@@ -176,7 +203,7 @@ class CDiT(nn.Module):
                     nn.init.constant_(module.bias, 0)
         self.apply(_basic_init)
 
-        # Initialize (and freeze) pos_embed by sin-cos embedding:
+        # Initialize (and freeze) pos_embed by normal:
         nn.init.normal_(self.pos_embed, std=0.02)
 
         # Initialize patch_embed like nn.Linear (instead of nn.Conv2d):
@@ -184,24 +211,20 @@ class CDiT(nn.Module):
         nn.init.xavier_uniform_(w.view([w.shape[0], -1]))
         nn.init.constant_(self.x_embedder.proj.bias, 0)
 
-
         # Initialize action embedding:
         nn.init.normal_(self.y_embedder.x_emb.mlp[0].weight, std=0.02)
         nn.init.normal_(self.y_embedder.x_emb.mlp[2].weight, std=0.02)
-
         nn.init.normal_(self.y_embedder.y_emb.mlp[0].weight, std=0.02)
         nn.init.normal_(self.y_embedder.y_emb.mlp[2].weight, std=0.02)
-
         nn.init.normal_(self.y_embedder.angle_emb.mlp[0].weight, std=0.02)
         nn.init.normal_(self.y_embedder.angle_emb.mlp[2].weight, std=0.02)
 
         # Initialize timestep embedding MLP:
         nn.init.normal_(self.t_embedder.mlp[0].weight, std=0.02)
         nn.init.normal_(self.t_embedder.mlp[2].weight, std=0.02)
-        
         nn.init.normal_(self.time_embedder.mlp[0].weight, std=0.02)
         nn.init.normal_(self.time_embedder.mlp[2].weight, std=0.02)
-            
+
         # Zero-out adaLN modulation layers in DiT blocks:
         for block in self.blocks:
             nn.init.constant_(block.adaLN_modulation[-1].weight, 0)
@@ -222,34 +245,83 @@ class CDiT(nn.Module):
         p = self.x_embedder.patch_size[0]
         h = w = int(x.shape[1] ** 0.5)
         assert h * w == x.shape[1]
-
         x = x.reshape(shape=(x.shape[0], h, w, p, p, c))
         x = torch.einsum('nhwpqc->nchpwq', x)
         imgs = x.reshape(shape=(x.shape[0], c, h * p, h * p))
         return imgs
 
-    def forward(self, x, t, y, x_cond, rel_t, x_sup):
+    @torch.no_grad()
+    def _build_last_frame_patch_mask(self, x_cond_img, eps: float = 1e-6):
+        """
+        生成对齐 PatchEmbed 的逐 patch 屏蔽：
+        - 仅针对 x_cond 的最后一帧
+        - 逐 patch 判黑（True=屏蔽）
+        x_cond_img: [B, T, C, H, W]
+        返回: [B, T*P] 的 key_padding_mask
+        """
+        B, T, C, H, W = x_cond_img.shape
+
+        # 从 PatchEmbed 提取 kernel/stride（要求 kernel==stride, padding=0）
+        kh, kw = self.x_embedder.proj.kernel_size
+        sh, sw = self.x_embedder.proj.stride
+        ph, pw = kh, kw
+        assert (kh, kw) == (sh, sw), "要求 PatchEmbed 的 kernel_size == stride"
+        if isinstance(self.x_embedder.proj.padding, tuple):
+            assert self.x_embedder.proj.padding == (0, 0), "建议 padding=0，以保持 token 顺序一致"
+        else:
+            assert self.x_embedder.proj.padding == 0, "建议 padding=0，以保持 token 顺序一致"
+
+        assert H % ph == 0 and W % pw == 0, f"H,W 必须整除 patch 大小；H={H},W={W}, patch=({ph},{pw})"
+        P = self.x_embedder.num_patches  # 每帧 token 数
+        assert P == (H // ph) * (W // pw), "num_patches 与 H,W,patch_size 不匹配"
+
+        last = x_cond_img[:, -1]  # [B, C, H, W]
+        # 与 PatchEmbed 完全一致的切法：kernel=stride=(ph,pw), padding=0
+        patches = F.unfold(last, kernel_size=(ph, pw), stride=(ph, pw), padding=0)  # [B, C*ph*pw, P]
+
+        # 判黑：每个 patch 像素绝对值和 < eps
+        # 如需更严格，可改为 patches.abs().amax(dim=1) < eps
+        patch_is_black = (patches.abs().sum(dim=1) < eps)  # [B, P] bool
+
+        key_padding_mask = torch.zeros(B, T * P, dtype=torch.bool, device=x_cond_img.device)
+        key_padding_mask[:, -P:] = patch_is_black
+        return key_padding_mask
+
+    def forward(self, x, t, y, x_cond, rel_t, x_sup, black_eps: float = 1e-6):
         """
         Forward pass of DiT.
-        x: (N, C, H, W) tensor of spatial inputs (images or latent representations of images)
-        t: (N,) tensor of diffusion timesteps
-        y: (N,) tensor of class labels
+        x:      (B, C, H, W)  预测目标帧（当前 step 的输入/latent）
+        x_cond: (B, T, C, H, W) 条件帧序列（含最后一帧；仅屏蔽最后一帧中黑 patch）
+        t:      (B,) diffusion timesteps
+        y:      (B, 4) 行为/动作向量（示例）
         """
-        x = self.x_embedder(x) + self.pos_embed[self.context_size:]             # [B*num_goals, 196, 1152] + [1, 196, 1152]
-        x_sup = self.x_embedder(x_sup) + self.pos_embed[self.context_size:]     
+        # 1) 在 embedder 前生成逐 patch 的 key_padding_mask（只作用于 x_cond 的最后一帧里“黑”的 patch）
+        key_padding_mask = self._build_last_frame_patch_mask(x_cond, eps=black_eps)  # [B, T*P]
 
-        x_cond = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1])) + self.pos_embed[:self.context_size]  # (N, T, D), where T = H * W / patch_size ** 2.flatten(1, 2)      [B*num_goals, num_cond+1, 196, 1152]
-        x_cond = x_cond.flatten(1, 2)                           # [B*num_goals, (num_cond+1)*196, 1152]
+        # 2) PatchEmbed + 位置编码
+        x     = self.x_embedder(x)     + self.pos_embed[self.context_size:]   # [B, P, D]
+        x_sup = self.x_embedder(x_sup) + self.pos_embed[self.context_size:]
+
+        # x_cond: [B, T, C, H, W] -> [B, T, P, D] -> 加每帧 pos -> [B, T*P, D]
+        x_cond_emb = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1]))
+        x_cond_emb = x_cond_emb + self.pos_embed[:self.context_size]          # [B, T, P, D]
+        x_cond_seq = x_cond_emb.flatten(1, 2)                                 # [B, T*P, D]
+
+        # 3) 条件向量
         t = self.t_embedder(t[..., None])
-        y = self.y_embedder(y) 
+        y = self.y_embedder(y)
         time_emb = self.time_embedder(rel_t[..., None])
-        c = t + time_emb + y # if training on unlabeled data, dont add y.
+        c = t + time_emb + y  # 若无标签训练可不加 y
 
+        # 4) Transformer blocks（传入 key_padding_mask）
         for block in self.blocks:
-            x = block(x, c, x_cond)
+            x = block(x, c, x_cond_seq, xcond_key_padding_mask=key_padding_mask)
+
+        # 5) 输出
         x = self.final_layer(x, c)
         x = self.unpatchify(x)
         return x
+
 
 #################################################################################
 #                   Sine/Cosine Positional Embedding Functions                  #
@@ -276,11 +348,8 @@ def get_2d_sincos_pos_embed(embed_dim, grid_size, cls_token=False, extra_tokens=
 
 def get_2d_sincos_pos_embed_from_grid(embed_dim, grid):
     assert embed_dim % 2 == 0
-
-    # use half of dimensions to encode grid_h
     emb_h = get_1d_sincos_pos_embed_from_grid(embed_dim // 2, grid[0])  # (H*W, D/2)
     emb_w = get_1d_sincos_pos_embed_from_grid(embed_dim // 2, grid[1])  # (H*W, D/2)
-
     emb = np.concatenate([emb_h, emb_w], axis=1) # (H*W, D)
     return emb
 
@@ -307,7 +376,7 @@ def get_1d_sincos_pos_embed_from_grid(embed_dim, pos):
 
 
 #################################################################################
-#                                   CDiT Configs                                  #
+#                                   CDiT Configs                                #
 #################################################################################
 
 def CDiT_XL_2(**kwargs):
@@ -324,8 +393,8 @@ def CDiT_S_2(**kwargs):
 
 
 CDiT_models = {
-    'CDiT-XL/2': CDiT_XL_2, 
-    'CDiT-L/2':  CDiT_L_2, 
-    'CDiT-B/2':  CDiT_B_2, 
+    'CDiT-XL/2': CDiT_XL_2,
+    'CDiT-L/2':  CDiT_L_2,
+    'CDiT-B/2':  CDiT_B_2,
     'CDiT-S/2':  CDiT_S_2
 }
