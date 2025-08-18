@@ -247,7 +247,8 @@ class WM_Planning_Evaluator:
         self.model = torch.compile(model)
         self.diffusion = create_diffusion(str(250))
         self.vae = AutoencoderKL.from_pretrained(f"stabilityai/sd-vae-ft-ema").to(device)
-        self.model = torch.nn.parallel.DistributedDataParallel(self.model, device_ids=[self.device], find_unused_parameters=False)
+        # IMPORTANT: device_ids expects int GPU id(s), not torch.device
+        self.model = torch.nn.parallel.DistributedDataParallel(self.model, device_ids=[torch.cuda.current_device()], find_unused_parameters=False)
         self.model_without_ddp = self.model.module
          
         self.loss_fn = lpips.LPIPS(net='alex').to(self.device)
@@ -273,18 +274,26 @@ class WM_Planning_Evaluator:
 
         for traj in range(n_evals):
             traj_id = int(idxs.flatten()[traj].item())
-            start_pose = (0, 0, 0, 0)  # 起始 pose（参考坐标系）
 
-            # 生成 trajectory poses
-            candidate_trajectories = trajectory_generation(start_pose, steps=len_traj_pred, candidate_number=candidate_number)
-            candidate_trajectories = np.array(candidate_trajectories)  # [N, steps+1, 4]
+            # === 构造 GT 轨迹（含起点），用于你的随机轨迹生成器 ===
+            # gt_actions[traj]: [T, 4? or 3?] 这里只取 xyz 增量
+            gt_deltas_xyz = gt_actions[traj, :, :3].to('cpu').numpy()  # [T, 3]
+            gt_xyz = np.concatenate([np.zeros((1, 3), dtype=np.float32),
+                                     np.cumsum(gt_deltas_xyz, axis=0).astype(np.float32)], axis=0)  # [T+1, 3]
+            T = gt_xyz.shape[0]
+            gt_yaw = np.zeros((T,), dtype=np.float32)  # 相似度只用 xyz，yaw 给 0 即可
+            GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz, gt_yaw)]
+
+            # 生成候选 trajectory poses（按模块签名：只传 GT_trajectory 和 candidate_number）
+            candidate_trajectories = trajectory_generation(GT_traj, candidate_number=candidate_number)
+            candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4] 其中 T = len_traj_pred + 1
 
             # 转换为 delta（轨迹点之间的变化）
             candidate_deltas = candidate_trajectories[:, 1:, :] - candidate_trajectories[:, :-1, :]  # [N, steps, 4]
-            deltas = torch.tensor(candidate_deltas, dtype=torch.float32).to(self.device)
+            deltas = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)
 
             cur_obs_image = obs_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1) 
-            cur_goal_image = goal_image[traj].unsqueeze(0).repeat(self.args.num_samples, 1, 1, 1, 1).squeeze(1)
+            cur_goal_image = goal_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1).squeeze(1)
             
             # WM is stochastic, so we can repeat the evaluation of each trajectory and average to reduce variance
             if self.num_repeat_eval * self.num_samples > 12:
@@ -308,7 +317,7 @@ class WM_Planning_Evaluator:
                 loss = loss.view(self.num_repeat_eval, -1)
                 loss = loss.mean(dim=0)
 
-                preds = preds[:self.args.num_samples]
+                preds = preds[:self.num_samples]
 
             sorted_idx = torch.argsort(loss)
             topk_idx = sorted_idx[:self.topk]
@@ -331,7 +340,8 @@ class WM_Planning_Evaluator:
         loss = self.loss_fn(preds.to(self.device), goal_image.squeeze(1).to(self.device)).flatten(0)
 
         if self.args.save_preds:
-            save_planning_pred(dataset_save_output_dir, n_evals, idxs, obs_image, goal_image, preds, deltas, loss, gt_actions, preds_completed)
+            # 注意：此处应保存 final_deltas（不是局部循环里的 deltas）
+            save_planning_pred(dataset_save_output_dir, n_evals, idxs, obs_image, goal_image, preds, final_deltas, loss, gt_actions, preds_completed)
         
         if self.args.plot:
             img_name = os.path.join(image_plot_dir, f'FINAL_{idx_string}.png')
@@ -339,8 +349,8 @@ class WM_Planning_Evaluator:
             plot_batch_final(obs_image[:, -1].to(self.device), preds, goal_image.squeeze(1).to(self.device), idxs, all_losses, save_path=img_name)
             plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_image.squeeze(1).to(self.device), idxs, save_path=traj_name)
 
-        pred_actions = get_action_torch(deltas[:, :, :3], ACTION_STATS_TORCH)
-        pred_yaw = deltas[:, :, -1].sum(1)
+        pred_actions = get_action_torch(final_deltas[:, :, :3], ACTION_STATS_TORCH)
+        pred_yaw = final_deltas[:, :, -1].sum(1)
         return pred_actions, pred_yaw
 
     def visualize_trajectories(self, dataset_name, gt_actions, image_plot_dir, i, traj, traj_id, deltas, cur_obs_image, cur_goal_image, preds, loss, topk_idx):
@@ -349,7 +359,7 @@ class WM_Planning_Evaluator:
         img_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}.png')
         plot_images_with_losses(img_for_plotting, loss_for_plotting, save_path=img_name)
         plot_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}_trajs.png')
-        num_plot = self.args.num_samples
+        num_plot = self.num_samples
         log_viz_single(
                         dataset_name, 
                         cur_obs_image[0], 
@@ -395,9 +405,8 @@ class WM_Planning_Evaluator:
         traj = PoseTrajectory3D(positions_xyz=positions_xyz, orientations_quat_wxyz=orientations_quat_wxyz, timestamps=timestamps)
         return traj
     
-    @torch.no_grad
+    @torch.no_grad()
     def evaluate(self):
-        
         for dataset_name in self.dataset_names:
             metric_logger = dist.MetricLogger(delimiter="  ")
             header = 'Test:'

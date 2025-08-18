@@ -124,22 +124,22 @@ class BaseDataset(Dataset):
             traj_data = pickle.load(f)
         for k,v in traj_data.items():
             traj_data[k] = v.astype('float')
-        off = 88
-        TIME_KEYS = ("point", "position", "pose", "depth", "yaw")  # 这些第一维是时间
-        # 先确定“时间长度”
-        time_lens = []
-        for k in TIME_KEYS:
-            if k in traj_data and isinstance(traj_data[k], np.ndarray) and traj_data[k].ndim >= 1:
-                time_lens.append(traj_data[k].shape[0])
-        time_len = min(time_lens) if len(time_lens) > 0 else 0
+        # off = 88
+        # TIME_KEYS = ("point", "position", "pose", "depth", "yaw")  # 这些第一维是时间
+        # # 先确定“时间长度”
+        # time_lens = []
+        # for k in TIME_KEYS:
+        #     if k in traj_data and isinstance(traj_data[k], np.ndarray) and traj_data[k].ndim >= 1:
+        #         time_lens.append(traj_data[k].shape[0])
+        # time_len = min(time_lens) if len(time_lens) > 0 else 0
 
-        if time_len > 0 and off > 0:
-            for k in TIME_KEYS:
-                if k in traj_data and isinstance(traj_data[k], np.ndarray):
-                    arr = traj_data[k]
-                    # 只切第一维等于 time_len 的数组（按时间展开的）
-                    if arr.ndim >= 1 and arr.shape[0] == time_len:
-                        traj_data[k] = arr[off:]
+        # if time_len > 0 and off > 0:
+        #     for k in TIME_KEYS:
+        #         if k in traj_data and isinstance(traj_data[k], np.ndarray):
+        #             arr = traj_data[k]
+        #             # 只切第一维等于 time_len 的数组（按时间展开的）
+        #             if arr.ndim >= 1 and arr.shape[0] == time_len:
+        #                 traj_data[k] = arr[off:]
 
         return traj_data
 

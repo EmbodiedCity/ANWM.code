@@ -1,8 +1,8 @@
-W0818 23:09:30.030000 2568754 site-packages/torch/distributed/run.py:793] 
-W0818 23:09:30.030000 2568754 site-packages/torch/distributed/run.py:793] *****************************************
-W0818 23:09:30.030000 2568754 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0818 23:09:30.030000 2568754 site-packages/torch/distributed/run.py:793] *****************************************
-[[34m2025-08-18 23:09:34[0m] Experiment directory created at logs/nwm_cdit_airvln_v7_0
+W0819 01:39:37.960000 2651437 site-packages/torch/distributed/run.py:793] 
+W0819 01:39:37.960000 2651437 site-packages/torch/distributed/run.py:793] *****************************************
+W0819 01:39:37.960000 2651437 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0819 01:39:37.960000 2651437 site-packages/torch/distributed/run.py:793] *****************************************
+[[34m2025-08-19 01:39:42[0m] Experiment directory created at logs/nwm_cdit_airvln_v7_0
 /data1/tpz/nwm-main/train_v7.py:147: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
   scaler = torch.cuda.amp.GradScaler()
 /data1/tpz/nwm-main/train_v7.py:147: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
@@ -15,4 +15,4 @@ W0818 23:09:30.030000 2568754 site-packages/torch/distributed/run.py:793] ******
   scaler = torch.cuda.amp.GradScaler()
 /data1/tpz/nwm-main/train_v7.py:147: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
   scaler = torch.cuda.amp.GradScaler()
-[[34m2025-08-18 23:10:04[0m] CDiT Parameters: 1,123,422,368
+[[34m2025-08-19 01:40:01[0m] CDiT Parameters: 1,123,422,368
