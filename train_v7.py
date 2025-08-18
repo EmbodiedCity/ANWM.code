@@ -38,7 +38,7 @@ from diffusers.models import AutoencoderKL
 from isolated_nwm_infer_v7 import model_forward_wrapper
 
 from distributed import init_distributed
-from models_zwc_v7 import CDiT_models
+from models_tpz_v7 import CDiT_models
 from diffusion import create_diffusion
 from datasets_v3 import TrainingDataset
 from misc import transform
@@ -133,7 +133,7 @@ def main(args):
 
     assert config['image_size'] % 8 == 0, "Image size must be divisible by 8 (for the VAE encoder)."
     num_cond = config['context_size']
-    model = CDiT_models[config['model']](context_size=num_cond+1, input_size=latent_size, in_channels=4).to(device)
+    model = CDiT_models[config['model']](context_size=num_cond, input_size=latent_size, in_channels=4).to(device)
     # print(model)
     ema = deepcopy(model).to(device)  # Create an EMA of the model for use after training
     requires_grad(ema, False)
@@ -298,14 +298,14 @@ def main(args):
                 x_start = x[:, num_cond:].flatten(0, 1)             # [B*num_goals, 4, 28, 28]
                 x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)      # [B*num_goals, num_cond, 4, 28, 28]
                 y_cond = aug.unsqueeze(2).flatten(0, 1)             # [B*num_goals, 1, 4, 28, 28]
-                x_cond = torch.cat((x_cond, y_cond), dim=1)                    # [B*num_goals, num_cond+1, 4, 28, 28]                      
-               #  print(f"x_cond shape: {x_cond.size()}")
+                # x_cond = torch.cat((x_cond, y_cond), dim=1)                    # [B*num_goals, num_cond+1, 4, 28, 28]                      
+
                 y = y.flatten(0, 1)
                 rel_t = rel_t.flatten(0, 1)
                 
                 camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
                 camera_mats_x_cond = camera_mats[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, 4, 4).flatten(0, 1)    # [B*num_goals, num_cond, 4, 4]
-                camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)
+                # camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)
                 
                 t = torch.randint(0, diffusion.num_timesteps, (x_start.shape[0],), device=device)
                 model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1), viewmats=camera_mats_x_cond)
