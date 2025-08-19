@@ -94,7 +94,7 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
 
         camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
         camera_mats_x_cond = camera_mats[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, 4, 4).flatten(0, 1)    # [B*num_goals, num_cond, 4, 4]
-        # camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)        # [B*num_goals, 5, 4, 4]
+        camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)        # [B*num_goals, 5, 4, 4]
                 
         # print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}, y shape: {y.size()}, rel_t shape: {rel_t.size()}")
 

@@ -121,7 +121,7 @@ class CDiTBlock(nn.Module):
         # print(f"x.shape: {x.shape}")
         # print(f"x_cond.shape: {x_cond.shape}")
         x_all = torch.cat([x_cond, x], dim=1)
-        viewmats = torch.cat([viewmats, viewmats[:, -1:]], dim=1)
+        # viewmats = torch.cat([viewmats, viewmats[:, -1:]], dim=1)
         # print(f"x_all.shape: {x_all.shape}")
         # [B, T, D] → [B, num_heads, T, head_dim]
         B, T, D = x_all.shape
