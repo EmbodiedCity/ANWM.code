@@ -297,6 +297,10 @@ class WM_Planning_Evaluator:
         """
         将一条轨迹（init + T steps + goal）保存为逐帧 PNG + metadata.json。
         若 tag != 'final'，则落到 run_xxx/candidates/cand_yyy 目录，并保存 deltas.npy。
+
+        仅两点增强：
+        1) 若提供 deltas，自动聚合成与 step_seq 帧数 T 对齐（np.array_split 分组后求和）；
+        2) 用聚合后的 deltas 累计得到逐帧 pose（避免 metadata 中全 0）。
         """
         editor_dir = _ensure_dir(os.path.join(base_dir, "editor"))
         run_dir = _ensure_dir(os.path.join(editor_dir, f"run_{sid:03d}"))
@@ -320,17 +324,40 @@ class WM_Planning_Evaluator:
             step_losses.append(float(self.loss_fn(step_seq[t:t+1].to(self.device),
                                                   goal_img[None].to(self.device)).item()))
 
-        # 可选保存 deltas（仅 candidate 目录保存 deltas.npy）
-        deltas_np = None
+        # ====== 小幅增强：将 raw deltas 聚合到 T，并累计 pose ======
+        deltas_eff = None  # (T,4) or None
+        pose_xyz = None
+        pose_yaw = None
         if deltas is not None:
-            if deltas.ndim == 3 and deltas.shape[0] == 1:
-                deltas_np = deltas.squeeze(0).detach().cpu().numpy()
-            elif deltas.ndim == 2:
-                deltas_np = deltas.detach().cpu().numpy()
+            if isinstance(deltas, torch.Tensor):
+                d = deltas.detach().cpu().numpy()
             else:
-                deltas_np = deltas.detach().cpu().numpy()
+                d = np.asarray(deltas)
+            if d.ndim == 3 and d.shape[0] == 1:
+                d = d[0]  # -> (T_raw,4)
+            assert d.ndim == 2 and d.shape[1] == 4, f"Expected (T_raw,4), got {d.shape}"
+
+            T_raw = d.shape[0]
+            if T_raw == T:
+                deltas_eff = d.astype(np.float32, copy=False)
+            else:
+                idxs = np.arange(T_raw)
+                chunks = np.array_split(idxs, T)
+                summed = []
+                for ch in chunks:
+                    if len(ch) == 0:
+                        summed.append(np.zeros((4,), dtype=np.float32))
+                    else:
+                        summed.append(d[ch].sum(0).astype(np.float32))
+                deltas_eff = np.stack(summed, axis=0)  # (T,4)
+
+            # 累计 pose
+            pose_xyz = deltas_eff[:, :3].cumsum(axis=0)   # (T,3)
+            pose_yaw = deltas_eff[:, 3].cumsum(axis=0)    # (T,)
+
+            # 仅 candidate 目录落一个 deltas.npy（与你之前的约定一致）
             if tag != "final":
-                np.save(os.path.join(run_dir, "deltas.npy"), deltas_np)
+                np.save(os.path.join(run_dir, "deltas.npy"), deltas_eff)
 
         # metadata
         H, W = init_img.shape[-2:]
@@ -361,14 +388,19 @@ class WM_Planning_Evaluator:
         })
         # STEPS
         for t in range(T):
-            dx = dy = dz = dtheta = 0.0
-            if deltas_np is not None:
-                dx, dy, dz, dtheta = [float(v) for v in deltas_np[t]]
+            if deltas_eff is None:
+                dx = dy = dz = dtheta = 0.0
+                px = py = pz = pyaw = 0.0
+            else:
+                dx, dy, dz, dtheta = [float(v) for v in deltas_eff[t]]
+                px, py, pz = [float(v) for v in pose_xyz[t]]
+                pyaw = float(pose_yaw[t])
+
             meta["frames"].append({
                 "frame": t + 1,
                 "png": f"frames/step_{t:03d}.png",
                 "action": int(t),
-                "pose": {"x": 0.0, "y": 0.0, "z": 0.0, "theta_rad": 0.0},
+                "pose": {"x": px, "y": py, "z": pz, "theta_rad": pyaw},
                 "delta": {"dx": dx, "dy": dy, "dz": dz, "dtheta": dtheta},
                 "loss": step_losses[t]
             })
@@ -521,61 +553,22 @@ class WM_Planning_Evaluator:
         # 逐帧 loss：LPIPS(frame, goal)；对 init、每个 step 与 goal 都计算（goal 自己设 0.0）
         if self.args.save_preds:
             B = obs_image.shape[0]
-            T = preds_completed.shape[1]
-            init_imgs = obs_image[:, -1]               # (B,C,H,W)
-            goal_imgs = goal_image.squeeze(1)          # (B,C,H,W)
-
-            editor_dir = _ensure_dir(os.path.join(dataset_save_output_dir, "editor"))
+            init_imgs = obs_image[:, -1]          # (B,C,H,W)
+            goal_imgs = goal_image.squeeze(1)     # (B,C,H,W)
             for b in range(B):
                 sid = int(idxs[b].item())
-                run_dir = _ensure_dir(os.path.join(editor_dir, f"run_{sid:03d}"))
-                frames_dir = _ensure_dir(os.path.join(run_dir, "frames"))
-
-                # 1) 存图：init, step_*, goal
-                _save_png(init_imgs[b], os.path.join(frames_dir, "init.png"))
-                for t in range(T):
-                    _save_png(preds_completed[b, t], os.path.join(frames_dir, f"step_{t:03d}.png"))
-                _save_png(goal_imgs[b], os.path.join(frames_dir, "goal.png"))
-
-                # 2) 逐帧 LPIPS loss
-                init_loss = float(self.loss_fn(init_imgs[b:b+1].to(self.device),
-                                               goal_imgs[b:b+1].to(self.device)).item())
-                step_losses = []
-                for t in range(T):
-                    step_losses.append(float(self.loss_fn(preds_completed[b, t:t+1].to(self.device),
-                                                          goal_imgs[b:b+1].to(self.device)).item()))
-                # 3) 写 metadata.json
-                H, W = init_imgs.shape[-2:]
-                meta = {
-                    "run_index": sid,
-                    "video_mp4": "",
-                    "fps": int(self.args.rollout_stride) if self.args.rollout_stride > 0 else 1,
-                    "resolution": {"width": int(W), "height": int(H)},
-                    "num_frames": T + 1,            # INIT + T steps
-                    "sequence": list(range(T)),     # 0..T-1
-                    "commands": {},
-                    "frames": []
-                }
-                # INIT
-                meta["frames"].append({
-                    "frame": 0,
-                    "png": "frames/init.png",
-                    "action": "INIT",
-                    "pose": {"x": 0.0, "y": 0.0, "z": 0.0, "theta_rad": 0.0},
-                    "delta": {"dx": 0.0, "dy": 0.0, "dz": 0.0, "dtheta": 0.0},
-                    "loss": init_loss
-                })
-                # STEPS
-                for t in range(T):
-                    meta["frames"].append({
-                        "frame": t + 1,
-                        "png": f"frames/step_{t:03d}.png",
-                        "action": t,
-                        "pose": {"x": 0.0, "y": 0.0, "z": 0.0, "theta_rad": 0.0},
-                        "delta": {"dx": 0.0, "dy": 0.0, "dz": 0.0, "dtheta": 0.0},
-                        "loss": step_losses[t]
-                    })
-                _write_json(os.path.join(run_dir, "metadata.json"), meta)
+                self._save_editor_run(
+                    base_dir=dataset_save_output_dir,
+                    sid=sid,
+                    init_img=init_imgs[b],
+                    step_seq=preds_completed[b],   # (T,C,H,W)
+                    goal_img=goal_imgs[b],
+                    deltas=final_deltas[b:b+1],    # (1, steps, 4) 原始未聚合，函数内部会聚合并累计pose
+                    tag="final",
+                    cand_rank=None,
+                    cand_id=None,
+                    extra_meta={"final_lpips": float(loss[b].item())}
+                )
         # ==========================================================================
 
         if self.args.plot:
