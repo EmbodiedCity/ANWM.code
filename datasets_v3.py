@@ -96,6 +96,8 @@ class BaseDataset(Dataset):
             )
             
             self.index_to_data, self.goals_index = self._build_index()
+            print("here?")
+
             with open(index_to_data_path, "wb") as f:
                 pickle.dump((self.index_to_data, self.goals_index), f)
 

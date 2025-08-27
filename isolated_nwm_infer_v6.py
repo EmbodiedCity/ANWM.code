@@ -35,7 +35,7 @@ def save_image(output_file, img, unnormalize_img):
     image.save(output_file)
     
     
-def get_dataset_eval(config, dataset_name, eval_type, predefined_index=True):
+def get_dataset_eval(config, dataset_name, eval_type, predefined_index=False):
     data_config = config["eval_datasets"][dataset_name]    
     if predefined_index:
         predefined_index = f"data_splits/{dataset_name}/test/{eval_type}.pkl"
@@ -256,7 +256,7 @@ def main(args):
         os.makedirs(dataset_save_output_dir, exist_ok=True)
         curr_data_loader = datasets[dataset_name]
         
-        for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
+        for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image, *_) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
             with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
                 obs_image = obs_image[:, -num_cond:].to(device)
                 gt_image = gt_image.to(device)
