@@ -195,6 +195,7 @@ class CDiT(nn.Module):
         self.out_channels = in_channels * 2 if learn_sigma else in_channels
         self.patch_size = patch_size
         self.num_heads = num_heads
+
         self.x_embedder = PatchEmbed(input_size, patch_size, in_channels, hidden_size, bias=True)
         self.t_embedder = TimestepEmbedder(hidden_size)
         self.y_embedder = ActionEmbedder(hidden_size)
@@ -202,7 +203,8 @@ class CDiT(nn.Module):
         self.k_proj = nn.Linear(hidden_size, hidden_size)
         self.v_proj = nn.Linear(hidden_size, hidden_size)
         num_patches = self.x_embedder.num_patches
-        self.pos_embed = nn.Parameter(torch.zeros(self.context_size + 1, num_patches, hidden_size), requires_grad=True) # for context and for predicted frame
+        
+        # self.pos_embed = nn.Parameter(torch.zeros(self.context_size+1, num_patches, hidden_size), requires_grad=True) # for context and for predicted frame
         self.blocks = nn.ModuleList([CDiTBlock(hidden_size, num_heads, mlp_ratio=mlp_ratio) for _ in range(depth)])
         self.final_layer = FinalLayer(hidden_size, patch_size, self.out_channels)
         self.time_embedder = TimestepEmbedder(hidden_size)
@@ -218,7 +220,7 @@ class CDiT(nn.Module):
         self.apply(_basic_init)
 
         # Initialize (and freeze) pos_embed by sin-cos embedding:
-        nn.init.normal_(self.pos_embed, std=0.02)
+        # nn.init.normal_(self.pos_embed, std=0.02)
 
         # Initialize patch_embed like nn.Linear (instead of nn.Conv2d):
         w = self.x_embedder.proj.weight.data
@@ -269,22 +271,33 @@ class CDiT(nn.Module):
         imgs = x.reshape(shape=(x.shape[0], c, h * p, h * p))
         return imgs
 
-    def forward(self, x, t, y, x_cond, rel_t, x_sup, viewmats, Ks):
+    def forward(self, x, t, y, x_cond, rel_t, x_sup, viewmats, Ks=None):
         """
         Forward pass of DiT.
         x: (N, C, H, W) tensor of spatial inputs (images or latent representations of images)
         t: (N,) tensor of diffusion timesteps
         y: (N,) tensor of class labels
         """
-        x = self.x_embedder(x) + self.pos_embed[self.context_size:]             # [B*num_goals, 196, 1152] + [1, 196, 1152]
-        x_cond = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1])) + self.pos_embed[:self.context_size]  # (N, T, D), where T = H * W / patch_size ** 2.flatten(1, 2)      [B*num_goals, num_cond+1, 196, 1152]
-        x_cond = x_cond.flatten(1, 2)                           # [B*num_goals, (num_cond+1)*196, 1152]
+        # v7.2 with relative and absolute position encoding
+        # x = self.x_embedder(x) + self.pos_embed[self.context_size:]             # [B*num_goals, 196, 1152] + [1, 196, 1152]
+        # x_cond = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1])) + self.pos_embed[:self.context_size]  # (N, T, D), where T = H * W / patch_size ** 2.flatten(1, 2)      [B*num_goals, num_cond+1, 196, 1152]
+        
+        # v7.1 wo relative pose encoding only
+        x = self.x_embedder(x)         # [B*num_goals, 196, 1152] + [1, 196, 1152]
+        x_cond = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1]))  # (N, T, D), where T = H * W / patch_size ** 2.flatten(1, 2)      [B*num_goals, num_cond+1, 196, 1152]
+        
+        _, TT, _ = x.shape
+        x_cond = x_cond.flatten(1, 2)         # [B*num_goals, (num_cond+1)*196, 1152]
         t = self.t_embedder(t[..., None])
         y = self.y_embedder(y) 
         time_emb = self.time_embedder(rel_t[..., None])
         c = t + time_emb + y # if training on unlabeled data, dont add y.
 
-        x_all = torch.cat([x_cond, x], dim=1)
+        x_all = torch.cat([x_cond, x], dim=1)       
+        # print("x all shape:", x_all.shape)
+        # print("t shape: ", t.shape)
+        # print("y shape: ", y.shape)
+        
         # viewmats = torch.cat([viewmats, viewmats[:, -1:]], dim=1)
         # print(f"x_all.shape: {x_all.shape}")
         # [B, T, D] → [B, num_heads, T, head_dim]
@@ -304,10 +317,10 @@ class CDiT(nn.Module):
             q, k, v,
             viewmats=viewmats,
             Ks=Ks,
-            patches_x=self.patch_size,
-            patches_y=self.patch_size,
-            image_width=self.latent_size,
-            image_height=self.latent_size,
+            patches_x=14,
+            patches_y=14,
+            image_width=14,
+            image_height=14,
         )
         
         # [B, H, T, Hd] → [B, T, H, Hd] → [B, T, D]
@@ -315,9 +328,10 @@ class CDiT(nn.Module):
         # .flatten(2, 3) = .view(B, T, D)
         x_all_encoded = x_all_encoded.transpose(1, 2).flatten(2, 3)
         
-        x = x_all_encoded[:, -1, :]
-        x_cond = x_all_encoded[:, :-1, :]
+        x = x_all_encoded[:, -TT:, :]
+        x_cond = x_all_encoded[:, :-TT, :]
         
+        # print("x shape: ", x.shape, "x_cond shape: ", x_cond.shape)
         for block in self.blocks:
             x = block(x, c, x_cond)
         x = self.final_layer(x, c)

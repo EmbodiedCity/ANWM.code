@@ -82,14 +82,17 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         aug = x_supervised.flatten(0,1)                 
         aug = vae.encode(aug).latent_dist.sample().mul_(0.18215)
         aug = aug.unflatten(0, (B_aug, T_aug))      # [B, num_goals, 4, 28, 28]
-        print(f"aug ori shape: {x_supervised.size()}, aug shape: {aug.size()}, x shape: {x.size()}")
+        # print(f"aug ori shape: {x_supervised.size()}, aug shape: {aug.size()}, x shape: {x.size()}")
         x = x.flatten(0,1)                          
         x = vae.encode(x).latent_dist.sample().mul_(0.18215).unflatten(0, (B, T))   # [B, num_goals+num_cond, 4, 28, 28]
         
         x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)
         y_cond = aug.unsqueeze(2).flatten(0, 1)         # [B*num_goals, 1, 4, 28, 28]
-        print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}")
-        x_cond = torch.cat((x_cond, y_cond), dim=1)     # [B*num_goals, 5, 4, 28, 28]
+        # print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}")
+        
+        # for v7.1 comment the following code, for v8 uncomment the following code
+        # x_cond = torch.cat((x_cond, y_cond), dim=1)     # [B*num_goals, 5, 4, 28, 28]
+       
         z = torch.randn(B*num_goals, 4, latent_size, latent_size, device=device)
         y = y.flatten(0, 1)
 

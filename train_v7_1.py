@@ -133,7 +133,7 @@ def main(args):
 
     assert config['image_size'] % 8 == 0, "Image size must be divisible by 8 (for the VAE encoder)."
     num_cond = config['context_size']
-    model = CDiT_models[config['model']](context_size=num_cond+1, input_size=latent_size, in_channels=4).to(device)
+    model = CDiT_models[config['model']](context_size=num_cond, input_size=latent_size, in_channels=4).to(device)
     # print(model)
     ema = deepcopy(model).to(device)  # Create an EMA of the model for use after training
     requires_grad(ema, False)
@@ -288,8 +288,9 @@ def main(args):
                     B, T = x.shape[:2]
                     x = x.flatten(0,1)
                     x = tokenizer.encode(x).latent_dist.sample().mul_(0.18215)
-                    x = x.unflatten(0, (B, T))                          
-                    print("x shape, ", x.shape)
+                    x = x.unflatten(0, (B, T))                          # [B, num_goals+num_conds, 4, 28, 28]
+                    # print("x shape, ", x.shape)
+                    
                     # aug same as x
                     B_aug, T_aug = aug.shape[:2]
                     aug = aug.flatten(0,1)
@@ -297,16 +298,21 @@ def main(args):
                     aug = aug.unflatten(0, (B_aug, T_aug))              # [B, num_goals, 4, 28, 28]
                     # print(f'aug latent shape: {aug.size()}')
 
+                num_goals = T - num_cond
+                x_start = x[:, num_cond:].flatten(0, 1)             # [B*num_goals, 4, 28, 28]
+                x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)      # [B*num_goals, num_cond, 4, 28, 28]
+                y_cond = aug.unsqueeze(2).flatten(0, 1)             # [B*num_goals, 1, 4, 28, 28]
+
                 y = y.flatten(0, 1)
                 rel_t = rel_t.flatten(0, 1)
-                print(y.shape, rel_t.shape)
                 
                 camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
-                camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)
+                camera_mats_x_cond = camera_mats[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, 4, 4).flatten(0, 1)    # [B*num_goals, num_cond, 4, 4]
+                camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)          # [B*num_goals, num_conds+1, 4, 4]
                 
-                t = torch.randint(0, diffusion.num_timesteps, (x.shape[0],), device=device)
-                model_kwargs = dict(y=y, rel_t=rel_t, viewmats=camera_mats_x_cond)
-                loss_dict = diffusion.training_losses(model, x, t, model_kwargs)
+                t = torch.randint(0, diffusion.num_timesteps, (x_start.shape[0],), device=device)
+                model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1), viewmats=camera_mats_x_cond)
+                loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
                 loss = loss_dict["loss"].mean()
 
             opt.zero_grad(set_to_none=True)
@@ -329,23 +335,23 @@ def main(args):
                         max_norm=config['grad_clip_val']
                     )
 
-            # ------------------- 4) 梯度探针 ----------------------
-            keywords = [
-                # ".attn.qkv.weight", ".attn.proj.weight",
-                # ".mlp.fc1.weight", ".mlp.fc2.weight",
-                "adaLN_modulation", "gate", "blocks.0", "x_embedder.proj.weight"
-            ]
-            # 打印几层代表性的 grad_norm，看是否非零
-            with torch.no_grad():
-                for n, p in model.module.named_parameters():   # DDP → .module
-                    if p.grad is None:
-                        continue
-                    # 按需修改关键词；建议先看 gate / 第 0 个 block
-                    if any(k in n for k in
-                        keywords):
-                        print(f"{n:<60} grad_norm={p.grad.norm():.3e}")
-                # 只跑前 N 步就停止调试
-                # if train_steps >= 20:  break
+            # # ------------------- 4) 梯度探针 ----------------------
+            # keywords = [
+            #     # ".attn.qkv.weight", ".attn.proj.weight",
+            #     # ".mlp.fc1.weight", ".mlp.fc2.weight",
+            #     "adaLN_modulation", "gate", "blocks.0", "x_embedder.proj.weight"
+            # ]
+            # # 打印几层代表性的 grad_norm，看是否非零
+            # with torch.no_grad():
+            #     for n, p in model.module.named_parameters():   # DDP → .module
+            #         if p.grad is None:
+            #             continue
+            #         # 按需修改关键词；建议先看 gate / 第 0 个 block
+            #         if any(k in n for k in
+            #             keywords):
+            #             print(f"{n:<60} grad_norm={p.grad.norm():.3e}")
+            #     # 只跑前 N 步就停止调试
+            #     # if train_steps >= 20:  break
 
             # ------------------- 5) 参数更新 ----------------------
             if bfloat_enable:
