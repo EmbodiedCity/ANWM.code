@@ -202,8 +202,10 @@ class CDiT(nn.Module):
         self.q_proj = nn.Linear(hidden_size, hidden_size)
         self.k_proj = nn.Linear(hidden_size, hidden_size)
         self.v_proj = nn.Linear(hidden_size, hidden_size)
-        num_patches = self.x_embedder.num_patches
-        
+        self.num_patches = self.x_embedder.num_patches
+        # patch 网格大小（注意顺序是 (H_patches, W_patches)）
+        self.num_patches_y, self.num_patches_x = self.x_embedder.grid_size
+        self.input_size = input_size
         # self.pos_embed = nn.Parameter(torch.zeros(self.context_size+1, num_patches, hidden_size), requires_grad=True) # for context and for predicted frame
         self.blocks = nn.ModuleList([CDiTBlock(hidden_size, num_heads, mlp_ratio=mlp_ratio) for _ in range(depth)])
         self.final_layer = FinalLayer(hidden_size, patch_size, self.out_channels)
@@ -317,10 +319,10 @@ class CDiT(nn.Module):
             q, k, v,
             viewmats=viewmats,
             Ks=Ks,
-            patches_x=14,
-            patches_y=14,
-            image_width=14,
-            image_height=14,
+            patches_x=self.num_patches_x,
+            patches_y=self.num_patches_y,
+            image_width=self.input_size,
+            image_height=self.input_size,
         )
         
         # [B, H, T, Hd] → [B, T, H, Hd] → [B, T, D]

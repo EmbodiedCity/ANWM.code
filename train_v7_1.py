@@ -35,7 +35,7 @@ from torch.utils.data.distributed import DistributedSampler
 
 from diffusers.models import AutoencoderKL
 
-from isolated_nwm_infer_v9 import model_forward_wrapper
+from isolated_nwm_infer_v7_1 import model_forward_wrapper
 
 from distributed import init_distributed
 from models_tpz_v7_1 import CDiT_models

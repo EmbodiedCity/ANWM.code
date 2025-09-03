@@ -1,4 +1,4 @@
-run_name: nwm_cdit_airvln_v6
+run_name: nwm_cdit_airvln_v7_1
 
 # training setup
 results_dir: logs
@@ -6,7 +6,7 @@ train: True
 batch_size: 1
 num_workers: 12
 model: CDiT-XL/2
-lr: 8e-7
+lr: 8e-6
 
 # normalization for the action space
 normalize: True
