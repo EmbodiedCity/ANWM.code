@@ -106,11 +106,11 @@ class CDiTBlock(nn.Module):
         approx_gelu = lambda: nn.GELU(approximate="tanh")
         self.mlp = Mlp(in_features=hidden_size, hidden_features=mlp_hidden_dim, act_layer=approx_gelu, drop=0)
 
-    def forward(self, x, c, x_cond):
+    def forward(self, x, c, x_cond, x_encoded, x_cond_encoded):
         shift_msa, scale_msa, gate_msa, shift_ca_xcond, scale_ca_xcond, shift_ca_x, scale_ca_x, gate_ca_x, shift_mlp, scale_mlp, gate_mlp = self.adaLN_modulation(c).chunk(11, dim=1)
         x = x + gate_msa.unsqueeze(1) * self.attn(modulate(self.norm1(x), shift_msa, scale_msa))
-        x_cond_norm = modulate(self.norm_cond(x_cond), shift_ca_xcond, scale_ca_xcond)
-        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=modulate(self.norm2(x), shift_ca_x, scale_ca_x), key=x_cond_norm, value=x_cond_norm, need_weights=False)[0]
+        x_cond_norm = modulate(self.norm_cond(x_cond_encoded), shift_ca_xcond, scale_ca_xcond)
+        x = x + gate_ca_x.unsqueeze(1) * self.cttn(query=modulate(self.norm2(x_encoded), shift_ca_x, scale_ca_x), key=x_cond_norm, value=x_cond_norm, need_weights=False)[0]
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
         return x
     
@@ -330,12 +330,12 @@ class CDiT(nn.Module):
         # .flatten(2, 3) = .view(B, T, D)
         x_all_encoded = x_all_encoded.transpose(1, 2).flatten(2, 3)
         
-        x = x_all_encoded[:, -TT:, :]
-        x_cond = x_all_encoded[:, :-TT, :]
+        x_encoded = x_all_encoded[:, -TT:, :]
+        x_cond_encoded = x_all_encoded[:, :-TT, :]
         
         # print("x shape: ", x.shape, "x_cond shape: ", x_cond.shape)
         for block in self.blocks:
-            x = block(x, c, x_cond)
+            x = block(x, c, x_cond, x_encoded, x_cond_encoded)
         x = self.final_layer(x, c)
         x = self.unpatchify(x)
         return x

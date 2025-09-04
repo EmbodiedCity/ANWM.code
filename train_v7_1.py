@@ -315,25 +315,37 @@ def main(args):
                 loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
                 loss = loss_dict["loss"].mean()
 
-            opt.zero_grad(set_to_none=True)
-
-            if bfloat_enable:                      # AMP / bfloat16 分支
-                scaler.scale(loss).backward()
-                # **关键**：unscale 把缩放后的梯度写回 param.grad
-                scaler.unscale_(opt)
-                # —— 如需梯度裁剪，在 unscale 之后、step 之前做 ——
-                if config.get('grad_clip_val', 0) > 0:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(),
-                        max_norm=config['grad_clip_val']
-                    )
-            else:                                  # 纯 FP32 分支
+            if not bfloat_enable:
+                opt.zero_grad()
                 loss.backward()
+                opt.step()
+            else:
+                scaler.scale(loss).backward()
                 if config.get('grad_clip_val', 0) > 0:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(),
-                        max_norm=config['grad_clip_val']
-                    )
+                    scaler.unscale_(opt)
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
+                scaler.step(opt)
+                scaler.update()
+
+            # opt.zero_grad(set_to_none=True)
+
+            # if bfloat_enable:                      # AMP / bfloat16 分支
+            #     scaler.scale(loss).backward()
+            #     # **关键**：unscale 把缩放后的梯度写回 param.grad
+            #     scaler.unscale_(opt)
+            #     # —— 如需梯度裁剪，在 unscale 之后、step 之前做 ——
+            #     if config.get('grad_clip_val', 0) > 0:
+            #         torch.nn.utils.clip_grad_norm_(
+            #             model.parameters(),
+            #             max_norm=config['grad_clip_val']
+            #         )
+            # else:                                  # 纯 FP32 分支
+            #     loss.backward()
+            #     if config.get('grad_clip_val', 0) > 0:
+            #         torch.nn.utils.clip_grad_norm_(
+            #             model.parameters(),
+            #             max_norm=config['grad_clip_val']
+            #         )
 
             # # ------------------- 4) 梯度探针 ----------------------
             # keywords = [
@@ -354,22 +366,11 @@ def main(args):
             #     # if train_steps >= 20:  break
 
             # ------------------- 5) 参数更新 ----------------------
-            if bfloat_enable:
-                scaler.step(opt)
-                scaler.update()
-            else:
-                opt.step()
-            # if not bfloat_enable:
-            #     opt.zero_grad()
-            #     loss.backward()
-            #     opt.step()
-            # else:
-            #     scaler.scale(loss).backward()
-            #     if config.get('grad_clip_val', 0) > 0:
-            #         scaler.unscale_(opt)
-            #         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
+            # if bfloat_enable:
             #     scaler.step(opt)
             #     scaler.update()
+            # else:
+            #     opt.step()
             
             update_ema(ema, model.module)
 
