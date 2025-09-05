@@ -266,7 +266,10 @@ class WM_Planning_Evaluator:
         return mu, sigma
 
     # ======================= 可微优化（替代 CEM） =======================
-    def _optimize_single_traj(self, obs_img_1, goal_img_1, T, aug_img_1, cam_1, steps, lr=0.05, smooth_w=1e-3):
+    def _optimize_single_traj(self, obs_img_1, goal_img_1, T, aug_img_1, cam_1, steps, lr=0.05, smooth_w=1e-3,
+                              # >>> NEW <<< 这些参数仅用于可视化；不影响原有优化/返回
+                              dataset_name=None, gt_actions=None, image_plot_dir=None, traj_idx=None, traj_id=None,
+                              viz_every=1):
         """
         对 batch 中单条样本做反向优化（保持外部接口不变）。
           obs_img_1:   (1, num_cond, C, H, W)
@@ -306,6 +309,29 @@ class WM_Planning_Evaluator:
                     aug_image=aug_img_1, camera_mats=cam_1
                 )                                                                   # (1,T,C,H,W)
                 pred_last = preds_seq[:, -1]                                        # (1,C,H,W)
+
+                # >>> NEW <<< GS 每次迭代可视化：与 CEM 输出保持一致，复用 visualize_trajectories
+                if self.args.plot and (dataset_name is not None) and (image_plot_dir is not None):
+                    last_it = max(20, steps * 4) - 1
+                    if (it % viz_every == 0) or (it == last_it):
+                        preds_for_viz = preds_seq[:, -1].detach()                                # (1,C,H,W)
+                        loss_img = self.loss_fn(preds_for_viz, goal_img_1).flatten(0).detach()   # (1,)
+                        topk_idx = torch.tensor([0], device=preds_for_viz.device)                # 单候选，高亮 0
+                        self.visualize_trajectories(
+                            dataset_name=dataset_name,
+                            gt_actions=gt_actions,
+                            image_plot_dir=image_plot_dir,
+                            i=it,                                  # 当前迭代步
+                            traj=0 if traj_idx is None else traj_idx,
+                            traj_id=-1 if traj_id is None else traj_id,
+                            deltas=deltas_1.detach(),              # (1,T,4)
+                            cur_obs_image=obs_img_1.detach(),      # (1,num_cond,C,H,W)
+                            cur_goal_image=goal_img_1.detach(),    # (1,C,H,W)
+                            preds=preds_for_viz,                   # (1,C,H,W)
+                            loss=loss_img,                         # (1,)
+                            topk_idx=topk_idx                      # (1,)
+                        )
+                # >>> NEW <<<
 
                 # 最后一帧 LPIPS（原口径）
                 img_loss = self.loss_fn(pred_last, goal_img_1).flatten(0).mean()
@@ -384,7 +410,15 @@ class WM_Planning_Evaluator:
                 deltas_1, preds_seq_1, final_lpips = self._optimize_single_traj(
                     obs_img_1=obs_1, goal_img_1=goal_1, T=T,
                     aug_img_1=aug_1, cam_1=cam_1,
-                    steps=self.opt_steps, lr=0.05, smooth_w=1e-3
+                    steps=self.opt_steps, lr=0.05, smooth_w=1e-3,
+                    # >>> NEW <<< 传入可视化上下文
+                    dataset_name=dataset_name,
+                    gt_actions=gt_actions,
+                    image_plot_dir=image_plot_dir,
+                    traj_idx=b,
+                    traj_id=int(idxs[b].item()),
+                    viz_every=100
+                    # >>> NEW <<<
                 )
             all_deltas.append(deltas_1)
             all_preds_seq.append(preds_seq_1)
@@ -462,7 +496,6 @@ class WM_Planning_Evaluator:
     
     @torch.no_grad
     def evaluate(self):
-        
         for dataset_name in self.dataset_names:
             metric_logger = dist.MetricLogger(delimiter="  ")
             header = 'Test:'
