@@ -310,13 +310,46 @@ class WM_Planning_Evaluator:
                 )                                                                   # (1,T,C,H,W)
                 pred_last = preds_seq[:, -1]                                        # (1,C,H,W)
 
-                # >>> NEW <<< GS 每次迭代可视化：与 CEM 输出保持一致，复用 visualize_trajectories
+                # >>> NEW <<< GS 每次迭代“候选批次”可视化（与 CEM 风格一致）
                 if self.args.plot and (dataset_name is not None) and (image_plot_dir is not None):
                     last_it = max(20, steps * 4) - 1
                     if (it % viz_every == 0) or (it == last_it):
-                        preds_for_viz = preds_seq[:, -1].detach()                                # (1,C,H,W)
-                        loss_img = self.loss_fn(preds_for_viz, goal_img_1).flatten(0).detach()   # (1,)
-                        topk_idx = torch.tensor([0], device=preds_for_viz.device)                # 单候选，高亮 0
+                        with torch.no_grad():
+                            viz_num = int(self.args.num_samples)  # 与 CEM 保持一致的候选数
+                            # 在归一化空间围绕当前 norm_xyz 采样可视化候选（轻微扰动）
+                            # 可调：用数据超参的 var_scale 做基准
+                            base_scale = float(data_hyperparams[self.args.datasets]['var_scale'][0]) if isinstance(data_hyperparams[self.args.datasets]['var_scale'], (list, tuple)) else float(data_hyperparams[self.args.datasets]['var_scale'])
+                            viz_sigma = 0.5 * base_scale if base_scale > 0 else 0.5
+
+                            norm_xyz_center = norm_xyz.detach()                                 # (1,T,3)
+                            norm_xyz_viz = norm_xyz_center.expand(viz_num, -1, -1).clone()      # (N,T,3)
+                            norm_xyz_viz = norm_xyz_viz + viz_sigma * torch.randn_like(norm_xyz_viz)
+
+                            # 构造 (N, T, 4) 的 deltas（计算 yaw；最后一帧加偏置）
+                            unnorm_viz = unnormalize_data(norm_xyz_viz, ACTION_STATS_TORCH)     # (N,T,3)
+                            d_yaw_viz = calculate_delta_yaw(unnorm_viz)                         # (N,T,1)
+                            deltas_viz = torch.cat([norm_xyz_viz, d_yaw_viz.to(norm_xyz_viz.device)], dim=-1)  # (N,T,4)
+                            deltas_viz[:, -1, -1] += last_yaw_bias.detach() * np.pi
+
+                            # 批量 rollout 可视化候选
+                            cur_obs = obs_img_1.repeat(viz_num, 1, 1, 1, 1)                     # (N, num_cond, C, H, W)
+                            cur_aug = aug_img_1.repeat(viz_num, 1, 1, 1, 1)                     # (N, 1, C, H, W)
+                            cur_cam = cam_1.repeat(viz_num, 1, 1, 1)                             # (N, num_cond+1, 4, 4)
+
+                            preds_seq_viz = self.autoregressive_rollout(
+                                cur_obs, deltas_viz, self.args.rollout_stride,
+                                aug_image=cur_aug, camera_mats=cur_cam
+                            )                                                                   # (N,T,C,H,W)
+                            preds_last_viz = preds_seq_viz[:, -1]                                # (N,C,H,W)
+
+                            # 计算每条候选的 LPIPS，排序选 topk（用于高亮）
+                            goal_rep = goal_img_1.expand(viz_num, -1, -1, -1)                    # (N,C,H,W)
+                            loss_viz = self.loss_fn(preds_last_viz, goal_rep).flatten(0)         # (N,)
+                            sorted_idx = torch.argsort(loss_viz)
+                            topk_k = int(self.topk) if self.topk is not None else min(5, viz_num)
+                            topk_idx = sorted_idx[:max(1, min(topk_k, viz_num))]
+
+                        # 复用 CEM 的可视化出图
                         self.visualize_trajectories(
                             dataset_name=dataset_name,
                             gt_actions=gt_actions,
@@ -324,12 +357,12 @@ class WM_Planning_Evaluator:
                             i=it,                                  # 当前迭代步
                             traj=0 if traj_idx is None else traj_idx,
                             traj_id=-1 if traj_id is None else traj_id,
-                            deltas=deltas_1.detach(),              # (1,T,4)
-                            cur_obs_image=obs_img_1.detach(),      # (1,num_cond,C,H,W)
-                            cur_goal_image=goal_img_1.detach(),    # (1,C,H,W)
-                            preds=preds_for_viz,                   # (1,C,H,W)
-                            loss=loss_img,                         # (1,)
-                            topk_idx=topk_idx                      # (1,)
+                            deltas=deltas_viz.detach(),            # (N,T,4)
+                            cur_obs_image=cur_obs.detach(),        # (N,num_cond,C,H,W)
+                            cur_goal_image=goal_img_1.detach(),    # (1,C,H,W) —— 函数内部只用 [0]
+                            preds=preds_last_viz.detach(),         # (N,C,H,W)
+                            loss=loss_viz.detach(),                # (N,)
+                            topk_idx=topk_idx.detach()             # (topk,)
                         )
                 # >>> NEW <<<
 
