@@ -36,7 +36,12 @@ from misc import (
 from isolated_nwm_eval import save_metric_to_disk
 import distributed as dist
 from models_tpz_v8 import CDiT_models
+import torch.distributed as tdist  # 用于优雅销毁进程组
 
+# ===================== 打印频率常量（无命令行开关） =====================
+SGLD_LOG_EVERY   = 10   # SGLD 迭代每隔多少步打印一次（含最后一步）
+SGLD_LOG_KEEP    = 8    # SGLD 打印时最多统计/展示前多少条样本
+ROLLOUT_LOG_KEEP = 8    # 每步 rollout 打印时最多展示前多少条样本
 
 # ---------------------- 全局配置加载 ----------------------
 with open("config/data_config.yaml", "r") as f:
@@ -49,10 +54,8 @@ ACTION_STATS_TORCH = {}
 for key in data_config['action_stats']:
     ACTION_STATS_TORCH[key] = torch.tensor(data_config['action_stats'][key])
 
-
 # ---------------------- 可视化工具 ----------------------
 def plot_images_with_losses(preds, losses, save_path="predictions_with_losses.png"):
-    # Denormalize images from [-1, 1] to [0, 1]
     preds = (preds + 1) / 2
     ncol = int(preds.size(0) ** 0.5)
     nrow = preds.size(0) // ncol
@@ -66,8 +69,6 @@ def plot_images_with_losses(preds, losses, save_path="predictions_with_losses.pn
     ax.axis("off")
 
     img_height, img_width = np_grid.shape[0] // nrow, np_grid.shape[1] // ncol
-
-    # Overlay the losses on each image
     for idx, loss in enumerate(losses):
         row = idx // ncol
         col = idx % ncol
@@ -85,20 +86,17 @@ def plot_images_with_losses(preds, losses, save_path="predictions_with_losses.pn
 
 
 def plot_batch_final(init_imgs, pred_imgs, goal_imgs, idxs, losses, save_path="final_plan.png"):
-    # images are (B, c, h, w)
     imgs_for_plotting = torch.cat([init_imgs, pred_imgs, goal_imgs])
     imgs_for_plotting = (imgs_for_plotting + 1) / 2
     ncol = init_imgs.shape[0]
     grid_img = vutils.make_grid(imgs_for_plotting, nrow=ncol, padding=2)
     np_grid = grid_img.to(torch.float32).permute(1, 2, 0).cpu().numpy()
 
-    fig, ax = plt.subplots(figsize=(ncol * 10, 30))  # Adjust size as needed
+    fig, ax = plt.subplots(figsize=(ncol * 10, 30))
     ax.imshow(np_grid)
     ax.axis("off")
 
     img_height, img_width = np_grid.shape[0] // 3, np_grid.shape[1] // ncol
-
-    # Overlay the IDs and losses on each image pair in the grid
     for i in range(ncol):
         x = i * img_width
         y_pred = img_height
@@ -110,31 +108,20 @@ def plot_batch_final(init_imgs, pred_imgs, goal_imgs, idxs, losses, save_path="f
 
 
 def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path="trajectory_grid.png"):
-    """
-    Visualize a batch of image trajectories:
-    - init_imgs: (B, C, H, W)
-    - pred_imgs_seq: (B, T, C, H, W)  --> multiple steps
-    - goal_imgs: (B, C, H, W)
-    - idxs: (B,) tensor of IDs
-    """
     B, T, C, H, W = pred_imgs_seq.shape
     imgs_for_plotting = []
 
-    # Denormalize from [-1, 1] to [0, 1]
     init_imgs = (init_imgs + 1) / 2
     goal_imgs = (goal_imgs + 1) / 2
     pred_imgs_seq = (pred_imgs_seq + 1) / 2
 
     for b in range(B):
-        traj = [init_imgs[b]]  # Start with initial image
-        traj += [pred_imgs_seq[b, t] for t in range(T)]  # Add each predicted step
-        traj += [goal_imgs[b]]  # End with goal image
+        traj = [init_imgs[b]]
+        traj += [pred_imgs_seq[b, t] for t in range(T)]
+        traj += [goal_imgs[b]]
         imgs_for_plotting.append(torch.stack(traj))
 
-    # Stack all batch trajectories vertically: shape → (B*(T+2), C, H, W)
     imgs_for_plotting = torch.cat(imgs_for_plotting, dim=0)
-
-    # Create image grid: (B rows, T+2 cols)
     grid_img = vutils.make_grid(imgs_for_plotting, nrow=T+2, padding=2)
     np_grid = grid_img.permute(1, 2, 0).cpu().numpy()
 
@@ -142,9 +129,9 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
     ax.imshow(np_grid)
     ax.axis("off")
 
-    img_height, img_width = H + 2, W + 2  # account for padding
+    img_height, img_width = H + 2, W + 2
     for b in range(B):
-        for t in range(T + 2):  # init + T preds + goal
+        for t in range(T + 2):
             x = t * img_width
             y = b * img_height
             if t == 0:
@@ -160,25 +147,57 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
     plt.close()
 
 
-def plot_traj3d(pred_xyz: torch.Tensor, gt_xyz: torch.Tensor = None,
-                save_path: str = "traj3d.png", title: str = None):
-    """
-    3D 轨迹绘制（绝对坐标），方便直观看到 Z 维变化。
-    pred_xyz: (T, 3)；gt_xyz: (T, 3) 可选
-    """
+def plot_traj3d(pred_xyz: torch.Tensor,
+                gt_xyz: torch.Tensor = None,
+                yaw_seq: torch.Tensor = None,
+                save_path: str = "traj3d.png",
+                title: str = None):
+    """3D 轨迹绘制（绝对坐标）"""
+    import numpy as np
     from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
     pred = pred_xyz.detach().cpu().numpy()
+    x, y, z = pred[:, 0], pred[:, 1], pred[:, 2]
+
+    if gt_xyz is not None:
+        gt_np = gt_xyz.detach().cpu().numpy()
+        gx, gy, gz = gt_np[:, 0], gt_np[:, 1], gt_np[:, 2]
+
     fig = plt.figure(figsize=(8, 7))
     ax = fig.add_subplot(111, projection='3d')
 
-    ax.plot(pred[:, 0], pred[:, 1], pred[:, 2], linewidth=2, label="Pred")
-    if gt_xyz is not None:
-        gt = gt_xyz.detach().cpu().numpy()
-        ax.plot(gt[:, 0], gt[:, 1], gt[:, 2], linestyle='--', linewidth=1.5, label="GT")
+    try:
+        ax.set_proj_type('persp')
+    except Exception:
+        pass
 
-    ax.scatter(pred[0, 0], pred[0, 1], pred[0, 2], s=50, marker='o', label="Start")
-    ax.scatter(pred[-1, 0], pred[-1, 1], pred[-1, 2], s=50, marker='^', label="End")
+    ax.plot(x, y, z, linewidth=2, label="Pred")
+    if gt_xyz is not None:
+        ax.plot(gx, gy, gz, linestyle='--', linewidth=1.5, label="GT")
+
+    ax.scatter(x[0], y[0], z[0], s=50, marker='o', label="Start")
+    ax.scatter(x[-1], y[-1], z[-1], s=50, marker='^', label="End")
+
+    if yaw_seq is not None:
+        yaw_np = yaw_seq.detach().cpu().numpy()
+        step = max(1, len(yaw_np) // 20)
+        u = np.cos(yaw_np[::step])
+        v = np.sin(yaw_np[::step])
+        w = np.zeros_like(u)
+        ax.quiver(x[::step], y[::step], z[::step], u, v, w,
+                  length=max(np.ptp(x), np.ptp(y)) * 0.05,
+                  normalize=True)
+
+    try:
+        ax.set_box_aspect([1, 1, 1])
+    except Exception:
+        max_range = np.array([np.ptp(x), np.ptp(y), np.ptp(z)]).max()
+        if max_range == 0:
+            max_range = 1.0
+        mx, my, mz = (x.min() + x.max())/2, (y.min() + y.max())/2, (z.min() + z.max())/2
+        ax.set_xlim(mx - max_range/2, mx + max_range/2)
+        ax.set_ylim(my - max_range/2, my + max_range/2)
+        ax.set_zlim(mz - max_range/2, mz + max_range/2)
 
     ax.set_xlabel('X'); ax.set_ylabel('Y'); ax.set_zlabel('Z')
     if title: ax.set_title(title)
@@ -292,7 +311,7 @@ class WM_Planning_Evaluator:
         self.model_without_ddp = self.model.module
 
         self.loss_fn = lpips.LPIPS(net='alex').to(self.device)
-        self.mode = 'sgld'  # sgld
+        self.mode = 'sgld'
         self.num_samples = self.args.num_samples
         self.topk = self.args.topk
         self.opt_steps = self.args.opt_steps
@@ -309,26 +328,17 @@ class WM_Planning_Evaluator:
         return mu, sigma
 
     # ================================================================
-    # 可微优化（点估计；之前我们替代 CEM 的版本仍保留）
+    # 可微优化（点估计；替代 CEM）
     # ================================================================
     def _optimize_single_traj(
         self, obs_img_1, goal_img_1, T, aug_img_1, cam_1, steps, lr=0.05, smooth_w=1e-3,
-        # 仅用于可视化
         dataset_name=None, gt_actions=None, image_plot_dir=None, traj_idx=None, traj_id=None,
         viz_every=1
     ):
-        """
-        对 batch 中单条样本做反向优化（保持外部接口不变）。
-        【注意：优化变量在“归一化动作空间” norm_xyz ∈ R^(T×3)，yaw 不直接优化，而是由 unnormalize 后的 (dx,dy,dz) 几何推导】
-        """
         device = self.device
-        mu0, _ = self.init_mu_sigma(obs_img_1, T)  # (1,4)
+        mu0, _ = self.init_mu_sigma(obs_img_1, T)
         mu0 = mu0.to(device)
-        # --------- 采样/优化空间差异说明 ----------
-        # 之前：CEM 在“归一化动作空间”（前三维 dx,dy,dz）做高斯采样；我们替代为梯度下降也在相同空间优化。
-        # 现在：SGLD 采样仍然在“归一化动作空间”上进行（与 CEM/优化一致），而不是图像空间或像素空间。
-        # yaw 依旧由 (dx,dy,dz) 通过 calculate_delta_yaw() 推导，不作为独立采样/优化变量。
-        # ----------------------------------------
+
         norm_xyz = mu0[:, :3].unsqueeze(1).repeat(1, T, 1).clone().detach().requires_grad_(True)
         last_yaw_bias = torch.zeros(1, device=device).requires_grad_(True)
 
@@ -340,9 +350,9 @@ class WM_Planning_Evaluator:
         with torch.enable_grad():
             for it in range(max(20, steps * 4)):
                 opt.zero_grad(set_to_none=True)
-                unnorm_xyz = unnormalize_data(norm_xyz, ACTION_STATS_TORCH)        # (1,T,3)
-                d_yaw = calculate_delta_yaw(unnorm_xyz)                            # (1,T,1)
-                deltas_1 = torch.cat([norm_xyz, d_yaw.to(norm_xyz.device)], dim=-1)  # (1,T,4)
+                unnorm_xyz = unnormalize_data(norm_xyz, ACTION_STATS_TORCH)
+                d_yaw = calculate_delta_yaw(unnorm_xyz)
+                deltas_1 = torch.cat([norm_xyz, d_yaw.to(norm_xyz.device)], dim=-1)
                 deltas_1[:, -1, -1] += last_yaw_bias * np.pi
 
                 preds_seq = self.autoregressive_rollout(
@@ -351,13 +361,11 @@ class WM_Planning_Evaluator:
                 )
                 pred_last = preds_seq[:, -1]
 
-                # （可选）迭代可视化
                 if self.args.plot and (dataset_name is not None) and (image_plot_dir is not None):
                     last_it = max(20, steps * 4) - 1
                     if (it % viz_every == 0) or (it == last_it):
                         with torch.no_grad():
                             viz_num = int(self.args.num_samples)
-                            # 围绕当前 norm_xyz 做轻微扰动可视化
                             var_sc = data_hyperparams[self.args.datasets]['var_scale']
                             base_scale = float(var_sc[0]) if isinstance(var_sc, (list, tuple)) else float(var_sc)
                             viz_sigma = 0.5 * base_scale if base_scale > 0 else 0.5
@@ -402,7 +410,6 @@ class WM_Planning_Evaluator:
                             topk_idx=topk_idx.detach()
                         )
 
-                # 能量（loss）= 末帧 LPIPS + 中间帧 LPIPS + 平滑 + jerk
                 img_loss = self.loss_fn(pred_last, goal_img_1).flatten(0).mean()
                 if preds_seq.shape[1] > 1:
                     mid = preds_seq[:, :-1].contiguous().view(-1, *preds_seq.shape[2:])
@@ -440,72 +447,112 @@ class WM_Planning_Evaluator:
         return deltas_1.detach(), preds_seq.detach(), final_lpips.detach()
 
     # ================================================================
-    # 概率场采样：SGLD 在“归一化动作空间 (dx,dy,dz)”上采样
+    # 仅正则/先验能量（对 norm_xyz 可导）
     # ================================================================
-    def _energy(self, obs_img, goal_img, deltas_norm, aug_img, cam_mats,
-                mid_w=0.2, smooth_w=1e-3, jerk_w=1e-3, prior_w=1.0):
-        """
-        deltas_norm: (N, T, 4)，但只使用前三维(归一化 dx,dy,dz)，yaw 由几何推导。返回:
-          E: (N,)；preds_seq: (N, T, C, H, W)
-        """
-        with torch.enable_grad():
-            norm_xyz = deltas_norm[..., :3]                           # 采样/优化空间：归一化动作 (dx, dy, dz)
+    def _regularizer_energy(
+        self,
+        norm_xyz: torch.Tensor,   # (N,T,3)
+        obs_img: torch.Tensor,    # (N, num_cond+1, C, H, W)
+        T: int,
+        var_scale: torch.Tensor,
+        prior_scale: float,
+        smooth_w: float = 1e-3,
+        jerk_w: float = 1e-3,
+    ):
+        N = norm_xyz.shape[0]
+
+        mu0_all, _ = self.init_mu_sigma(obs_img[:, -1], T)          # (N,4)
+        mu0_xyz = mu0_all.to(norm_xyz.device)[..., :3]               # (N,3)
+        mu0_xyz = mu0_xyz.unsqueeze(1).expand(N, T, 3)               # (N,T,3)
+
+        l2   = norm_xyz.pow(2).mean(dim=(1, 2))                      # (N,)
+        diff = (norm_xyz[:, 1:] - norm_xyz[:, :-1]).pow(2).mean(dim=(1, 2)) if T > 1 else torch.zeros_like(l2)
+        jerk = (norm_xyz[:, 2:] - 2*norm_xyz[:, 1:-1] + norm_xyz[:, :-2]).pow(2).mean(dim=(1, 2)) if T > 2 else torch.zeros_like(l2)
+
+        if var_scale.ndim == 0:
+            var_scale = var_scale.repeat(3)
+        sigma2 = (prior_scale * var_scale[:3])**2                    # (3,)
+        prior = ((norm_xyz - mu0_xyz)**2 / sigma2.view(1, 1, 3)).mean(dim=(1, 2))  # (N,)
+
+        E_reg = smooth_w * (l2 + diff) + jerk_w * jerk + prior       # (N,)
+        return E_reg
+
+    # ================================================================
+    # 计算能量（用于 SGLD） —— 图像项 no_grad；正则可导
+    # ================================================================
+    def _energy(
+        self, obs_img, goal_img, deltas_norm, aug_img, cam_mats,
+        mid_w=0.2, smooth_w=1e-3, jerk_w=1e-3, prior_w=1.0
+    ):
+        norm_xyz = deltas_norm[..., :3]                               # (N,T,3)
+
+        # ---------- 图像打分（不构图） ----------
+        with torch.no_grad():
             unnorm_xyz = unnormalize_data(norm_xyz, ACTION_STATS_TORCH)
             d_yaw = calculate_delta_yaw(unnorm_xyz)
             deltas = torch.cat([norm_xyz, d_yaw.to(norm_xyz.device)], dim=-1)
 
             preds_seq = self.autoregressive_rollout(
-                obs_img, deltas, self.args.rollout_stride, aug_image=aug_img, camera_mats=cam_mats
-            )
-            pred_last = preds_seq[:, -1]
+                obs_img, deltas, self.args.rollout_stride,
+                aug_image=aug_img, camera_mats=cam_mats
+            )  # (N, T, C, H, W)
 
-            goal_rep = goal_img.expand_as(pred_last)
-            img_loss = self.loss_fn(pred_last, goal_rep).flatten(1).mean(dim=1)
+            pred_last = preds_seq[:, -1]  # (N, C, H, W)
+            img_loss = self.loss_fn(pred_last, goal_img).flatten(1).mean(dim=1)  # (N,)
 
             if preds_seq.shape[1] > 1:
-                mid = preds_seq[:, :-1].contiguous().view(-1, *preds_seq.shape[2:])
-                tgt = goal_img.expand(preds_seq.shape[0]*(preds_seq.shape[1]-1), -1, -1, -1).contiguous()
-                mid_img_loss = self.loss_fn(mid, tgt).flatten(1).mean(dim=1)
+                N_, T_, C, H, W = preds_seq.shape
+                mid = preds_seq[:, :-1].contiguous().view(N_*(T_-1), C, H, W)
+                tgt = goal_img.unsqueeze(1).expand(N_, T_-1, C, H, W).contiguous().view(N_*(T_-1), C, H, W)
+                mid_lpips_each = self.loss_fn(mid, tgt).flatten(1).mean(dim=1)
+                mid_img_loss = mid_lpips_each.view(N_, T_-1).mean(dim=1)
             else:
                 mid_img_loss = torch.zeros_like(img_loss)
 
-            l2 = norm_xyz.pow(2).mean(dim=(1, 2))
-            diff = (norm_xyz[:, 1:] - norm_xyz[:, :-1]).pow(2).mean(dim=(1, 2))
-            if norm_xyz.shape[1] > 2:
-                jerk = (norm_xyz[:, 2:] - 2*norm_xyz[:, 1:-1] + norm_xyz[:, :-2]).pow(2).mean(dim=(1, 2))
-            else:
-                jerk = torch.zeros_like(img_loss)
+            img_term = (img_loss + mid_w * mid_img_loss).detach()    # (N,)
 
-            # 高斯先验：N(mu0, s^2 I)（在归一化域，用 var_scale 控制宽度）
-            N, T, _ = norm_xyz.shape
-            mu0, _ = self.init_mu_sigma(obs_img[:1, -1], T)  # (1,4)
-            mu0 = mu0.to(norm_xyz.device)[..., :3].view(1, 1, 3).expand(N, T, 3)
-            var_scale = torch.tensor(
-                data_hyperparams[self.args.datasets]['var_scale'],
-                device=norm_xyz.device, dtype=norm_xyz.dtype
-            )
-            if var_scale.ndim == 0:
-                var_scale = var_scale.repeat(3)
-            sigma2 = (self.args.prior_scale * var_scale[:3])**2
-            prior = ((norm_xyz - mu0)**2 / sigma2.view(1, 1, 3)).mean(dim=(1, 2))
+        # ---------- 正则/先验能量（可导） ----------
+        var_scale = torch.tensor(
+            data_hyperparams[self.args.datasets]['var_scale'],
+            device=norm_xyz.device, dtype=norm_xyz.dtype
+        )
+        E_reg = self._regularizer_energy(
+            norm_xyz, obs_img, norm_xyz.shape[1],
+            var_scale=var_scale, prior_scale=self.args.prior_scale,
+            smooth_w=smooth_w, jerk_w=jerk_w
+        )                                                             # (N,)
 
-            E = img_loss + mid_w * mid_img_loss + smooth_w * (l2 + diff) + jerk_w * jerk + prior_w * prior
-            return E, preds_seq
+        E = img_term + prior_w * E_reg                                # (N,)
+        return E, preds_seq
 
+    # ---------------------- 每步 rollout 后打印当前累计末端坐标 ----------------------
+    def _print_rollout_step(self, deltas_collapsed, step_idx):
+        try:
+            rank = dist.get_rank()
+        except Exception:
+            rank = 0
+        if rank != 0:
+            return
+
+        with torch.no_grad():
+            B, T, _ = deltas_collapsed.shape
+            n_show = min(B, ROLLOUT_LOG_KEEP)
+            deltas_phys = get_action_torch(deltas_collapsed[:n_show, :step_idx+1, :3], ACTION_STATS_TORCH)
+            xyz_abs = torch.cumsum(deltas_phys, dim=1)
+
+            for b in range(n_show):
+                last = xyz_abs[b, -1]
+                x, y, z = float(last[0]), float(last[1]), float(last[2])
+                print(f"[ROLL][step {step_idx+1}/{T}] sample={b} x={x:.6f} y={y:.6f} z={z:.6f}")
+
+    # ================================================================
+    # 概率场采样：SGLD
+    # ================================================================
     def _sample_langevin(self, obs_img_1, goal_img_1, T, aug_img_1, cam_1,
                          N=64, steps=200, eta=5e-3, beta=50.0):
-        """
-        在“归一化动作空间 (dx,dy,dz)”上做 SGLD（而不是像素/图像空间）；yaw 由几何推导，不直接采样。
-        返回:
-          deltas_N:  (N, T, 4)   —— 归一化 xyz + yaw
-          preds_seq_N: (N, T, C, H, W)
-          energy_N: (N,)
-          weights:   (N,)  ~ softmax(-beta * (E - minE)) 作为重要性权重
-        """
         device = self.device
 
-        # 初始化：以 mu0 为中心的高斯
-        mu0, _ = self.init_mu_sigma(obs_img_1[:, -1], T)    # (1,4)
+        mu0, _ = self.init_mu_sigma(obs_img_1[:, -1], T)
         mu0 = mu0.to(device)[..., :3].view(1, 1, 3)
         var_scale = torch.tensor(
             data_hyperparams[self.args.datasets]['var_scale'],
@@ -518,11 +565,56 @@ class WM_Planning_Evaluator:
         norm_xyz = mu0.expand(N, T, 3) + init_std.expand(N, T, 3) * torch.randn(N, T, 3, device=device)
         norm_xyz.requires_grad_(True)
 
-        # 纯粹为了 zero_grad 使用的“空”优化器
         opt_like = torch.optim.SGD([norm_xyz], lr=1.0)
 
+        try:
+            print_rank = (dist.get_rank() == 0)
+        except Exception:
+            print_rank = True
+
+        if print_rank:
+            with torch.no_grad():
+                mu_vec  = mu0[0, 0].detach().cpu()
+                std_vec = init_std[0, 0].detach().cpu()
+                print(f"[INIT][prior_norm] N={N} T={T} mu={mu_vec.tolist()} std={std_vec.tolist()}", flush=True)
+
+                nz = norm_xyz.detach().cpu().reshape(-1, 3)
+                m_norm = nz.mean(0); s_norm = nz.std(0, unbiased=False)
+                print(f"[INIT][empirical_norm] mean={m_norm.tolist()} std={s_norm.tolist()}", flush=True)
+
+                deltas_phys = get_action_torch(norm_xyz.detach(), ACTION_STATS_TORCH).detach().cpu().reshape(-1, 3)
+                m_phy = deltas_phys.mean(0); s_phy = deltas_phys.std(0, unbiased=False)
+                zmin = float(deltas_phys[:, 2].min()); zmax = float(deltas_phys[:, 2].max())
+                print(f"[INIT][empirical_phys] mean={m_phy.tolist()} std={s_phy.tolist()} z[min,max]=({zmin:.6f},{zmax:.6f})", flush=True)
+
+        def _print_snapshot(step, note=""):
+            if not print_rank:
+                return
+            with torch.no_grad():
+                n_save = int(min(SGLD_LOG_KEEP, norm_xyz.shape[0]))
+                deltas_xyz_phys = get_action_torch(norm_xyz[:n_save].detach(), ACTION_STATS_TORCH)
+                xyz_abs = torch.cumsum(deltas_xyz_phys, dim=1)
+                z_vals = xyz_abs[..., 2].detach().cpu()
+                z_min = float(z_vals.min()); z_max = float(z_vals.max())
+                z_rng = float(z_max - z_min)
+                z_rng_mean = float((z_vals.max(dim=1).values - z_vals.min(dim=1).values).mean())
+
+                norm_small = norm_xyz[:n_save].detach().cpu().reshape(-1, 3)
+                std_x = norm_small[:, 0].std().item()
+                std_y = norm_small[:, 1].std().item()
+                std_z = norm_small[:, 2].std().item()
+
+                print(f"[SGLD][{note}] step={step:04d}/{steps} n={n_save} "
+                      f"z_min={z_min:.6f} z_max={z_max:.6f} z_range={z_rng:.6f} "
+                      f"mean_range_per_traj={z_rng_mean:.6f} | "
+                      f"norm_std(x,y,z)=({std_x:.4f},{std_y:.4f},{std_z:.4f})")
+
+        # ================== 修复版 SGLD 主循环 ==================
         for k in range(steps):
+            norm_xyz = norm_xyz.detach().requires_grad_(True)
             opt_like.zero_grad(set_to_none=True)
+
+            # 需要梯度的能量路径（正则项）
             deltas_norm = torch.cat([norm_xyz, torch.zeros(N, T, 1, device=device)], dim=-1)
             E, _ = self._energy(
                 obs_img_1.repeat(N, 1, 1, 1, 1),
@@ -531,14 +623,36 @@ class WM_Planning_Evaluator:
                 aug_img_1.repeat(N, 1, 1, 1, 1),
                 cam_1.repeat(N, 1, 1, 1)
             )
-            (beta * E.mean()).backward()
+
+            loss_all = beta * E.mean()
+            grad = None
+            if loss_all.requires_grad:
+                grad = torch.autograd.grad(loss_all, norm_xyz, retain_graph=False, allow_unused=True)[0]
+
+            if (grad is None) or (not torch.isfinite(grad).all()):
+                var_scale_local = torch.tensor(
+                    data_hyperparams[self.args.datasets]['var_scale'],
+                    device=norm_xyz.device, dtype=norm_xyz.dtype
+                )
+                E_reg = self._regularizer_energy(
+                    norm_xyz, obs_img_1, T,
+                    var_scale=var_scale_local,
+                    prior_scale=self.args.prior_scale,
+                    smooth_w=1e-3, jerk_w=1e-3
+                )
+                loss_reg = beta * E_reg.mean()
+                grad = torch.autograd.grad(loss_reg, norm_xyz, retain_graph=False)[0]
 
             with torch.no_grad():
-                grad = norm_xyz.grad
-                # SGLD：x <- x - 0.5*eta*grad + sqrt(eta)*Noise
-                norm_xyz += -0.5 * eta * grad + (eta ** 0.5) * torch.randn_like(norm_xyz)
+                norm_xyz.add_(-0.5 * eta * grad)
+                norm_xyz.add_((eta ** 0.5) * torch.randn_like(norm_xyz))
                 norm_xyz.clamp_(-5.0, 5.0)
-            norm_xyz.requires_grad_(True)
+
+            if (k % max(1, SGLD_LOG_EVERY) == 0):
+                _print_snapshot(k, note="iter")
+        # ================== 主循环结束 ==================
+
+        _print_snapshot(steps, note="final")
 
         with torch.no_grad():
             deltas_norm = torch.cat([norm_xyz, torch.zeros(N, T, 1, device=device)], dim=-1)
@@ -553,19 +667,68 @@ class WM_Planning_Evaluator:
             d_yaw = calculate_delta_yaw(unnorm_xyz)
             deltas_N = torch.cat([norm_xyz, d_yaw.to(device)], dim=-1)
 
-            # 权重：避免数值下溢
             E_shift = E - E.min()
             w = torch.softmax(-beta * E_shift, dim=0)
 
         return deltas_N, preds_seq, E, w
 
+    # ---------------------- 世界模型自回归 rollout ----------------------
+    def autoregressive_rollout(self, obs_image, deltas, rollout_stride, aug_image, camera_mats):
+        deltas = deltas.unflatten(1, (-1, rollout_stride)).sum(2)
+        preds = []
+        curr_obs = obs_image.clone().to(self.device)
+
+        for i in range(deltas.shape[1]):
+            curr_delta = deltas[:, i:i + 1]
+            all_models = self.model, self.diffusion, self.vae
+            x_pred_pixels = model_forward_wrapper(
+                all_models, curr_obs, curr_delta, self.args.rollout_stride,
+                self.latent_size, num_cond=self.num_cond, device=self.device,
+                x_supervised=aug_image, camera_mats=camera_mats
+            )
+            x_pred_pixels = x_pred_pixels.unsqueeze(1)
+            curr_obs = torch.cat((curr_obs, x_pred_pixels), dim=1)
+            curr_obs = curr_obs[:, 1:]
+            preds.append(x_pred_pixels)
+
+            self._print_rollout_step(deltas, i)
+
+        preds = torch.cat(preds, 1)
+        return preds
+
+    def get_eval_name(self):
+        self.eval_name = f'SGLD_N{self.args.num_samples}_K{self.args.topk}_RS{self.args.rollout_stride}_rep{self.args.num_repeat_eval}_OPT{self.args.opt_steps}'
+
+    def actions_to_traj(self, actions, is_delta: bool = True):
+        actions = actions.detach().to(dtype=torch.float64, device="cpu")
+
+        if is_delta:
+            positions_xyz = torch.cumsum(actions, dim=0)
+        else:
+            positions_xyz = actions
+
+        T_len = positions_xyz.shape[0]
+        orientations_quat_wxyz = torch.zeros((T_len, 4), dtype=torch.float64)
+        orientations_quat_wxyz[:, 0] = 1.0  # w=1, x=y=z=0
+
+        timestamps = torch.arange(T_len, dtype=torch.float64)
+
+        traj = PoseTrajectory3D(
+            positions_xyz=positions_xyz.numpy(),
+            orientations_quat_wxyz=orientations_quat_wxyz.numpy(),
+            timestamps=timestamps.numpy()
+        )
+        return traj
+
     # ---------------------- 统一动作生成接口 ----------------------
     def generate_actions(self, dataset_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, len_traj_pred, aug_image, camera_mats):
         idx_string = "_".join(map(str, idxs.flatten().int().tolist()))
-        image_plot_dir = os.path.join(dataset_save_output_dir, 'plots')
-        os.makedirs(image_plot_dir, exist_ok=True)
-        videos_plot_dir = os.path.join(dataset_save_output_dir, 'videos')
-        os.makedirs(videos_plot_dir, exist_ok=True)
+        image_plot_dir = os.path.join(dataset_save_output_dir, 'plots') if dataset_save_output_dir else None
+        if image_plot_dir:
+            os.makedirs(image_plot_dir, exist_ok=True)
+        videos_plot_dir = os.path.join(dataset_save_output_dir, 'videos') if dataset_save_output_dir else None
+        if videos_plot_dir:
+            os.makedirs(videos_plot_dir, exist_ok=True)
 
         B = obs_image.shape[0]
         T = len_traj_pred
@@ -574,7 +737,6 @@ class WM_Planning_Evaluator:
         all_preds_seq = []
         all_final_losses = []
 
-        # squeeze 成 (B,C,H,W)
         goal_img_B = goal_image.squeeze(1).to(self.device)
 
         pred_actions_list = []
@@ -587,23 +749,21 @@ class WM_Planning_Evaluator:
             goal_1 = goal_img_B[b:b + 1]
 
             if self.args.sampler == "langevin":
-                # ---------- 概率采样：在“归一化动作空间”上用 SGLD ----------
-                deltas_N, preds_seq_N, E_N, w_N = self._sample_langevin(
-                    obs_1, goal_1, T, aug_1, cam_1,
-                    N=self.args.samples, steps=self.args.sgld_steps,
-                    eta=self.args.sgld_lr, beta=self.args.beta
-                )
-                # 用重要性权重做样本集的加权平均，得到一个“点估计轨迹”（你也可以返回全体样本）
+                # 确保开启梯度（evaluate 不再 no_grad，这里仍显式安全）
+                with torch.enable_grad():
+                    deltas_N, preds_seq_N, E_N, w_N = self._sample_langevin(
+                        obs_1, goal_1, T, aug_1, cam_1,
+                        N=self.args.samples, steps=self.args.sgld_steps,
+                        eta=self.args.sgld_lr, beta=self.args.beta
+                    )
                 deltas_agg = torch.einsum('n,ntd->td', w_N, deltas_N[..., :4]).unsqueeze(0)  # (1,T,4)
 
-                # 下游接口仍然使用 get_action_torch（内部含反归一化/尺度映射）
-                pred_actions_b = get_action_torch(deltas_agg[..., :3], ACTION_STATS_TORCH)  # (1,T,3) —— 注意：这里仍是“动作域参数”，评估时会 cumsum 得到绝对轨迹
+                pred_actions_b = get_action_torch(deltas_agg[..., :3], ACTION_STATS_TORCH)  # (1,T,3)
                 pred_yaw_b = deltas_agg[..., -1].sum(1)                                     # (1,)
 
-                # （可选）保存样本末帧可视化
-                if self.args.save_preds:
+                if self.args.save_preds and image_plot_dir is not None:
                     with torch.no_grad():
-                        preds_last = preds_seq_N[:, -1]  # (N,C,H,W)
+                        preds_last = preds_seq_N[:, -1]
                         loss_viz = self.loss_fn(preds_last, goal_1.repeat(self.args.samples, 1, 1, 1)).flatten(0)
                         topk_idx = torch.argsort(loss_viz)[:min(self.topk, self.args.samples)]
                         self.visualize_trajectories(
@@ -613,31 +773,27 @@ class WM_Planning_Evaluator:
                             cur_goal_image=goal_1, preds=preds_last, loss=loss_viz, topk_idx=topk_idx
                         )
 
-                    # 导出 3D 样本分布（绝对坐标）便于后处理
-                    samples_dir = os.path.join(dataset_save_output_dir, "samples")
-                    os.makedirs(samples_dir, exist_ok=True)
-                    with torch.no_grad():
-                        # 将 (N,T,3 delta-物理域) -> (N,T,3 绝对坐标)
-                        # 注意：get_action_torch 把归一化动作映射回物理位移（delta），我们需要 cumsum 得到绝对轨迹
-                        deltas_xyz_phys = get_action_torch(deltas_N[..., :3], ACTION_STATS_TORCH)  # (N,T,3) delta(物理域)
-                        xyz_abs_N = torch.cumsum(deltas_xyz_phys, dim=1)                           # (N,T,3)
-                        torch.save(
-                            {
-                                "xyz_abs": xyz_abs_N.detach().cpu(),
-                                "weights": w_N.detach().cpu(),
-                                "energy": E_N.detach().cpu()
-                            },
-                            os.path.join(samples_dir, f"samples_idx{int(idxs[b].item())}.pt")
-                        )
+                    samples_dir = os.path.join(dataset_save_output_dir, "samples") if dataset_save_output_dir else None
+                    if samples_dir:
+                        os.makedirs(samples_dir, exist_ok=True)
+                        with torch.no_grad():
+                            deltas_xyz_phys = get_action_torch(deltas_N[..., :3], ACTION_STATS_TORCH)
+                            xyz_abs_N = torch.cumsum(deltas_xyz_phys, dim=1)
+                            torch.save(
+                                {
+                                    "xyz_abs": xyz_abs_N.detach().cpu(),
+                                    "weights": w_N.detach().cpu(),
+                                    "energy": E_N.detach().cpu()
+                                },
+                                os.path.join(samples_dir, f"samples_idx{int(idxs[b].item())}.pt")
+                            )
 
                 pred_actions_list.append(pred_actions_b)
                 pred_yaw_list.append(pred_yaw_b)
 
-                # 用于与旧接口保持一致的保存/绘图（点估计轨迹）
                 all_deltas.append(deltas_agg.detach())
-                all_preds_seq.append(preds_seq_N[0:1].detach())  # 随便取一个样本的序列用于旧图；也可重新用 deltas_agg rollout
+                all_preds_seq.append(preds_seq_N[0:1].detach())
                 with torch.no_grad():
-                    # 使用 deltas_agg 重新 rollout 得到一致的 preds/preds_completed
                     preds_seq_agg = self.autoregressive_rollout(
                         obs_1, deltas_agg, self.args.rollout_stride, aug_image=aug_1, camera_mats=cam_1
                     )
@@ -646,7 +802,6 @@ class WM_Planning_Evaluator:
                     all_final_losses.append(final_lpips)
 
             else:
-                # ---------- 点估计（梯度优化） ----------
                 with torch.enable_grad():
                     deltas_1, preds_seq_1, final_lpips = self._optimize_single_traj(
                         obs_img_1=obs_1, goal_img_1=goal_1, T=T,
@@ -670,16 +825,15 @@ class WM_Planning_Evaluator:
         preds = preds_completed[:, -1]                        # (B,C,H,W)
         loss = torch.cat(all_final_losses, dim=0) if len(all_final_losses) > 0 else torch.zeros(B)
 
-        # 保存/绘图（点估计）
-        if self.args.save_preds:
+        if self.args.save_preds and dataset_save_output_dir is not None:
             save_planning_pred(dataset_save_output_dir, B, idxs, obs_image, goal_image, preds, deltas, loss, gt_actions, preds_completed)
-        if self.args.plot:
+        if self.args.plot and image_plot_dir is not None:
             img_name = os.path.join(image_plot_dir, f'FINAL_{idx_string}.png')
             traj_name = os.path.join(image_plot_dir, f"TRAJ_{idx_string}.png")
             plot_batch_final(obs_image[:, -1].to(self.device), preds, goal_img_B, idxs, loss.detach().cpu().tolist(), save_path=img_name)
             plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_img_B, idxs, save_path=traj_name)
 
-        pred_actions = torch.cat(pred_actions_list, dim=0)  # (B,T,3) —— 动作域(物理 delta)
+        pred_actions = torch.cat(pred_actions_list, dim=0)  # (B,T,3)
         pred_yaw = torch.cat(pred_yaw_list, dim=0)          # (B,)
         return pred_actions, pred_yaw
 
@@ -705,55 +859,7 @@ class WM_Planning_Evaluator:
             output_dir=plot_name
         )
 
-    # ---------------------- 世界模型自回归 rollout ----------------------
-    def autoregressive_rollout(self, obs_image, deltas, rollout_stride, aug_image, camera_mats):
-        # stride 合并
-        deltas = deltas.unflatten(1, (-1, rollout_stride)).sum(2)
-        preds = []
-        curr_obs = obs_image.clone().to(self.device)
-
-        for i in range(deltas.shape[1]):
-            curr_delta = deltas[:, i:i + 1]
-            all_models = self.model, self.diffusion, self.vae
-            x_pred_pixels = model_forward_wrapper(
-                all_models, curr_obs, curr_delta, self.args.rollout_stride,
-                self.latent_size, num_cond=self.num_cond, device=self.device,
-                x_supervised=aug_image, camera_mats=camera_mats
-            )
-            x_pred_pixels = x_pred_pixels.unsqueeze(1)
-            curr_obs = torch.cat((curr_obs, x_pred_pixels), dim=1)  # append current prediction
-            curr_obs = curr_obs[:, 1:]  # remove first observation
-            preds.append(x_pred_pixels)
-
-        preds = torch.cat(preds, 1)
-        return preds
-
-    def get_eval_name(self):
-        # 名称仍保留原参数，便于对比
-        self.eval_name = f'SGLD_N{self.args.num_samples}_K{self.args.topk}_RS{self.args.rollout_stride}_rep{self.args.num_repeat_eval}_OPT{self.args.opt_steps}'
-
-    def actions_to_traj(self, actions, is_delta: bool = True):
-        """
-        将动作序列转 PoseTrajectory3D。
-        actions: (T, 3) —— 通常是“物理域位移 (dx,dy,dz)”，需要 cumsum 得到绝对坐标。
-        is_delta=True 表示需要积分；如果上游已经是绝对坐标，置 False。
-        """
-        actions = actions.to(torch.float64)
-        if is_delta:
-            positions_xyz = torch.cumsum(actions, dim=0)  # (T,3) 绝对
-        else:
-            positions_xyz = actions
-        orientations_quat_wxyz = torch.zeros((positions_xyz.shape[0], 4), dtype=torch.float64)
-        orientations_quat_wxyz[:, -1] = 1.0
-        timestamps = torch.arange(positions_xyz.shape[0], dtype=torch.float64)
-        traj = PoseTrajectory3D(
-            positions_xyz=positions_xyz,
-            orientations_quat_wxyz=orientations_quat_wxyz,
-            timestamps=timestamps
-        )
-        return traj
-
-    @torch.no_grad()
+    # ------------ 评估（已移除 @torch.no_grad 装饰器，内部局部关梯度） ------------
     def evaluate(self):
         for dataset_name in self.dataset_names:
             metric_logger = dist.MetricLogger(delimiter="  ")
@@ -772,45 +878,48 @@ class WM_Planning_Evaluator:
                 camera_ctx = camera_ctx[:, -self.num_cond:]
                 camera_mats = torch.cat([camera_ctx, camera_goal], dim=1)  # (B, num_cond+1, 4, 4)
 
-                # 注意：采样（SGLD）或优化前需要 enable_grad（内部已处理）
+                # —— 这里不关梯度，确保 SGLD/优化可回传 —— #
                 pred_actions, pred_yaw = self.generate_actions(
                     eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions,
                     self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image, camera_mats=camera_mats
                 )
 
-                # 评估：将“动作域 delta(物理)”-> “绝对 3D 轨迹”，并画 3D
-                for i in range(len(obs_image)):
-                    pred_traj_i = self.actions_to_traj(pred_actions[i, :, :3], is_delta=True)
-                    gt_traj_i = self.actions_to_traj(gt_actions[i, :, :3], is_delta=True)
+                # 指标计算与绘图可在 no_grad 中进行
+                with torch.no_grad():
+                    for i in range(len(obs_image)):
+                        pred_traj_i = self.actions_to_traj(pred_actions[i, :, :3], is_delta=True)
+                        gt_traj_i = self.actions_to_traj(gt_actions[i, :, :3], is_delta=True)
 
-                    ate, rpe_trans, _ = self.eval_metrics(gt_traj_i, pred_traj_i)
+                        ate, rpe_trans, _ = self.eval_metrics(gt_traj_i, pred_traj_i)
 
-                    pred_final_pos = pred_actions[i, -1, :3].to('cpu')  # (3,)
-                    pred_final_yaw = pred_yaw[i].to('cpu')
-                    goal_final_pos = goal_pos[i, 0, :3]  # (3,)
-                    goal_final_yaw = goal_pos[i, 0, -1]
-                    pos_diff_norm = torch.norm(pred_final_pos - goal_final_pos)
-                    yaw_diff = pred_final_yaw - goal_final_yaw
-                    yaw_diff_norm = torch.atan2(torch.sin(yaw_diff), torch.cos(yaw_diff)).abs()
+                        pred_final_pos = pred_actions[i, -1, :3]
+                        pred_final_yaw = pred_yaw[i]
+                        goal_final_pos = goal_pos[i, 0, :3]
+                        goal_final_yaw = goal_pos[i, 0, -1]
+                        pos_diff_norm = torch.norm(pred_final_pos - goal_final_pos)
+                        yaw_diff = pred_final_yaw - goal_final_yaw
+                        yaw_diff_norm = torch.atan2(torch.sin(yaw_diff), torch.cos(yaw_diff)).abs()
 
-                    metric_logger.meters['{}_ate'.format(dataset_name)].update(ate, n=1)
-                    metric_logger.meters['{}_rpe_trans'.format(dataset_name)].update(rpe_trans, n=1)
-                    metric_logger.meters['{}_pos_diff_norm'.format(dataset_name)].update(pos_diff_norm, n=1)
-                    metric_logger.meters['{}_yaw_diff_norm'.format(dataset_name)].update(yaw_diff_norm, n=1)
+                        metric_logger.meters['{}_ate'.format(dataset_name)].update(ate, n=1)
+                        metric_logger.meters['{}_rpe_trans'.format(dataset_name)].update(rpe_trans, n=1)
+                        metric_logger.meters['{}_pos_diff_norm'.format(dataset_name)].update(pos_diff_norm, n=1)
+                        metric_logger.meters['{}_yaw_diff_norm'.format(dataset_name)].update(yaw_diff_norm, n=1)
 
-                    if self.args.save_preds and self.args.plot3d:
-                        out_dir = os.path.join(self.args.save_output_dir, dataset_name, self.eval_name, "traj3d")
-                        os.makedirs(out_dir, exist_ok=True)
-                        # 取绝对坐标用于绘图
-                        pred_xyz = torch.cumsum(pred_actions[i, :, :3], dim=0)
-                        gt_xyz = torch.cumsum(gt_actions[i, :, :3], dim=0)
-                        fn = os.path.join(out_dir, f"traj3d_idx{int(idxs[i].item())}.png")
-                        plot_traj3d(pred_xyz, gt_xyz, save_path=fn, title=f"{dataset_name} idx={int(idxs[i].item())}")
+                        if self.args.save_preds and self.args.plot3d:
+                            out_dir = os.path.join(self.args.save_output_dir, dataset_name, self.eval_name, "traj3d")
+                            os.makedirs(out_dir, exist_ok=True)
+                            pred_xyz = torch.cumsum(pred_actions[i, :, :3], dim=0)
+                            gt_xyz   = torch.cumsum(gt_actions[i,  :, :3], dim=0)
+                            d_yaw_seq = calculate_delta_yaw(pred_actions[i:i+1, :, :3])  # (1,T,1)
+                            yaw_seq   = torch.cumsum(d_yaw_seq[0, :, 0], dim=0)          # (T,)
+                            fn = os.path.join(out_dir, f"traj3d_idx{int(idxs[i].item())}.png")
+                            plot_traj3d(pred_xyz, gt_xyz, yaw_seq=yaw_seq, save_path=fn,
+                                        title=f"{dataset_name} idx={int(idxs[i].item())}")
 
-            output_fn = os.path.join(self.args.save_output_dir, f'{dataset_name}_{self.eval_name}.json')
-            save_metric_to_disk(metric_logger, output_fn)
+            output_fn = os.path.join(self.args.save_output_dir, f'{dataset_name}_{self.eval_name}.json') if self.args.save_preds else None
+            if output_fn:
+                save_metric_to_disk(metric_logger, output_fn)
 
-            # gather the stats from all processes
             metric_logger.synchronize_between_processes()
 
     def eval_metrics(self, traj_ref, traj_pred):
@@ -847,15 +956,16 @@ if __name__ == "__main__":
     parser.add_argument("--num_workers", type=int, default=8, help="num workers")
     parser.add_argument("--batch_size", type=int, default=16, help="batch size")
 
-    # Planning Specific Args（原字段保留便于对比）
+    # Planning Specific Args
     parser.add_argument("--num_samples", type=int, default=10, help="visualization sample count")
     parser.add_argument("--rollout_stride", type=int, default=1, help="rollout stride")
     parser.add_argument("--topk", type=int, default=5, help="top-k for visualization highlight")
     parser.add_argument("--opt_steps", type=int, default=15, help="baseline gradient steps for opt-mode")
     parser.add_argument("--num_repeat_eval", type=int, default=1, help="number of evals for one action")
     parser.add_argument('--plot', action='store_true', default=False)
+    parser.add_argument('--plot3d', action='store_true', default=False, help='save 3D trajectory plots')
 
-    # ---------- 新增：概率场采样配置 ----------
+    # 概率场采样配置
     parser.add_argument("--sampler", type=str, default="opt", choices=["opt", "langevin"],
                         help="opt: gradient descent point estimate; langevin: SGLD sampling in normalized action space")
     parser.add_argument("--samples", type=int, default=64, help="number of trajectory samples to draw (langevin)")
@@ -863,11 +973,14 @@ if __name__ == "__main__":
     parser.add_argument("--sgld_lr", type=float, default=5e-3, help="SGLD step size (eta)")
     parser.add_argument("--beta", type=float, default=50.0, help="energy temperature for posterior weighting")
     parser.add_argument("--prior_scale", type=float, default=1.0, help="N(mu0, prior_scale*var_scale) prior width in normalized domain")
-    parser.add_argument('--plot3d', action='store_true', default=False, help='save 3D trajectory plots')
 
     args = parser.parse_args()
 
     evaluator = WM_Planning_Evaluator(args)
-    # local_rank = int(os.environ.get("LOCAL_RANK", 0))  # 如需调试本地 rank 可启用
-    # gpu_id = torch.cuda.current_device()
-    evaluator.evaluate()
+
+    # 优雅销毁分布式进程组，避免 NCCL 警告/阻塞
+    try:
+        evaluator.evaluate()
+    finally:
+        if tdist.is_available() and tdist.is_initialized():
+            tdist.destroy_process_group()
