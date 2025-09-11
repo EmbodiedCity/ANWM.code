@@ -4233,3 +4233,184 @@ Using cache found in ./models/facebookresearch_dino_main
 [[34m2025-09-09 17:11:53[0m] (step=0397000) Train Loss: 0.1123, Train Steps/Sec: 2.48, Samples/Sec: 39.60
 [[34m2025-09-09 17:12:34[0m] (step=0397100) Train Loss: 0.1128, Train Steps/Sec: 2.47, Samples/Sec: 39.50
 [[34m2025-09-09 17:13:14[0m] (step=0397200) Train Loss: 0.1206, Train Steps/Sec: 2.47, Samples/Sec: 39.46
+[[34m2025-09-09 17:13:55[0m] (step=0397300) Train Loss: 0.1092, Train Steps/Sec: 2.46, Samples/Sec: 39.32
+[[34m2025-09-09 17:14:36[0m] (step=0397400) Train Loss: 0.1117, Train Steps/Sec: 2.42, Samples/Sec: 38.67
+[[34m2025-09-09 17:15:16[0m] (step=0397500) Train Loss: 0.1128, Train Steps/Sec: 2.49, Samples/Sec: 39.88
+[[34m2025-09-09 17:15:57[0m] (step=0397600) Train Loss: 0.1046, Train Steps/Sec: 2.48, Samples/Sec: 39.66
+[[34m2025-09-09 17:16:37[0m] (step=0397700) Train Loss: 0.1153, Train Steps/Sec: 2.50, Samples/Sec: 40.05
+[[34m2025-09-09 17:17:18[0m] (step=0397800) Train Loss: 0.1086, Train Steps/Sec: 2.43, Samples/Sec: 38.88
+[[34m2025-09-09 17:17:59[0m] (step=0397900) Train Loss: 0.1088, Train Steps/Sec: 2.40, Samples/Sec: 38.43
+[[34m2025-09-09 17:18:40[0m] (step=0398000) Train Loss: 0.1109, Train Steps/Sec: 2.46, Samples/Sec: 39.42
+[[34m2025-09-09 17:19:20[0m] (step=0398100) Train Loss: 0.1081, Train Steps/Sec: 2.50, Samples/Sec: 40.00
+[[34m2025-09-09 17:20:01[0m] (step=0398200) Train Loss: 0.1130, Train Steps/Sec: 2.45, Samples/Sec: 39.22
+[[34m2025-09-09 17:20:41[0m] (step=0398300) Train Loss: 0.1127, Train Steps/Sec: 2.48, Samples/Sec: 39.65
+[[34m2025-09-09 17:21:22[0m] (step=0398400) Train Loss: 0.1058, Train Steps/Sec: 2.47, Samples/Sec: 39.55
+[[34m2025-09-09 17:22:02[0m] (step=0398500) Train Loss: 0.1050, Train Steps/Sec: 2.47, Samples/Sec: 39.54
+[[34m2025-09-09 17:22:44[0m] (step=0398600) Train Loss: 0.1163, Train Steps/Sec: 2.41, Samples/Sec: 38.57
+[[34m2025-09-09 17:23:24[0m] (step=0398700) Train Loss: 0.1125, Train Steps/Sec: 2.49, Samples/Sec: 39.88
+[[34m2025-09-09 17:24:05[0m] (step=0398800) Train Loss: 0.1094, Train Steps/Sec: 2.45, Samples/Sec: 39.23
+[[34m2025-09-09 17:24:46[0m] (step=0398900) Train Loss: 0.1120, Train Steps/Sec: 2.44, Samples/Sec: 38.97
+[[34m2025-09-09 17:25:27[0m] (step=0399000) Train Loss: 0.1117, Train Steps/Sec: 2.44, Samples/Sec: 38.96
+[[34m2025-09-09 17:26:08[0m] (step=0399100) Train Loss: 0.1072, Train Steps/Sec: 2.44, Samples/Sec: 38.97
+[[34m2025-09-09 17:26:49[0m] (step=0399200) Train Loss: 0.0997, Train Steps/Sec: 2.45, Samples/Sec: 39.24
+[[34m2025-09-09 17:27:29[0m] (step=0399300) Train Loss: 0.0991, Train Steps/Sec: 2.47, Samples/Sec: 39.52
+[[34m2025-09-09 17:28:10[0m] (step=0399400) Train Loss: 0.0998, Train Steps/Sec: 2.41, Samples/Sec: 38.64
+[[34m2025-09-09 17:28:50[0m] (step=0399500) Train Loss: 0.1051, Train Steps/Sec: 2.50, Samples/Sec: 40.00
+[[34m2025-09-09 17:29:31[0m] (step=0399600) Train Loss: 0.1095, Train Steps/Sec: 2.50, Samples/Sec: 39.95
+[[34m2025-09-09 17:30:11[0m] (step=0399700) Train Loss: 0.1077, Train Steps/Sec: 2.47, Samples/Sec: 39.46
+[[34m2025-09-09 17:30:54[0m] (step=0399800) Train Loss: 0.1098, Train Steps/Sec: 2.34, Samples/Sec: 37.39
+[[34m2025-09-09 17:31:36[0m] (step=0399900) Train Loss: 0.1111, Train Steps/Sec: 2.37, Samples/Sec: 37.90
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-09-09 17:32:17[0m] (step=0400000) Train Loss: 0.1120, Train Steps/Sec: 2.46, Samples/Sec: 39.28
+[[34m2025-09-09 17:32:47[0m] Saved checkpoint to logs/nwm_cdit_airvln_v7_1/checkpoints/0400000.pth.tar
+Using cache found in ./models/facebookresearch_dino_main
+[[34m2025-09-09 17:34:17[0m] (step=0400000) Perceptual Loss: 0.3237, Eval Time: 89.77
+[[34m2025-09-09 17:35:01[0m] (step=0400100) Train Loss: 0.1095, Train Steps/Sec: 0.61, Samples/Sec: 9.77
+[[34m2025-09-09 17:35:44[0m] (step=0400200) Train Loss: 0.1087, Train Steps/Sec: 2.30, Samples/Sec: 36.82
+[[34m2025-09-09 17:36:26[0m] (step=0400300) Train Loss: 0.1109, Train Steps/Sec: 2.37, Samples/Sec: 37.89
+[[34m2025-09-09 17:37:09[0m] (step=0400400) Train Loss: 0.1084, Train Steps/Sec: 2.32, Samples/Sec: 37.17
+[[34m2025-09-09 17:37:54[0m] (step=0400500) Train Loss: 0.1086, Train Steps/Sec: 2.27, Samples/Sec: 36.26
+[[34m2025-09-09 17:38:37[0m] (step=0400600) Train Loss: 0.1146, Train Steps/Sec: 2.28, Samples/Sec: 36.53
+[[34m2025-09-09 17:39:20[0m] (step=0400700) Train Loss: 0.1057, Train Steps/Sec: 2.33, Samples/Sec: 37.30
+[[34m2025-09-09 17:40:03[0m] (step=0400800) Train Loss: 0.1061, Train Steps/Sec: 2.36, Samples/Sec: 37.71
+[[34m2025-09-09 17:40:45[0m] (step=0400900) Train Loss: 0.1136, Train Steps/Sec: 2.34, Samples/Sec: 37.45
+[[34m2025-09-09 17:41:28[0m] (step=0401000) Train Loss: 0.1103, Train Steps/Sec: 2.37, Samples/Sec: 37.87
+[[34m2025-09-09 17:42:11[0m] (step=0401100) Train Loss: 0.1077, Train Steps/Sec: 2.32, Samples/Sec: 37.08
+W0909 17:42:45.515000 2801654 site-packages/torch/distributed/elastic/agent/server/api.py:704] Received Signals.SIGINT death signal, shutting down workers
+W0909 17:42:45.518000 2801654 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2801747 closing signal SIGINT
+W0909 17:42:45.519000 2801654 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2801748 closing signal SIGINT
+W0909 17:42:45.519000 2801654 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2801749 closing signal SIGINT
+W0909 17:42:45.520000 2801654 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 2801750 closing signal SIGINT
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/data1/tpz/nwm-main/train_v7_1.py", line 510, in <module>
+[rank2]:     main(args)
+[rank2]:   File "/data1/tpz/nwm-main/train_v7_1.py", line 315, in main
+[rank2]:     loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+[rank2]:   File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+[rank2]:     return super().training_losses(self._wrap_model(model), *args, **kwargs)
+[rank2]:   File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 753, in training_losses
+[rank2]:     model_output = model(x_t, t, **model_kwargs)
+[rank2]:   File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+[rank2]:     return self.model(x, new_ts, **kwargs)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+[rank2]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+[rank2]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/data1/tpz/nwm-main/models_tpz_v7_1.py", line 513, in forward
+[rank2]:     x = block(x, c, x_cond, viewmats=viewmats, Ks=Ks)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/data1/tpz/nwm-main/models_tpz_v7_1.py", line 308, in forward
+[rank2]:     query=modulate(self.norm2(x), shift_ca_x, scale_ca_x),
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/normalization.py", line 217, in forward
+[rank2]:     return F.layer_norm(
+[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/functional.py", line 2900, in layer_norm
+[rank2]:     return torch.layer_norm(
+[rank2]: KeyboardInterrupt
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/data1/tpz/nwm-main/train_v7_1.py", line 510, in <module>
+[rank1]:     main(args)
+[rank1]:   File "/data1/tpz/nwm-main/train_v7_1.py", line 315, in main
+[rank1]:     loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+[rank1]:   File "/data1/tpz/nwm-main/diffusion/respace.py", line 103, in training_losses
+[rank1]:     return super().training_losses(self._wrap_model(model), *args, **kwargs)
+[rank1]:   File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 753, in training_losses
+[rank1]:     model_output = model(x_t, t, **model_kwargs)
+[rank1]:   File "/data1/tpz/nwm-main/diffusion/respace.py", line 135, in __call__
+[rank1]:     return self.model(x, new_ts, **kwargs)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/parallel/distributed.py", line 1643, in forward
+[rank1]:     else self._run_ddp_forward(*inputs, **kwargs)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/parallel/distributed.py", line 1459, in _run_ddp_forward
+[rank1]:     return self.module(*inputs, **kwargs)  # type: ignore[index]
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/data1/tpz/nwm-main/models_tpz_v7_1.py", line 513, in forward
+[rank1]:     x = block(x, c, x_cond, viewmats=viewmats, Ks=Ks)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:   File "/data1/tpz/nwm-main/models_tpz_v7_1.py", line 307, in forward
+[rank1]:     x = x + gate_ca_x.unsqueeze(1) * self.cttn.forward_cross(
+[rank1]:   File "/data1/tpz/nwm-main/models_tpz_v7_1.py", line 225, in forward_cross
+[rank1]:     k = einops.rearrange(self.k_proj(key),   'b l (h d) -> b h l d', h=self.num_heads)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/einops/einops.py", line 600, in rearrange
+[rank1]:     return reduce(tensor, pattern, reduction="rearrange", **axes_lengths)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/einops/einops.py", line 532, in reduce
+[rank1]:     return _apply_recipe(
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/einops/einops.py", line 243, in _apply_recipe
+[rank1]:     tensor = backend.reshape(tensor, init_shapes)
+[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/einops/_backends.py", line 93, in reshape
+[rank1]:     return x.reshape(shape)
+[rank1]: KeyboardInterrupt
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/data1/tpz/nwm-main/train_v7_1.py", line 510, in <module>
+[rank0]:     main(args)
+[rank0]:   File "/data1/tpz/nwm-main/train_v7_1.py", line 323, in main
+[rank0]:     scaler.scale(loss).backward()
+[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/_tensor.py", line 581, in backward
+[rank0]:     torch.autograd.backward(
+[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/autograd/__init__.py", line 347, in backward
+[rank0]:     _engine_run_backward(
+[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/autograd/graph.py", line 825, in _engine_run_backward
+[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0]: KeyboardInterrupt
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/data1/tpz/nwm-main/train_v7_1.py", line 510, in <module>
+[rank3]:     main(args)
+[rank3]:   File "/data1/tpz/nwm-main/train_v7_1.py", line 323, in main
+[rank3]:     scaler.scale(loss).backward()
+[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/_tensor.py", line 581, in backward
+[rank3]:     torch.autograd.backward(
+[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/autograd/__init__.py", line 347, in backward
+[rank3]:     _engine_run_backward(
+[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/autograd/graph.py", line 825, in _engine_run_backward
+[rank3]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank3]: KeyboardInterrupt
+[rank0]:[W909 17:42:46.927224365 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W0909 17:43:15.543000 2801654 site-packages/torch/distributed/elastic/multiprocessing/api.py:916] Unable to shutdown process 2801747 via Signals.SIGINT, forcefully exiting via Signals.SIGKILL
+W0909 17:43:16.033000 2801654 site-packages/torch/distributed/elastic/multiprocessing/api.py:916] Unable to shutdown process 2801750 via Signals.SIGINT, forcefully exiting via Signals.SIGKILL
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm3/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
+    result = agent.run()
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
+    result = self._invoke_run(role)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 855, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 2801654 got signal: 2

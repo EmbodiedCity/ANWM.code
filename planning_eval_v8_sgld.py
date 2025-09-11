@@ -38,10 +38,13 @@ import distributed as dist
 from models_tpz_v8 import CDiT_models
 import torch.distributed as tdist  # 用于优雅销毁进程组
 
-# ===================== 打印频率常量（无命令行开关） =====================
-SGLD_LOG_EVERY   = 10   # SGLD 迭代每隔多少步打印一次（含最后一步）
-SGLD_LOG_KEEP    = 8    # SGLD 打印时最多统计/展示前多少条样本
-ROLLOUT_LOG_KEEP = 8    # 每步 rollout 打印时最多展示前多少条样本
+# ===================== 常量 =====================
+SGLD_LOG_EVERY   = 10   # SGLD 迭代打印频率
+SGLD_LOG_KEEP    = 8    # SGLD 打印时最多展示样本数
+ROLLOUT_LOG_KEEP = 8    # 每步 rollout 打印样本数
+
+# ★ 物理域单步位移上限（米）：依据“单步<~5m”的先验，避免轨迹暴涨/跑偏
+STEP_CAP_METERS  = 5.0
 
 # ---------------------- 全局配置加载 ----------------------
 with open("config/data_config.yaml", "r") as f:
@@ -74,10 +77,7 @@ def plot_images_with_losses(preds, losses, save_path="predictions_with_losses.pn
         col = idx % ncol
         x = col * img_width
         y = row * img_height
-        if idx == 0:
-            text = f"GT Goal"
-        else:
-            text = f"ID: {idx - 1}  Loss: {loss:.2f}"
+        text = "GT Goal" if idx == 0 else f"ID: {idx - 1}  Loss: {loss:.2f}"
         ax.text(x + img_width / 2, y + 15, text, color="white",
                 ha="center", va="top", fontsize=50, backgroundcolor="black")
 
@@ -134,12 +134,9 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
         for t in range(T + 2):
             x = t * img_width
             y = b * img_height
+            label = "Goal" if t == T + 1 else ("Init" if t == 0 else f"Step {t}")
             if t == 0:
                 label = f"ID:{int(idxs[b].item())} Init"
-            elif t == T + 1:
-                label = "Goal"
-            else:
-                label = f"Step {t}"
             ax.text(x + img_width / 2, y + 20, label, color="white",
                     ha="center", va="top", fontsize=16, backgroundcolor="black")
 
@@ -207,6 +204,102 @@ def plot_traj3d(pred_xyz: torch.Tensor,
     plt.savefig(save_path, dpi=200)
     plt.close(fig)
 
+# ==== 概率场云（Point Cloud）可视化，叠加 GT 参考 ====
+def plot_probability_cloud(xyz_abs: torch.Tensor,
+                           weights: torch.Tensor,
+                           save_prefix: str,
+                           title: str = "",
+                           gt_xyz_abs: torch.Tensor = None,
+                           max_points: int = 200_000):
+    """
+    xyz_abs: (N, T, 3)  -> 采样得到的绝对轨迹点（已 cumsum）
+    weights: (N,)       -> 每条轨迹的后验权重（softmax 后）
+    gt_xyz_abs: (T, 3)  -> GT 绝对轨迹，用折线叠加作为参考
+    save_prefix: 保存文件路径前缀；会生成 *_3d.png 和 *_xy.png
+    """
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D  # noqa
+
+    xyz = xyz_abs.detach().cpu().reshape(-1, 3)          # (N*T,3)
+    N, T, _ = xyz_abs.shape
+    w = weights.detach().cpu()                           # (N,)
+    w_rep = w.unsqueeze(1).expand(N, T).reshape(-1)      # (N*T,)
+
+    # 归一化权重到[0,1]
+    if w_rep.numel() > 0:
+        w_min, w_max = float(w_rep.min()), float(w_rep.max())
+        w_norm = (w_rep - w_min) / (w_max - w_min + 1e-12) if (w_max > w_min) else torch.ones_like(w_rep)
+    else:
+        w_norm = torch.ones_like(w_rep)
+
+    # 下采样
+    M = xyz.shape[0]
+    if M > max_points:
+        idx = torch.randperm(M)[:max_points]
+        xyz = xyz[idx]
+        w_norm = w_norm[idx]
+
+    sizes = 5.0 + 45.0 * w_norm.numpy()   # 点大小随权重
+    alphas = 0.10 + 0.50 * w_norm.numpy() # 透明度随权重
+
+    # --- 3D 云 ---
+    fig = plt.figure(figsize=(8, 7))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(xyz[:, 0], xyz[:, 1], xyz[:, 2], s=sizes, alpha=alphas)
+    if gt_xyz_abs is not None:
+        g = gt_xyz_abs.detach().cpu().numpy()
+        ax.plot(g[:, 0], g[:, 1], g[:, 2], linestyle='--', linewidth=2.0, label='GT')
+        ax.scatter(g[0, 0], g[0, 1], g[0, 2], s=40, c='k', marker='o')  # GT start
+        ax.scatter(g[-1, 0], g[-1, 1], g[-1, 2], s=40, c='k', marker='^')  # GT end
+        ax.legend()
+
+    ax.set_xlabel("X"); ax.set_ylabel("Y"); ax.set_zlabel("Z")
+    if title: ax.set_title(title + " (3D cloud)")
+    try: ax.set_box_aspect([1,1,1])
+    except Exception: pass
+    plt.tight_layout()
+    os.makedirs(os.path.dirname(save_prefix), exist_ok=True)
+    plt.savefig(f"{save_prefix}_3d.png", dpi=200)
+    plt.close(fig)
+
+    # --- 俯视 (X-Y) 云：方形坐标范围 + 外边距，避免直线时过窄 ---
+    fig2, ax2 = plt.subplots(figsize=(8, 8))  # 方形画布
+    ax2.scatter(xyz[:, 0], xyz[:, 1], s=sizes, alpha=alphas)
+    if gt_xyz_abs is not None:
+        g = gt_xyz_abs.detach().cpu().numpy()
+        ax2.plot(g[:, 0], g[:, 1], linestyle='--', linewidth=2.0, label='GT')
+        ax2.scatter(g[0, 0], g[0, 1], s=30, c='k', marker='o')
+        ax2.scatter(g[-1, 0], g[-1, 1], s=30, c='k', marker='^')
+        ax2.legend()
+
+    ax2.set_xlabel("X"); ax2.set_ylabel("Y")
+    ax2.set_aspect("equal", adjustable="box")
+
+    # 计算云点+GT的总体范围，构造方形边界并加 padding
+    all_x = xyz[:, 0].numpy()
+    all_y = xyz[:, 1].numpy()
+    if gt_xyz_abs is not None:
+        all_x = np.concatenate([all_x, g[:, 0]])
+        all_y = np.concatenate([all_y, g[:, 1]])
+
+    x_min, x_max = float(np.min(all_x)), float(np.max(all_x))
+    y_min, y_max = float(np.min(all_y)), float(np.max(all_y))
+    cx, cy = 0.5 * (x_min + x_max), 0.5 * (y_min + y_max)
+    rng_x, rng_y = x_max - x_min, y_max - y_min
+    max_rng = max(rng_x, rng_y)
+
+    # 最小显示跨度，直线或近零范围时保证可视化；再加 15% 边距
+    MIN_SPAN = 1.0  # 米
+    PAD = 0.15
+    span = max(max_rng, MIN_SPAN)
+    half = 0.5 * span * (1.0 + PAD)
+    ax2.set_xlim(cx - half, cx + half)
+    ax2.set_ylim(cy - half, cy + half)
+
+    if title: ax2.set_title(title + " (top-down)")
+    plt.tight_layout()
+    plt.savefig(f"{save_prefix}_xy.png", dpi=200)
+    plt.close(fig2)
 
 # ---------------------- 数据集 ----------------------
 def get_dataset_eval(config, dataset_name, predefined_index=True):
@@ -343,7 +436,7 @@ class WM_Planning_Evaluator:
         last_yaw_bias = torch.zeros(1, device=device).requires_grad_(True)
 
         for p in self.model.parameters():
-            p.requires_grad_(False)
+            p.requires_grad_((False))
 
         opt = torch.optim.Adam([norm_xyz, last_yaw_bias], lr=lr)
 
@@ -465,16 +558,16 @@ class WM_Planning_Evaluator:
         mu0_xyz = mu0_all.to(norm_xyz.device)[..., :3]               # (N,3)
         mu0_xyz = mu0_xyz.unsqueeze(1).expand(N, T, 3)               # (N,T,3)
 
-        l2   = norm_xyz.pow(2).mean(dim=(1, 2))                      # (N,)
+        l2   = norm_xyz.pow(2).mean(dim=(1, 2))
         diff = (norm_xyz[:, 1:] - norm_xyz[:, :-1]).pow(2).mean(dim=(1, 2)) if T > 1 else torch.zeros_like(l2)
         jerk = (norm_xyz[:, 2:] - 2*norm_xyz[:, 1:-1] + norm_xyz[:, :-2]).pow(2).mean(dim=(1, 2)) if T > 2 else torch.zeros_like(l2)
 
         if var_scale.ndim == 0:
             var_scale = var_scale.repeat(3)
-        sigma2 = (prior_scale * var_scale[:3])**2                    # (3,)
-        prior = ((norm_xyz - mu0_xyz)**2 / sigma2.view(1, 1, 3)).mean(dim=(1, 2))  # (N,)
+        sigma2 = (prior_scale * var_scale[:3])**2
+        prior = ((norm_xyz - mu0_xyz)**2 / sigma2.view(1, 1, 3)).mean(dim=(1, 2))
 
-        E_reg = smooth_w * (l2 + diff) + jerk_w * jerk + prior       # (N,)
+        E_reg = smooth_w * (l2 + diff) + jerk_w * jerk + prior
         return E_reg
 
     # ================================================================
@@ -520,9 +613,9 @@ class WM_Planning_Evaluator:
             norm_xyz, obs_img, norm_xyz.shape[1],
             var_scale=var_scale, prior_scale=self.args.prior_scale,
             smooth_w=smooth_w, jerk_w=jerk_w
-        )                                                             # (N,)
+        )
 
-        E = img_term + prior_w * E_reg                                # (N,)
+        E = img_term + prior_w * E_reg
         return E, preds_seq
 
     # ---------------------- 每步 rollout 后打印当前累计末端坐标 ----------------------
@@ -565,8 +658,6 @@ class WM_Planning_Evaluator:
         norm_xyz = mu0.expand(N, T, 3) + init_std.expand(N, T, 3) * torch.randn(N, T, 3, device=device)
         norm_xyz.requires_grad_(True)
 
-        opt_like = torch.optim.SGD([norm_xyz], lr=1.0)
-
         try:
             print_rank = (dist.get_rank() == 0)
         except Exception:
@@ -592,7 +683,7 @@ class WM_Planning_Evaluator:
                 return
             with torch.no_grad():
                 n_save = int(min(SGLD_LOG_KEEP, norm_xyz.shape[0]))
-                deltas_xyz_phys = get_action_torch(norm_xyz[:n_save].detach(), ACTION_STATS_TORCH)
+                deltas_xyz_phys = get_action_torch(norm_xyz[:n_save].detach(), ACTION_STATS_TORCH)  # (n_save,T,3)
                 xyz_abs = torch.cumsum(deltas_xyz_phys, dim=1)
                 z_vals = xyz_abs[..., 2].detach().cpu()
                 z_min = float(z_vals.min()); z_max = float(z_vals.max())
@@ -609,12 +700,11 @@ class WM_Planning_Evaluator:
                       f"mean_range_per_traj={z_rng_mean:.6f} | "
                       f"norm_std(x,y,z)=({std_x:.4f},{std_y:.4f},{std_z:.4f})")
 
-        # ================== 修复版 SGLD 主循环 ==================
+        # ================== SGLD 主循环（带物理步长钳制） ==================
         for k in range(steps):
             norm_xyz = norm_xyz.detach().requires_grad_(True)
-            opt_like.zero_grad(set_to_none=True)
 
-            # 需要梯度的能量路径（正则项）
+            # 能量（图像项 no_grad；正则可导）
             deltas_norm = torch.cat([norm_xyz, torch.zeros(N, T, 1, device=device)], dim=-1)
             E, _ = self._energy(
                 obs_img_1.repeat(N, 1, 1, 1, 1),
@@ -630,6 +720,7 @@ class WM_Planning_Evaluator:
                 grad = torch.autograd.grad(loss_all, norm_xyz, retain_graph=False, allow_unused=True)[0]
 
             if (grad is None) or (not torch.isfinite(grad).all()):
+                # 回退到纯正则梯度
                 var_scale_local = torch.tensor(
                     data_hyperparams[self.args.datasets]['var_scale'],
                     device=norm_xyz.device, dtype=norm_xyz.dtype
@@ -644,8 +735,17 @@ class WM_Planning_Evaluator:
                 grad = torch.autograd.grad(loss_reg, norm_xyz, retain_graph=False)[0]
 
             with torch.no_grad():
+                # Langevin 更新（归一化域）
                 norm_xyz.add_(-0.5 * eta * grad)
                 norm_xyz.add_((eta ** 0.5) * torch.randn_like(norm_xyz))
+
+                # 物理域单步位移上限（~5m）：先计算物理模长，再按比例缩小归一化向量
+                deltas_phys = get_action_torch(norm_xyz, ACTION_STATS_TORCH)  # (N,T,3) 物理域单步
+                mag_phys = torch.linalg.norm(deltas_phys, dim=-1, keepdim=True)  # (N,T,1)
+                scale_phys = torch.clamp(STEP_CAP_METERS / (mag_phys + 1e-8), max=1.0)
+                norm_xyz.mul_(scale_phys)
+
+                # 额外硬边界（极端安全网）
                 norm_xyz.clamp_(-5.0, 5.0)
 
             if (k % max(1, SGLD_LOG_EVERY) == 0):
@@ -726,9 +826,9 @@ class WM_Planning_Evaluator:
         image_plot_dir = os.path.join(dataset_save_output_dir, 'plots') if dataset_save_output_dir else None
         if image_plot_dir:
             os.makedirs(image_plot_dir, exist_ok=True)
-        videos_plot_dir = os.path.join(dataset_save_output_dir, 'videos') if dataset_save_output_dir else None
-        if videos_plot_dir:
-            os.makedirs(videos_plot_dir, exist_ok=True)
+        cloud_dir = os.path.join(dataset_save_output_dir, 'cloud') if dataset_save_output_dir else None
+        if cloud_dir:
+            os.makedirs(cloud_dir, exist_ok=True)
 
         B = obs_image.shape[0]
         T = len_traj_pred
@@ -749,7 +849,6 @@ class WM_Planning_Evaluator:
             goal_1 = goal_img_B[b:b + 1]
 
             if self.args.sampler == "langevin":
-                # 确保开启梯度（evaluate 不再 no_grad，这里仍显式安全）
                 with torch.enable_grad():
                     deltas_N, preds_seq_N, E_N, w_N = self._sample_langevin(
                         obs_1, goal_1, T, aug_1, cam_1,
@@ -761,24 +860,49 @@ class WM_Planning_Evaluator:
                 pred_actions_b = get_action_torch(deltas_agg[..., :3], ACTION_STATS_TORCH)  # (1,T,3)
                 pred_yaw_b = deltas_agg[..., -1].sum(1)                                     # (1,)
 
+                # 概率场点云（叠加 GT）
+                try:
+                    with torch.no_grad():
+                        deltas_xyz_phys = get_action_torch(deltas_N[..., :3], ACTION_STATS_TORCH)  # (N,T,3)
+                        xyz_abs_all = torch.cumsum(deltas_xyz_phys, dim=1)                         # (N,T,3)
+                        gt_xyz_abs = torch.cumsum(gt_actions[b, :, :3], dim=0)                    # (T,3)
+
+                        save_prefix = os.path.join(cloud_dir, f"idx{int(idxs[b].item())}_cloud") if cloud_dir else f"idx{int(idxs[b].item())}_cloud"
+                        plot_probability_cloud(
+                            xyz_abs_all, w_N,
+                            save_prefix=save_prefix,
+                            title=f"{dataset_name} idx={int(idxs[b].item())} (all)",
+                            gt_xyz_abs=gt_xyz_abs
+                        )
+                        topk_k = int(self.topk) if self.topk is not None else min(5, self.args.samples)
+                        topk_idx = torch.argsort(w_N, descending=True)[:max(1, min(topk_k, self.args.samples))]
+                        plot_probability_cloud(
+                            xyz_abs_all[topk_idx], w_N[topk_idx],
+                            save_prefix=save_prefix + "_topk",
+                            title=f"{dataset_name} idx={int(idxs[b].item())} (topk)",
+                            gt_xyz_abs=gt_xyz_abs
+                        )
+                except Exception as e:
+                    print(f"[WARN] plot cloud failed for idx {int(idxs[b].item())}: {e}")
+
                 if self.args.save_preds and image_plot_dir is not None:
                     with torch.no_grad():
                         preds_last = preds_seq_N[:, -1]
                         loss_viz = self.loss_fn(preds_last, goal_1.repeat(self.args.samples, 1, 1, 1)).flatten(0)
-                        topk_idx = torch.argsort(loss_viz)[:min(self.topk, self.args.samples)]
+                        topk_idx_vis = torch.argsort(loss_viz)[:min(self.topk, self.args.samples)]
                         self.visualize_trajectories(
                             dataset_name, gt_actions, image_plot_dir,
                             i=self.args.sgld_steps, traj=b, traj_id=int(idxs[b].item()),
                             deltas=deltas_N, cur_obs_image=obs_1.repeat(self.args.samples, 1, 1, 1, 1),
-                            cur_goal_image=goal_1, preds=preds_last, loss=loss_viz, topk_idx=topk_idx
+                            cur_goal_image=goal_1, preds=preds_last, loss=loss_viz, topk_idx=topk_idx_vis
                         )
 
                     samples_dir = os.path.join(dataset_save_output_dir, "samples") if dataset_save_output_dir else None
                     if samples_dir:
                         os.makedirs(samples_dir, exist_ok=True)
                         with torch.no_grad():
-                            deltas_xyz_phys = get_action_torch(deltas_N[..., :3], ACTION_STATS_TORCH)
-                            xyz_abs_N = torch.cumsum(deltas_xyz_phys, dim=1)
+                            deltas_xyz_phys_all = get_action_torch(deltas_N[..., :3], ACTION_STATS_TORCH)
+                            xyz_abs_N = torch.cumsum(deltas_xyz_phys_all, dim=1)
                             torch.save(
                                 {
                                     "xyz_abs": xyz_abs_N.detach().cpu(),
@@ -859,7 +983,7 @@ class WM_Planning_Evaluator:
             output_dir=plot_name
         )
 
-    # ------------ 评估（已移除 @torch.no_grad 装饰器，内部局部关梯度） ------------
+    # ------------ 评估 ------------
     def evaluate(self):
         for dataset_name in self.dataset_names:
             metric_logger = dist.MetricLogger(delimiter="  ")
@@ -878,11 +1002,14 @@ class WM_Planning_Evaluator:
                 camera_ctx = camera_ctx[:, -self.num_cond:]
                 camera_mats = torch.cat([camera_ctx, camera_goal], dim=1)  # (B, num_cond+1, 4, 4)
 
-                # —— 这里不关梯度，确保 SGLD/优化可回传 —— #
+                # 不关梯度，确保 SGLD/优化可回传
                 pred_actions, pred_yaw = self.generate_actions(
                     eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions,
                     self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image, camera_mats=camera_mats
                 )
+
+                # === 统一设备，避免 cuda/cpu 混用 ===
+                goal_pos = goal_pos.to(pred_actions.device)
 
                 # 指标计算与绘图可在 no_grad 中进行
                 with torch.no_grad():
@@ -894,8 +1021,9 @@ class WM_Planning_Evaluator:
 
                         pred_final_pos = pred_actions[i, -1, :3]
                         pred_final_yaw = pred_yaw[i]
-                        goal_final_pos = goal_pos[i, 0, :3]
+                        goal_final_pos = goal_pos[i, 0, :3]       # 已转到 pred 的 device
                         goal_final_yaw = goal_pos[i, 0, -1]
+
                         pos_diff_norm = torch.norm(pred_final_pos - goal_final_pos)
                         yaw_diff = pred_final_yaw - goal_final_yaw
                         yaw_diff_norm = torch.atan2(torch.sin(yaw_diff), torch.cos(yaw_diff)).abs()
