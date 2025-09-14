@@ -142,8 +142,8 @@ class BaseDataset(Dataset):
         
         # print(f"pose_src shape: {pose_src.shape}, pose_dst shape: {pose_dst.shape}, dep_map shape: {depth_map.shape}")
         
-        # projected_images = self.generate_augmented_image(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
-        projected_images = self.generate_augmented_image_v2(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
+        projected_images = self.generate_augmented_image(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
+        # projected_images = self.generate_augmented_image_v2(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
 
         return projected_images
         
@@ -463,6 +463,7 @@ class EvalDataset(BaseDataset):
             # Compute projected tensor
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
+            print(f"Step {i} has been projected.")
             print(f"projected_images shape: {projected_images.shape}, projected_tensor shape: {projected_tensor.size()}")
             # Compute T
             T_wc_ctx = curr_traj_data['pose'][context_times]             # (context_size, 4, 4)

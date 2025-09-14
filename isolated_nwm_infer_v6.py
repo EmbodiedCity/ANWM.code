@@ -102,18 +102,22 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         return torch.clip(samples, -1., 1.)
 
 def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image, gt_image, delta, num_cond, device, x_supervised):
-    print(f"idxs: {idxs}")
+    # print(f"idxs: {idxs}")
     rollout_stride = args.input_fps // rollout_fps
     gt_image = gt_image[:, rollout_stride-1::rollout_stride]
     delta = delta.unflatten(1, (-1, rollout_stride)).sum(2)
     curr_obs = obs_image.clone().to(device)
-    print(f"yyy x_super shape: {x_supervised.size()}")
+    # print(f"yyy x_super shape: {x_supervised.size()}")
+    sup_image = x_supervised[:, rollout_stride-1::rollout_stride]
+    assert sup_image.shape == gt_image.shape, \
+        f"x_sup_strided shape={sup_image.shape} != gt shape={gt_image.shape}"
+
     for i in range(gt_image.shape[1]):
         curr_delta = delta[:, i:i+1].to(device)
         if args.gt:
             x_pred_pixels = gt_image[:, i].clone().to(device)
         else:
-            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, rollout_stride, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=x_supervised)
+            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, rollout_stride, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=sup_image[:, i:i+1])
 
         curr_obs = torch.cat((curr_obs, x_pred_pixels.unsqueeze(1)), dim=1) # append current prediction
         curr_obs = curr_obs[:, 1:] # remove first observation
@@ -261,7 +265,7 @@ def main(args):
                 obs_image = obs_image[:, -num_cond:].to(device)
                 gt_image = gt_image.to(device)
                 num_cond = config["context_size"]
-                print(f"xxxx aug_img shape: {aug_image.size()}")
+                # print(f"xxxx aug_img shape: {aug_image.size()}")
                 if args.eval_type == 'rollout':
                     for rollout_fps in args.rollout_fps_values:
                         curr_rollout_output_dir = os.path.join(dataset_save_output_dir, f'rollout_{rollout_fps}fps')

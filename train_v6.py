@@ -270,101 +270,101 @@ def main(args):
 
         for x, y, rel_t, aug, _ in loader:    
             x = x.to(device, non_blocking=True)
-            # y = y.to(device, non_blocking=True)
-            # rel_t = rel_t.to(device, non_blocking=True)
-            # aug = aug.to(device, non_blocking=True)
+            y = y.to(device, non_blocking=True)
+            rel_t = rel_t.to(device, non_blocking=True)
+            aug = aug.to(device, non_blocking=True)
             
-            # with torch.amp.autocast('cuda', enabled=bfloat_enable, dtype=torch.bfloat16):
-            #     with torch.no_grad():
-            #         # Map input images to latent space + normalize latents:
-            #         B, T = x.shape[:2]
-            #         x = x.flatten(0,1)
-            #         x = tokenizer.encode(x).latent_dist.sample().mul_(0.18215)
-            #         x = x.unflatten(0, (B, T))
-            #         # aug same as x
-            #         B_aug, T_aug = aug.shape[:2]
-            #         aug = aug.flatten(0,1)
-            #         aug = tokenizer.encode(aug).latent_dist.sample().mul_(0.18215)
-            #         aug = aug.unflatten(0, (B_aug, T_aug))              # [B, num_goals, 4, 28, 28]
-            #         # print(f'aug latent shape: {aug.size()}')
+            with torch.amp.autocast('cuda', enabled=bfloat_enable, dtype=torch.bfloat16):
+                with torch.no_grad():
+                    # Map input images to latent space + normalize latents:
+                    B, T = x.shape[:2]
+                    x = x.flatten(0,1)
+                    x = tokenizer.encode(x).latent_dist.sample().mul_(0.18215)
+                    x = x.unflatten(0, (B, T))
+                    # aug same as x
+                    B_aug, T_aug = aug.shape[:2]
+                    aug = aug.flatten(0,1)
+                    aug = tokenizer.encode(aug).latent_dist.sample().mul_(0.18215)
+                    aug = aug.unflatten(0, (B_aug, T_aug))              # [B, num_goals, 4, 28, 28]
+                    # print(f'aug latent shape: {aug.size()}')
                 
-            #     num_goals = T - num_cond
-            #     x_start = x[:, num_cond:].flatten(0, 1)             # [B*num_goals, 4, 28, 28]
-            #     x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)      # [B*num_goals, num_cond, 4, 28, 28]
-            #     y_cond = aug.unsqueeze(2).flatten(0, 1)             # [B*num_goals, 1, 4, 28, 28]
-            #     x_cond = torch.cat((x_cond, y_cond), dim=1)                    # [B*num_goals, num_cond+1, 4, 28, 28]                      
-            #     #  print(f"x_cond shape: {x_cond.size()}")
-            #     y = y.flatten(0, 1)
-            #     rel_t = rel_t.flatten(0, 1)
+                num_goals = T - num_cond
+                x_start = x[:, num_cond:].flatten(0, 1)             # [B*num_goals, 4, 28, 28]
+                x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)      # [B*num_goals, num_cond, 4, 28, 28]
+                y_cond = aug.unsqueeze(2).flatten(0, 1)             # [B*num_goals, 1, 4, 28, 28]
+                x_cond = torch.cat((x_cond, y_cond), dim=1)                    # [B*num_goals, num_cond+1, 4, 28, 28]                      
+                #  print(f"x_cond shape: {x_cond.size()}")
+                y = y.flatten(0, 1)
+                rel_t = rel_t.flatten(0, 1)
                 
-            #     t = torch.randint(0, diffusion.num_timesteps, (x_start.shape[0],), device=device)
-            #     model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1))
-            #     loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
-            #     loss = loss_dict["loss"].mean()
+                t = torch.randint(0, diffusion.num_timesteps, (x_start.shape[0],), device=device)
+                model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1))
+                loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
+                loss = loss_dict["loss"].mean()
 
-            # if not bfloat_enable:
-            #     opt.zero_grad()
-            #     loss.backward()
-            #     opt.step()
-            # else:
-            #     scaler.scale(loss).backward()
-            #     if config.get('grad_clip_val', 0) > 0:
-            #         scaler.unscale_(opt)
-            #         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
-            #     scaler.step(opt)
-            #     scaler.update()
+            if not bfloat_enable:
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+            else:
+                scaler.scale(loss).backward()
+                if config.get('grad_clip_val', 0) > 0:
+                    scaler.unscale_(opt)
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
+                scaler.step(opt)
+                scaler.update()
             
-            # update_ema(ema, model.module)
+            update_ema(ema, model.module)
 
-            # # Log loss values:
-            # running_loss += loss.detach().item()
-            # log_steps += 1
-            # train_steps += 1
+            # Log loss values:
+            running_loss += loss.detach().item()
+            log_steps += 1
+            train_steps += 1
 
-            # if train_steps % args.log_every == 0:
-            #     # Measure training speed:
-            #     torch.cuda.synchronize()
-            #     end_time = time()
-            #     steps_per_sec = log_steps / (end_time - start_time)
-            #     samples_per_sec = dist.get_world_size()*x_cond.shape[0]*steps_per_sec
-            #     # Reduce loss history over all processes:
-            #     avg_loss = torch.tensor(running_loss / log_steps, device=device)
-            #     dist.all_reduce(avg_loss, op=dist.ReduceOp.SUM)
-            #     avg_loss = avg_loss.item() / dist.get_world_size()
-            #     logger.info(f"(step={train_steps:07d}) Train Loss: {avg_loss:.4f}, Train Steps/Sec: {steps_per_sec:.2f}, Samples/Sec: {samples_per_sec:.2f}")
-            #     # Reset monitoring variables:
-            #     running_loss = 0
-            #     log_steps = 0
-            #     start_time = time()
+            if train_steps % args.log_every == 0:
+                # Measure training speed:
+                torch.cuda.synchronize()
+                end_time = time()
+                steps_per_sec = log_steps / (end_time - start_time)
+                samples_per_sec = dist.get_world_size()*x_cond.shape[0]*steps_per_sec
+                # Reduce loss history over all processes:
+                avg_loss = torch.tensor(running_loss / log_steps, device=device)
+                dist.all_reduce(avg_loss, op=dist.ReduceOp.SUM)
+                avg_loss = avg_loss.item() / dist.get_world_size()
+                logger.info(f"(step={train_steps:07d}) Train Loss: {avg_loss:.4f}, Train Steps/Sec: {steps_per_sec:.2f}, Samples/Sec: {samples_per_sec:.2f}")
+                # Reset monitoring variables:
+                running_loss = 0
+                log_steps = 0
+                start_time = time()
 
-            # # Save DiT checkpoint:
-            # if train_steps % args.ckpt_every == 0 and train_steps > 0:
-            #     if rank == 0:
-            #         checkpoint = {
-            #             "model": model.module.state_dict(),
-            #             "ema": ema.state_dict(),
-            #             "opt": opt.state_dict(),
-            #             "args": args,
-            #             "epoch": epoch,
-            #             "train_steps": train_steps
-            #         }
-            #         if bfloat_enable:
-            #             checkpoint.update({"scaler": scaler.state_dict()})
-            #         checkpoint_path = f"{checkpoint_dir}/latest.pth.tar"
-            #         torch.save(checkpoint, checkpoint_path)
-            #         if train_steps % (10*args.ckpt_every) == 0 and train_steps > 0:
-            #             checkpoint_path = f"{checkpoint_dir}/{train_steps:07d}.pth.tar"
-            #             torch.save(checkpoint, checkpoint_path)
-            #         logger.info(f"Saved checkpoint to {checkpoint_path}")
+            # Save DiT checkpoint:
+            if train_steps % args.ckpt_every == 0 and train_steps > 0:
+                if rank == 0:
+                    checkpoint = {
+                        "model": model.module.state_dict(),
+                        "ema": ema.state_dict(),
+                        "opt": opt.state_dict(),
+                        "args": args,
+                        "epoch": epoch,
+                        "train_steps": train_steps
+                    }
+                    if bfloat_enable:
+                        checkpoint.update({"scaler": scaler.state_dict()})
+                    checkpoint_path = f"{checkpoint_dir}/latest.pth.tar"
+                    torch.save(checkpoint, checkpoint_path)
+                    if train_steps % (10*args.ckpt_every) == 0 and train_steps > 0:
+                        checkpoint_path = f"{checkpoint_dir}/{train_steps:07d}.pth.tar"
+                        torch.save(checkpoint, checkpoint_path)
+                    logger.info(f"Saved checkpoint to {checkpoint_path}")
             
-            # if train_steps % args.eval_every == 0 and train_steps > 0:
-            #     eval_start_time = time()
-            #     save_dir = os.path.join(experiment_dir, str(train_steps))
-            #     sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
-            #     dist.barrier()
-            #     eval_end_time = time()
-            #     eval_time = eval_end_time - eval_start_time
-            #     logger.info(f"(step={train_steps:07d}) Perceptual Loss: {sim_score:.4f}, Eval Time: {eval_time:.2f}")
+            if train_steps % args.eval_every == 0 and train_steps > 0:
+                eval_start_time = time()
+                save_dir = os.path.join(experiment_dir, str(train_steps))
+                sim_score = evaluate(ema, tokenizer, diffusion, test_dataset, rank, config["batch_size"], config["num_workers"], latent_size, device, save_dir, args.global_seed, bfloat_enable, num_cond)
+                dist.barrier()
+                eval_end_time = time()
+                eval_time = eval_end_time - eval_start_time
+                logger.info(f"(step={train_steps:07d}) Perceptual Loss: {sim_score:.4f}, Eval Time: {eval_time:.2f}")
 
     model.eval()  # important! This disables randomized embedding dropout
     # do any sampling/FID calculation/etc. with ema (or model) in eval mode ...
