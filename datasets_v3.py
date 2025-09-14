@@ -457,13 +457,13 @@ class EvalDataset(BaseDataset):
             rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
             rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
             # Compute actions
-            actions, _, projected_images = self._compute_actions(curr_traj_data, curr_time, np.array([curr_time+1]), rgb_img) # last argument is dummy goal
+            actions, _, projected_images = self._compute_actions(curr_traj_data, curr_time, np.array(pred_times), rgb_img) # last argument is dummy goal
             actions[:, :3] = normalize_data(actions[:, :3], self.ACTION_STATS)
             delta = get_delta_np(actions)
             # Compute projected tensor
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
-            # print(f"projected_images shape: {projected_images.shape}, projected_tensor shape: {projected_tensor.size()}")
+            print(f"projected_images shape: {projected_images.shape}, projected_tensor shape: {projected_tensor.size()}")
             # Compute T
             T_wc_ctx = curr_traj_data['pose'][context_times]             # (context_size, 4, 4)
             T_wc_pred = curr_traj_data['pose'][pred_times]               # (len_traj_pred, 4, 4)
