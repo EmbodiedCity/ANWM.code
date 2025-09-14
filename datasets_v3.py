@@ -142,7 +142,9 @@ class BaseDataset(Dataset):
         
         # print(f"pose_src shape: {pose_src.shape}, pose_dst shape: {pose_dst.shape}, dep_map shape: {depth_map.shape}")
         
-        projected_images = self.generate_augmented_image(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
+        # projected_images = self.generate_augmented_image(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
+        projected_images = self.generate_augmented_image_v2(K=K, depth_map=depth_map, rgb_img=rgb_img, pose_src=pose_src, pose_dst=pose_dst)
+
         return projected_images
         
     def generate_augmented_image(self, K, depth_map, rgb_img, pose_src, pose_dst) -> np.ndarray:
@@ -156,6 +158,123 @@ class BaseDataset(Dataset):
         images = project_to_2d_image_2seq(K, points_3d, colors, image_size) # (H, W, 3, goal_time)
         return images
 
+    def generate_augmented_image_v2(self, K, depth_map, rgb_img, pose_src, pose_dst):
+        goal_times = pose_dst.shape[0]
+        images = []
+        for i in range(goal_times):
+            p_dst = pose_dst[i]
+            images.append(self.warpPerspective(K, depth_map, rgb_img, pose_src, p_dst))
+        return images
+        
+    def warpPerspective(self, K, depth_map, rgb_img, pose_src, pose_dst, out_size=None, fill_value=0) -> np.ndarray:
+        """
+        重投影 src 图像到 dst 相机视角（同内参 K）。
+        参数
+        ----
+        K : (3,3) numpy.ndarray
+            相机内参（src/dst 相同）
+        depth_map : (H,W) numpy.ndarray
+            与 rgb_img 对齐的深度（单位米）
+        rgb_img : (H,W,3) uint8
+            源图像（相机 src 拍摄）
+        pose_src : (4,4) numpy.ndarray
+            相机 src 的 camera-to-world (c2w) 位姿
+        pose_dst : (4,4) numpy.ndarray
+            相机 dst 的 camera-to-world (c2w) 位姿
+        out_size : (W_out, H_out) or None
+            目标图像尺寸；None 时用源图像尺寸
+        fill_value : int or tuple
+            空洞填充值（背景）
+
+        返回
+        ----
+        img_dst : (H_out, W_out, 3) uint8
+            在 dst 视角下渲染的图像
+        z_dst : (H_out, W_out) float32
+            目标视角的深度（可用于可视化/调试）
+        """
+
+        H, W = depth_map.shape
+        if out_size is None:
+            W_out, H_out = W, H
+        else:
+            W_out, H_out = out_size
+
+        # 1) 构造像素网格（源图像）
+        u, v = np.meshgrid(np.arange(W), np.arange(H))  # (H,W)
+        ones = np.ones_like(u, dtype=np.float32)
+        pix_src_h = np.stack([u, v, ones], axis=-1).reshape(-1, 3).T  # 3xN
+        depth = depth_map.reshape(-1).astype(np.float32)               # N
+
+        # 2) 反投影到 cam_src 坐标： x_src = depth * K^{-1} * [u,v,1]^T
+        Kinv = np.linalg.inv(K)
+        x_src = (Kinv @ pix_src_h) * depth  # 3xN
+
+        # 3) cam_src -> world -> cam_dst
+        #    T_src2dst = (pose_dst)^{-1} @ pose_src
+        T_src2dst = np.linalg.inv(pose_dst) @ pose_src
+        R = T_src2dst[:3, :3]
+        t = T_src2dst[:3, 3:4]  # 3x1
+
+        x_dst = (R @ x_src) + t  # 3xN
+
+        # 4) 投影到 dst 像素
+        pix_dst_h = K @ x_dst                      # 3xN
+        z = pix_dst_h[2, :] + 1e-6
+        u_dst = (pix_dst_h[0, :] / z)
+        v_dst = (pix_dst_h[1, :] / z)
+
+        # 5) 前向“光栅化” + Z-buffer（处理遮挡；最近深度覆盖）
+        img_dst = np.full((H_out, W_out, 3), fill_value, dtype=rgb_img.dtype)
+        z_dst = np.full((H_out, W_out), np.inf, dtype=np.float32)
+
+        # 只保留落在目标画幅内的点
+        u_round = np.round(u_dst).astype(np.int64)
+        v_round = np.round(v_dst).astype(np.int64)
+
+        valid = (
+            (z > 0) &
+            (u_round >= 0) & (u_round < W_out) &
+            (v_round >= 0) & (v_round < H_out) &
+            (depth > 0)
+        )
+
+        src_colors = rgb_img.reshape(-1, 3)[valid]
+        uu = u_round[valid]
+        vv = v_round[valid]
+        zz = z[valid].astype(np.float32)
+
+        # Z-buffer：对同一像素，保留深度更小（更近）的样本
+        # 用扁平索引实现原子“最小深度写入”
+        flat_idx = vv * W_out + uu
+        # 为每个像素找到最小深度的索引
+        order = np.argsort(zz)  # 从近到远
+        flat_idx = flat_idx[order]
+        zz = zz[order]
+        src_colors = src_colors[order]
+
+        # 只保留每个像素第一次出现（即最小深度）
+        _, first_pos = np.unique(flat_idx, return_index=True)
+        keep = np.zeros_like(order, dtype=bool)
+        keep[first_pos] = True
+
+        flat_idx = flat_idx[keep]
+        zz = zz[keep]
+        src_colors = src_colors[keep]
+
+        # 写入帧缓冲
+        z_dst.flat[flat_idx] = zz
+        img_dst.reshape(-1, 3)[flat_idx] = src_colors
+        
+        # 补全`
+        # hole_mask = (img_dst.mean(axis=2) == 0).astype(np.uint8)
+        # print(hole_mask.sum())
+        # hole_mask = cv2.dilate(hole_mask, np.ones((3,3), np.uint8), iterations=1)
+        # img_dst = cv2.inpaint(img_dst, hole_mask*255, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
+        
+        return img_dst
+        
+    
     def _compute_actions(self, traj_data, curr_time, goal_time, rgb_img):
         start_index = curr_time
         end_index = curr_time + self.len_traj_pred + 1
@@ -216,7 +335,7 @@ class TrainingDataset(BaseDataset):
         try:
             f_curr, curr_time, min_goal_dist, max_goal_dist = self.index_to_data[i]
             goal_offset = np.random.randint(min_goal_dist//4, max_goal_dist//4 + 1, size=(self.goals_per_obs))
-
+            
             goal_time = (curr_time + goal_offset).astype('int')
             rel_time = (goal_offset).astype('float')/(128.) # TODO: refactor, currently a fixed const
 
@@ -267,7 +386,7 @@ class TrainingDataset(BaseDataset):
             
             # # ===================== 保存图像 =====================
             # vis_root = './visualizations'
-            # sample_dir = os.path.join(vis_root, f'{self.dataset_name}', f'sample_{i}')
+            # sample_dir = os.path.join(vis_root, f'airvln_16_v2', f'sample_{i}')
             # os.makedirs(sample_dir, exist_ok=True)
 
             # # 1. 保存 curr_frame

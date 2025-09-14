@@ -1,10 +1,7 @@
 # A 3D trajectory genration module for a drone. Generates several trajectories by sampling from random positions near certain waypoints.
 # Trajectory is a sequence of 3D points of (x,y,z,yaw).
 
-
-
-
-
+import datetime
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -184,8 +181,8 @@ def plot_3d_trajectories(GT_trajectory, candidate_trajectoires, save_path="./plo
 if __name__ == "__main__":
     # Initiate
     origin_crd = (0.0, 0.0, 0.0, 0.0)  # (x, y, z, yaw)
-    candidate_number = 20
-    step_number = 6
+    candidate_number = 10
+    # step_number = 6
 
     candidate_trajectoires = []
 
@@ -203,7 +200,7 @@ if __name__ == "__main__":
         GT_traj,
         candidate_trajectoires, 
         save_path="./plot", 
-        filename="trajectories_GT_with_noise.png"
+        filename=f"trajectories_GT_with_noise_{datetime.datetime.now():%m-%d_%H-%M-%S}.png"
     )
 
 

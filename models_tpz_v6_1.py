@@ -236,8 +236,8 @@ class CDiT(nn.Module):
         y: (N,) tensor of class labels
         """
         x = self.x_embedder(x) + self.pos_embed[self.context_size:]             # [B*num_goals, 196, 1152] + [1, 196, 1152]
-        x_sup = self.x_embedder(x_sup) + self.pos_embed[self.context_size:]     
-
+        # x_sup = self.x_embedder(x_sup) + self.pos_embed[self.context_size:]     
+                                                                
         x_cond = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1])) + self.pos_embed[:self.context_size]  # (N, T, D), where T = H * W / patch_size ** 2.flatten(1, 2)      [B*num_goals, num_cond+1, 196, 1152]
         x_cond = x_cond.flatten(1, 2)                           # [B*num_goals, (num_cond+1)*196, 1152]
         t = self.t_embedder(t[..., None])

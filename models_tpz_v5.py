@@ -253,11 +253,12 @@ class CDiT(nn.Module):
         c = self.out_channels
         p = self.x_embedder.patch_size[0]
         h = w = int(x.shape[1] ** 0.5)
+        # h, w = self.x_embedder.grid_size          # 不再用 sqrt/int CUDA OOM
         assert h * w == x.shape[1]
 
         x = x.reshape(shape=(x.shape[0], h, w, p, p, c))
         x = torch.einsum('nhwpqc->nchpwq', x)
-        imgs = x.reshape(shape=(x.shape[0], c, h * p, h * p))
+        imgs = x.reshape(shape=(x.shape[0], c, h * p, h * p)) # 用 w*p，而不是 h*p
         return imgs
 
     def forward(self, x, t, y, x_cond, rel_t, x_supervised):

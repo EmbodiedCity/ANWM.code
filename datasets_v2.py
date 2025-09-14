@@ -251,26 +251,26 @@ class TrainingDataset(BaseDataset):
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
-            # ===================== 保存图像 =====================
-            vis_root = './visualizations'
-            sample_dir = os.path.join(vis_root, f'{self.dataset_name}', f'sample_{i}')
-            os.makedirs(sample_dir, exist_ok=True)
+            # # ===================== 保存图像 =====================
+            # vis_root = './visualizations'
+            # sample_dir = os.path.join(vis_root, f'{self.dataset_name}', f'sample_{i}')
+            # os.makedirs(sample_dir, exist_ok=True)
 
-            # 1. 保存 curr_frame
-            curr_img_save_path = os.path.join(sample_dir, 'curr_frame.png')
-            Image.fromarray(rgb_img).save(curr_img_save_path)
+            # # 1. 保存 curr_frame
+            # curr_img_save_path = os.path.join(sample_dir, 'curr_frame.png')
+            # Image.fromarray(rgb_img).save(curr_img_save_path)
 
-            # 2. 保存 goal_frame
-            for idx, (f_curr, t_goal) in enumerate(goal_context):
-                goal_img_path = get_data_path(self.data_folder, f_curr, t_goal)
-                goal_img = Image.open(goal_img_path)
-                goal_img.save(os.path.join(sample_dir, f'goal_{idx}.png'))
+            # # 2. 保存 goal_frame
+            # for idx, (f_curr, t_goal) in enumerate(goal_context):
+            #     goal_img_path = get_data_path(self.data_folder, f_curr, t_goal)
+            #     goal_img = Image.open(goal_img_path)
+            #     goal_img.save(os.path.join(sample_dir, f'goal_{idx}.png'))
 
-            # 3. 保存 projected goal frame
-            for idx, proj_img in enumerate(projected_images):
-                proj_img_save_path = os.path.join(sample_dir, f'projected_goal_{idx}.png')
-                Image.fromarray(proj_img).save(proj_img_save_path)
-            # ====================================================
+            # # 3. 保存 projected goal frame
+            # for idx, proj_img in enumerate(projected_images):
+            #     proj_img_save_path = os.path.join(sample_dir, f'projected_goal_{idx}.png')
+            #     Image.fromarray(proj_img).save(proj_img_save_path)
+            # # ====================================================
 
             return (
                 torch.as_tensor(obs_image, dtype=torch.float32),
@@ -323,13 +323,31 @@ class EvalDataset(BaseDataset):
             rgb_img = cv2.imread(get_data_path(self.data_folder, f_img, t_img))
             rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB)
             # Compute actions
-            actions, _, projected_images = self._compute_actions(curr_traj_data, curr_time, np.array([curr_time+1]), rgb_img) # last argument is dummy goal
+            actions, _, projected_images = self._compute_actions(curr_traj_data, curr_time, np.array(pred_times), rgb_img) # last argument is dummy goal
             actions[:, :3] = normalize_data(actions[:, :3], self.ACTION_STATS)
             delta = get_delta_np(actions)
             # Compute projected tensor
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
-            # print(f"projected_images shape: {projected_images.shape}, projected_tensor shape: {projected_tensor.size()}")
+            print(f"Index {i}, projected_images shape: {projected_images.shape}, projected_tensor shape: {projected_tensor.size()}")
+            # # ===================== 保存图像 =====================
+            # vis_root = './visualizations-eval'
+            # sample_dir = os.path.join(vis_root, f'{self.dataset_name}', f'sample_{i}')
+            # os.makedirs(sample_dir, exist_ok=True)
+
+            # # 1) 保存当前帧
+            # Image.fromarray(rgb_img).save(os.path.join(sample_dir, 'curr_frame.png'))
+
+            # # 2) 保存各个未来 GT 帧（与 pred_times 对齐）
+            # for idx, (f_pred, t_pred) in enumerate(pred):
+            #     gt_img = Image.open(get_data_path(self.data_folder, f_pred, t_pred))
+            #     gt_img.save(os.path.join(sample_dir, f'gt_future_{idx:02d}.png'))
+
+            # # 3) 保存各个投影图（与 pred_times 一一对应）
+            # for idx, proj_img in enumerate(projected_images):
+            #     proj_img_save_path = os.path.join(sample_dir, f'projected_goal_{idx}.png')
+            #     Image.fromarray(proj_img).save(proj_img_save_path)
+            # # ====================================================
             return (
                 torch.tensor([i], dtype=torch.float32), # for logging purposes
                 torch.as_tensor(obs_image, dtype=torch.float32),

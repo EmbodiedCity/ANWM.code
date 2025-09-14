@@ -1,446 +1,119 @@
-Process ForkProcess-29:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-28:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-13:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-11:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-6:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-21:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-23:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-10:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-17:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-1:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-3:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-12:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-7:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-15:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-20:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-27:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-2:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-22:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-30:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-5:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-25:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-4:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-14:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-8:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-18:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-26:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-9:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-31:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-19:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-24:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-32:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 96, in get
-    with self._rlock:
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/synchronize.py", line 95, in __enter__
-    return self._semlock.__enter__()
-KeyboardInterrupt
-Process ForkProcess-16:
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
-    self.run()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/concurrent/futures/process.py", line 233, in _process_worker
-    call_item = call_queue.get(block=True)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/queues.py", line 97, in get
-    res = self._recv_bytes()
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/connection.py", line 216, in recv_bytes
-    buf = self._recv_bytes(maxlength)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/connection.py", line 414, in _recv_bytes
-    buf = self._recv(4)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/multiprocessing/connection.py", line 379, in _recv
-    chunk = read(handle, remaining)
-KeyboardInterrupt
-Traceback (most recent call last):
-  File "isolated_nwm_infer_v6.py", line 296, in <module>
-    main(args)
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
-    return func(*args, **kwargs)
-  File "isolated_nwm_infer_v6.py", line 274, in main
-    generate_time(args, curr_time_output_dir, idxs, model_lst, obs_image, gt_image, delta, secs, num_cond, device, aug_image)
-  File "isolated_nwm_infer_v6.py", line 159, in generate_time
-    x_pred_pixels = model_forward_wrapper(
-  File "/data1/tpz/anaconda3/envs/nwm2/lib/python3.8/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
-    return func(*args, **kwargs)
-  File "isolated_nwm_infer_v6.py", line 97, in model_forward_wrapper
-    samples = diffusion.p_sample_loop(
-  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 456, in p_sample_loop
-    for sample in self.p_sample_loop_progressive(
-  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 507, in p_sample_loop_progressive
-    out = self.p_sample(
-  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 408, in p_sample
-    out = self.p_mean_variance(
-  File "/data1/tpz/nwm-main/diffusion/respace.py", line 98, in p_mean_variance
-    return super().p_mean_variance(self._wrap_model(model), *args, **kwargs)
-  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 294, in p_mean_variance
-    min_log = _extract_into_tensor(self.posterior_log_variance_clipped, t, x.shape)
-  File "/data1/tpz/nwm-main/diffusion/gaussian_diffusion.py", line 876, in _extract_into_tensor
-    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
-KeyboardInterrupt
+Using port 29529
+gps: 0
+****** Using a predefined evaluation index... data_splits/airvln_16/test/navigation_eval.pkl******
+loading
+Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
+Loading model from: /data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
+GT traj: [(0.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.6060606241226196, 0.0), (1.5151515007019043, 1.319517835518232e-14, 1.2121212482452393, 0.0), (3.0303030014038086, 2.639035671036464e-14, 2.4242424964904785, 0.0), (6.060606002807617, 5.278071342072928e-14, 3.6363637447357178, 0.0), (9.090909004211426, 7.917107182515981e-14, 5.454545497894287, 0.0), (13.636363983154297, 1.1875660773773972e-13, 7.2727274894714355, 0.0), (19.696969985961914, 1.715373177703372e-13, 9.090909004211426, 0.0), (25.75757598876953, 2.243180278029347e-13, 11.515151977539062, 0.0)]
+Candidate traj: [[[ 0.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [10.         0.         0.         0.       ]
+  [15.         0.         0.         0.       ]
+  [20.         0.         0.         0.       ]
+  [25.         0.         0.         0.       ]
+  [30.         0.         0.         0.       ]
+  [35.         0.         0.         0.       ]
+  [40.         0.         0.         0.       ]]
+
+ [[ 0.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         2.         0.       ]
+  [10.         0.         2.         0.       ]
+  [10.         0.         4.         0.       ]
+  [15.         0.         4.         0.       ]
+  [15.         0.         6.         0.       ]
+  [20.         0.         6.         0.       ]
+  [20.         0.         8.         0.       ]]
+
+ [[ 0.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.        -2.         0.       ]
+  [10.         0.        -2.         0.       ]
+  [10.         0.        -4.         0.       ]
+  [15.         0.        -4.         0.       ]
+  [15.         0.        -6.         0.       ]
+  [20.         0.        -6.         0.       ]
+  [20.         0.        -8.         0.       ]]
+
+ [[ 0.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.2617994]
+  [ 9.829629   1.2940953  0.         0.2617994]
+  [ 9.829629   1.2940953  0.         0.5235988]
+  [14.159756   3.7940953  0.         0.5235988]
+  [14.159756   3.7940953  0.         0.7853982]
+  [17.69529    7.329629   0.         0.7853982]
+  [17.69529    7.329629   0.         1.0471976]]
+
+ [[ 0.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.        -0.2617994]
+  [ 9.829629  -1.2940953  0.        -0.2617994]
+  [ 9.829629  -1.2940953  0.        -0.5235988]
+  [14.159756  -3.7940953  0.        -0.5235988]
+  [14.159756  -3.7940953  0.        -0.7853982]
+  [17.69529   -7.329629   0.        -0.7853982]
+  [17.69529   -7.329629   0.        -1.0471976]]
+
+ [[ 0.         0.         0.         0.       ]
+  [ 0.         0.         2.         0.       ]
+  [ 5.         0.         2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [10.         0.         0.         0.       ]
+  [10.         0.         2.         0.       ]
+  [15.         0.         2.         0.       ]
+  [15.         0.         0.         0.       ]
+  [20.         0.         0.         0.       ]]]
+Candidate daltas: [[[ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 5.         0.         0.         0.       ]]
+
+ [[ 5.         0.         0.         0.       ]
+  [ 0.         0.         2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.         2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.         2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.         2.         0.       ]]
+
+ [[ 5.         0.         0.         0.       ]
+  [ 0.         0.        -2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.        -2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.        -2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.        -2.         0.       ]]
+
+ [[ 5.         0.         0.         0.       ]
+  [ 0.         0.         0.         0.2617994]
+  [ 4.829629   1.2940953  0.         0.       ]
+  [ 0.         0.         0.         0.2617994]
+  [ 4.330127   2.5        0.         0.       ]
+  [ 0.         0.         0.         0.2617994]
+  [ 3.535534   3.5355337  0.         0.       ]
+  [ 0.         0.         0.         0.2617994]]
+
+ [[ 5.         0.         0.         0.       ]
+  [ 0.         0.         0.        -0.2617994]
+  [ 4.829629  -1.2940953  0.         0.       ]
+  [ 0.         0.         0.        -0.2617994]
+  [ 4.330127  -2.5        0.         0.       ]
+  [ 0.         0.         0.        -0.2617994]
+  [ 3.535534  -3.5355337  0.         0.       ]
+  [ 0.         0.         0.        -0.2617994]]
+
+ [[ 0.         0.         2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.        -2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.         2.         0.       ]
+  [ 5.         0.         0.         0.       ]
+  [ 0.         0.        -2.         0.       ]
+  [ 5.         0.         0.         0.       ]]]
