@@ -1,7 +1,7 @@
 # MIT License
 #
 # Copyright (c) Authors of
-# "Cameras as Relative Positional Encoding" https://arxiv.org/pdf/2507.10496
+# "PRoPE: Projective Positional Encoding for Multiview Transformers"
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,40 +21,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# How to use PRoPE attention for self-attention:
-# 
-# 1. Easiest way (fast):
-#    attn = PropeDotProductAttention(...)
-#    o = attn(q, k, v, viewmats, Ks)
-#
-# 2. More flexible way (fast):
-#    attn = PropeDotProductAttention(...)
-#    attn._precompute_and_cache_apply_fns(viewmats, Ks)
-#    q = attn._apply_to_q(q)
-#    k = attn._apply_to_kv(k)
-#    v = attn._apply_to_kv(v)
-#    o = F.scaled_dot_product_attention(q, k, v, **kwargs)
-#    o = attn._apply_to_o(o)
-# 
-# 3. The most flexible way (but slower because repeated computation of RoPE coefficients):
-#    o = prope_dot_product_attention(q, k, v, ...)
-# 
-# How to use PRoPE attention for cross-attention:
-# 
-#    attn_src = PropeDotProductAttention(...)
-#    attn_tgt = PropeDotProductAttention(...)
-#    attn_src._precompute_and_cache_apply_fns(viewmats_src, Ks_src)
-#    attn_tgt._precompute_and_cache_apply_fns(viewmats_tgt, Ks_tgt)
-#    q_src = attn_src._apply_to_q(q_src)
-#    k_tgt = attn_tgt._apply_to_kv(k_tgt)
-#    v_tgt = attn_tgt._apply_to_kv(v_tgt)
-#    o_src = F.scaled_dot_product_attention(q_src, k_tgt, v_tgt, **kwargs)
-#    o_src = attn_src._apply_to_o(o_src)
-
 from functools import partial
-from typing import Callable, Optional, Tuple, List
+from typing import Callable, Optional, Tuple
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
 
@@ -69,6 +40,7 @@ class PropeDotProductAttention(torch.nn.Module):
     def __init__(
         self,
         head_dim: int,
+        cameras: int,
         patches_x: int,
         patches_y: int,
         image_width: int,
@@ -78,19 +50,23 @@ class PropeDotProductAttention(torch.nn.Module):
     ):
         super().__init__()
         self.head_dim = head_dim
+        self.cameras = cameras
         self.patches_x = patches_x
         self.patches_y = patches_y
         self.image_width = image_width
         self.image_height = image_height
 
         coeffs_x: Tuple[torch.Tensor, torch.Tensor] = _rope_precompute_coeffs(
-            torch.tile(torch.arange(patches_x), (patches_y,)),
+            torch.tile(torch.arange(patches_x), (patches_y * cameras,)),
             freq_base=freq_base,
             freq_scale=freq_scale,
             feat_dim=head_dim // 4,
         )
         coeffs_y: Tuple[torch.Tensor, torch.Tensor] = _rope_precompute_coeffs(
-            torch.repeat_interleave(torch.arange(patches_y), patches_x),
+            torch.tile(
+                torch.repeat_interleave(torch.arange(patches_y), patches_x),
+                (cameras,),
+            ),
             freq_base=freq_base,
             freq_scale=freq_scale,
             feat_dim=head_dim // 4,
@@ -134,50 +110,6 @@ class PropeDotProductAttention(torch.nn.Module):
             **kwargs,
         )
 
-    def _precompute_and_cache_apply_fns(
-        self, viewmats: torch.Tensor, Ks: Optional[torch.Tensor]
-    ):
-        (batch, cameras, _, _) = viewmats.shape
-        assert viewmats.shape == (batch, cameras, 4, 4)
-        assert Ks is None or Ks.shape == (batch, cameras, 3, 3)
-        self.cameras = cameras
-
-        self.apply_fn_q, self.apply_fn_kv, self.apply_fn_o = _prepare_apply_fns(
-            head_dim=self.head_dim,
-            viewmats=viewmats,
-            Ks=Ks,
-            patches_x=self.patches_x,
-            patches_y=self.patches_y,
-            image_width=self.image_width,
-            image_height=self.image_height,
-            coeffs_x=(self.coeffs_x_0, self.coeffs_x_1),
-            coeffs_y=(self.coeffs_y_0, self.coeffs_y_1),
-        )
-
-    def _apply_to_q(self, q: torch.Tensor) -> torch.Tensor:
-        (batch, num_heads, seqlen, head_dim) = q.shape
-        assert seqlen == self.cameras * self.patches_x * self.patches_y
-        assert head_dim == self.head_dim
-        assert q.shape == (batch, num_heads, seqlen, head_dim)
-        assert self.apply_fn_q is not None
-        return self.apply_fn_q(q)
-
-    def _apply_to_kv(self, kv: torch.Tensor) -> torch.Tensor:
-        (batch, num_heads, seqlen, head_dim) = kv.shape
-        assert seqlen == self.cameras * self.patches_x * self.patches_y
-        assert head_dim == self.head_dim
-        assert kv.shape == (batch, num_heads, seqlen, head_dim)
-        assert self.apply_fn_kv is not None
-        return self.apply_fn_kv(kv)
-
-    def _apply_to_o(self, o: torch.Tensor) -> torch.Tensor:
-        (batch, num_heads, seqlen, head_dim) = o.shape
-        assert seqlen == self.cameras * self.patches_x * self.patches_y
-        assert head_dim == self.head_dim
-        assert o.shape == (batch, num_heads, seqlen, head_dim)
-        assert self.apply_fn_o is not None
-        return self.apply_fn_o(o)
-
 
 def prope_dot_product_attention(
     q: torch.Tensor,  # (batch, num_heads, seqlen, head_dim)
@@ -190,8 +122,8 @@ def prope_dot_product_attention(
     patches_y: int,  # How many patches tall is each image?
     image_width: int,  # Width of the image. Used to normalize intrinsics.
     image_height: int,  # Height of the image. Used to normalize intrinsics.
-    coeffs_x: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
-    coeffs_y: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
+    coeffs_x: Optional[torch.Tensor] = None,
+    coeffs_y: Optional[torch.Tensor] = None,
     **kwargs,
 ) -> torch.Tensor:
     """Similar to torch.nn.functional.scaled_dot_product_attention, but applies PRoPE-style
@@ -204,6 +136,7 @@ def prope_dot_product_attention(
     And token ordering allows the `(seqlen,)` axis to be reshaped into
     `(cameras, patches_x, patches_y)`.
     """
+
     # We're going to assume self-attention: all inputs are the same shape.
     (batch, num_heads, seqlen, head_dim) = q.shape
     cameras = viewmats.shape[1]
@@ -211,48 +144,6 @@ def prope_dot_product_attention(
     assert viewmats.shape == (batch, cameras, 4, 4)
     assert Ks is None or Ks.shape == (batch, cameras, 3, 3)
     assert seqlen == cameras * patches_x * patches_y
-
-    apply_fn_q, apply_fn_kv, apply_fn_o = _prepare_apply_fns(
-        head_dim=head_dim,
-        viewmats=viewmats,
-        Ks=Ks,
-        patches_x=patches_x,
-        patches_y=patches_y,
-        image_width=image_width,
-        image_height=image_height,
-        coeffs_x=coeffs_x,
-        coeffs_y=coeffs_y,
-    )
-
-    out = F.scaled_dot_product_attention(
-        query=apply_fn_q(q),
-        key=apply_fn_kv(k),
-        value=apply_fn_kv(v),
-        **kwargs,
-    )
-    out = apply_fn_o(out)
-    assert out.shape == (batch, num_heads, seqlen, head_dim)
-    return out
-
-
-def _prepare_apply_fns(
-    head_dim: int,  # Q/K/V will have this last dimension
-    viewmats: torch.Tensor,  # (batch, cameras, 4, 4)
-    Ks: Optional[torch.Tensor],  # (batch, cameras, 3, 3)
-    patches_x: int,  # How many patches wide is each image?
-    patches_y: int,  # How many patches tall is each image?
-    image_width: int,  # Width of the image. Used to normalize intrinsics.
-    image_height: int,  # Height of the image. Used to normalize intrinsics.
-    coeffs_x: Optional[torch.Tensor] = None,
-    coeffs_y: Optional[torch.Tensor] = None,
-) -> Tuple[
-    Callable[[torch.Tensor], torch.Tensor],
-    Callable[[torch.Tensor], torch.Tensor],
-    Callable[[torch.Tensor], torch.Tensor],
-]:
-    """Prepare transforms for PRoPE-style positional encoding."""
-    device = viewmats.device
-    (batch, cameras, _, _) = viewmats.shape
 
     # Normalize camera intrinsics.
     if Ks is not None:
@@ -288,7 +179,9 @@ def _prepare_apply_fns(
     # broadcasting.
     if coeffs_x is None:
         coeffs_x = _rope_precompute_coeffs(
-            torch.tile(torch.arange(patches_x, device=device), (patches_y * cameras,)),
+            torch.tile(
+                torch.arange(patches_x, device=q.device), (patches_y * cameras,)
+            ),
             freq_base=100.0,
             freq_scale=1.0,
             feat_dim=head_dim // 4,
@@ -297,7 +190,7 @@ def _prepare_apply_fns(
         coeffs_y = _rope_precompute_coeffs(
             torch.tile(
                 torch.repeat_interleave(
-                    torch.arange(patches_y, device=device), patches_x
+                    torch.arange(patches_y, device=q.device), patches_x
                 ),
                 (cameras,),
             ),
@@ -323,11 +216,118 @@ def _prepare_apply_fns(
         (partial(_rope_apply_coeffs, coeffs=coeffs_x, inverse=True), head_dim // 4),
         (partial(_rope_apply_coeffs, coeffs=coeffs_y, inverse=True), head_dim // 4),
     ]
+    out = F.scaled_dot_product_attention(
+        query=_apply_block_diagonal(q, transforms_q),
+        key=_apply_block_diagonal(k, transforms_kv),
+        value=_apply_block_diagonal(v, transforms_kv),
+        **kwargs,
+    )
+    out = _apply_block_diagonal(out, transforms_o)
+    assert out.shape == (batch, num_heads, seqlen, head_dim)
+    return out
 
-    apply_fn_q = partial(_apply_block_diagonal, func_size_pairs=transforms_q)
-    apply_fn_kv = partial(_apply_block_diagonal, func_size_pairs=transforms_kv)
-    apply_fn_o = partial(_apply_block_diagonal, func_size_pairs=transforms_o)
-    return apply_fn_q, apply_fn_kv, apply_fn_o
+
+# ==================== [ADDED] 支持 Cq ≠ Ckv 的 Cross-Attn ====================
+def prope_cross_dot_product_attention(  # [ADDED]
+    q: torch.Tensor,  # (B, H, Tq, Hd)
+    k: torch.Tensor,  # (B, H, Tk, Hd)
+    v: torch.Tensor,  # (B, H, Tk, Hd)
+    *,
+    viewmats_q: torch.Tensor,    # (B, Cq, 4, 4)
+    viewmats_kv: torch.Tensor,   # (B, Ckv, 4, 4)
+    Ks_q: Optional[torch.Tensor],    # (B, Cq, 3, 3)
+    Ks_kv: Optional[torch.Tensor],   # (B, Ckv, 3, 3)
+    patches_x: int,
+    patches_y: int,
+    image_width: int,
+    image_height: int,
+    **kwargs,
+) -> torch.Tensor:
+    """
+    PRoPE cross-attention that supports different #cameras for Q and KV.
+    Token order must be camera-major: T? = C? * patches_x * patches_y.
+    """
+    B, H, Tq, Hd = q.shape
+    _, _, Tk, _ = k.shape
+    Cq = viewmats_q.shape[1]
+    Ck = viewmats_kv.shape[1]
+    assert Tq == Cq * patches_x * patches_y, "Q length must be Cq*px*py"
+    assert Tk == Ck * patches_x * patches_y, "KV length must be Ckv*px*py"
+    assert viewmats_q.shape == (B, Cq, 4, 4)
+    assert viewmats_kv.shape == (B, Ck, 4, 4)
+    assert (Ks_q is None) or Ks_q.shape == (B, Cq, 3, 3)
+    assert (Ks_kv is None) or Ks_kv.shape == (B, Ck, 3, 3)
+
+    # --- Q side: build Pq, Pq^T ---
+    if Ks_q is not None:
+        Ks_qn = torch.zeros_like(Ks_q)
+        Ks_qn[..., 0, 0] = Ks_q[..., 0, 0] / image_width
+        Ks_qn[..., 1, 1] = Ks_q[..., 1, 1] / image_height
+        Ks_qn[..., 0, 2] = Ks_q[..., 0, 2] / image_width - 0.5
+        Ks_qn[..., 1, 2] = Ks_q[..., 1, 2] / image_height - 0.5
+        Ks_qn[..., 2, 2] = 1.0
+        Pq = torch.einsum("...ij,...jk->...ik", _lift_K(Ks_qn), viewmats_q)  # image<-world
+        Pq_T = Pq.transpose(-1, -2)
+    else:
+        Pq = viewmats_q
+        Pq_T = Pq.transpose(-1, -2)
+
+    # --- KV side: build Pkv_inv ---
+    if Ks_kv is not None:
+        Ks_kvn = torch.zeros_like(Ks_kv)
+        Ks_kvn[..., 0, 0] = Ks_kv[..., 0, 0] / image_width
+        Ks_kvn[..., 1, 1] = Ks_kv[..., 1, 1] / image_height
+        Ks_kvn[..., 0, 2] = Ks_kv[..., 0, 2] / image_width - 0.5
+        Ks_kvn[..., 1, 2] = Ks_kv[..., 1, 2] / image_height - 0.5
+        Ks_kvn[..., 2, 2] = 1.0
+        Pkv_inv = torch.einsum(
+            "...ij,...jk->...ik",
+            _invert_SE3(viewmats_kv),
+            _lift_K(_invert_K(Ks_kvn)),
+        )
+    else:
+        Pkv_inv = _invert_SE3(viewmats_kv)
+
+    # --- RoPE coeffs for Q and KV (lengths differ) ---
+    assert Hd % 4 == 0
+    def rope_coeffs(cams: int):
+        cx = _rope_precompute_coeffs(
+            torch.tile(torch.arange(patches_x, device=q.device), (patches_y * cams,)),
+            freq_base=100.0, freq_scale=1.0, feat_dim=Hd // 4,
+        )
+        cy = _rope_precompute_coeffs(
+            torch.tile(torch.repeat_interleave(torch.arange(patches_y, device=q.device), patches_x), (cams,)),
+            freq_base=100.0, freq_scale=1.0, feat_dim=Hd // 4,
+        )
+        return cx, cy
+
+    (cx_q, cy_q) = rope_coeffs(Cq)
+    (cx_kv, cy_kv) = rope_coeffs(Ck)
+
+    transforms_q = [
+        (partial(_apply_tiled_projmat, matrix=Pq_T), Hd // 2),
+        (partial(_rope_apply_coeffs, coeffs=cx_q),   Hd // 4),
+        (partial(_rope_apply_coeffs, coeffs=cy_q),   Hd // 4),
+    ]
+    transforms_kv = [
+        (partial(_apply_tiled_projmat, matrix=Pkv_inv), Hd // 2),
+        (partial(_rope_apply_coeffs, coeffs=cx_kv),     Hd // 4),
+        (partial(_rope_apply_coeffs, coeffs=cy_kv),     Hd // 4),
+    ]
+    transforms_o = [
+        (partial(_apply_tiled_projmat, matrix=Pq), Hd // 2),
+        (partial(_rope_apply_coeffs, coeffs=cx_q, inverse=True), Hd // 4),
+        (partial(_rope_apply_coeffs, coeffs=cy_q, inverse=True), Hd // 4),
+    ]
+
+    q_ = _apply_block_diagonal(q, transforms_q)      # (B,H,Tq,Hd)
+    k_ = _apply_block_diagonal(k, transforms_kv)     # (B,H,Tk,Hd)
+    v_ = _apply_block_diagonal(v, transforms_kv)     # (B,H,Tk,Hd)
+
+    out = F.scaled_dot_product_attention(q_, k_, v_, **kwargs)  # supports Tq != Tk
+    out = _apply_block_diagonal(out, transforms_o)
+    return out  # (B,H,Tq,Hd)
+# ==================== [ADDED END] ============================================
 
 
 def _apply_tiled_projmat(
@@ -382,13 +382,6 @@ def _rope_apply_coeffs(
     """Apply RoPE coefficients to features. We adopt a 'split' ordering
     convention. (in contrast to 'interleaved')"""
     cos, sin = coeffs
-    # We allow (cos, sin) to be either with shape (1, 1, seqlen, feat_dim // 2),
-    # or (1, 1, seqlen_per_image, feat_dim // 2) and we repeat it to
-    # match the shape of feats.
-    if cos.shape[2] != feats.shape[2]:
-        n_repeats = feats.shape[2] // cos.shape[2]
-        cos = cos.repeat(1, 1, n_repeats, 1)
-        sin = sin.repeat(1, 1, n_repeats, 1)
     assert len(feats.shape) == len(cos.shape) == len(sin.shape) == 4
     assert cos.shape[-1] == sin.shape[-1] == feats.shape[-1] // 2
     x_in = feats[..., : feats.shape[-1] // 2]
@@ -405,7 +398,7 @@ def _rope_apply_coeffs(
 
 def _apply_block_diagonal(
     feats: torch.Tensor,  # (..., dim)
-    func_size_pairs: List[Tuple[Callable[[torch.Tensor], torch.Tensor], int]],
+    func_size_pairs: list[tuple[Callable[[torch.Tensor], torch.Tensor], int]],
 ) -> torch.Tensor:
     """Apply a block-diagonal function to an input array.
 
@@ -456,3 +449,125 @@ def _invert_K(Ks: torch.Tensor) -> torch.Tensor:
     out[..., 1, 2] = -Ks[..., 1, 2] / Ks[..., 1, 1]
     out[..., 2, 2] = 1.0
     return out
+
+# ===========================================================
+# ======== High-level wrappers for (B,T,D) inputs ===========
+# ===========================================================
+
+# [ADDED] Batch-first 自注意力
+class PropeSelfAttention(nn.Module):
+    """
+    Batch-first PRoPE self-attention wrapper for (B,T,D) tensors.
+    Reuses original prope_dot_product_attention path.
+    """
+    def __init__(self, embed_dim, num_heads, *, patches_x, patches_y, image_size,
+                 qkv_bias=True, attn_drop=0.0, proj_drop=0.0,
+                 freq_base=100.0, freq_scale=1.0):
+        super().__init__()
+        assert embed_dim % num_heads == 0
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.head_dim = embed_dim // num_heads
+        self.px = patches_x
+        self.py = patches_y
+        self.im = image_size
+
+        self.qkv = nn.Linear(embed_dim, 3 * embed_dim, bias=qkv_bias)
+        self.proj = nn.Linear(embed_dim, embed_dim)
+        self.attn_drop = nn.Dropout(attn_drop)
+        self.proj_drop = nn.Dropout(proj_drop)
+
+        # 预创建一个核心对象（持有 buffer 尺寸），但具体系数在函数内部根据 seqlen 生成/广播
+        self.core = PropeDotProductAttention(
+            head_dim=self.head_dim,
+            cameras=1,  # 仅作占位；真正使用由 seqlen//(px*py) 推相机数
+            patches_x=self.px,
+            patches_y=self.py,
+            image_width=self.im,
+            image_height=self.im,
+            freq_base=freq_base,
+            freq_scale=freq_scale,
+        )
+
+    def forward(self, x, *, viewmats_q, Ks_q=None, **sdpa_kwargs):
+        B, T, D = x.shape
+        H, Hd = self.num_heads, self.head_dim
+        qkv = self.qkv(x)
+        q, k, v = qkv.chunk(3, dim=-1)
+        q = q.view(B, T, H, Hd).transpose(1, 2)
+        k = k.view(B, T, H, Hd).transpose(1, 2)
+        v = v.view(B, T, H, Hd).transpose(1, 2)
+
+        out = prope_dot_product_attention(
+            q, k, v,
+            viewmats=viewmats_q,
+            Ks=Ks_q,
+            patches_x=self.px,
+            patches_y=self.py,
+            image_width=self.im,
+            image_height=self.im,
+            **sdpa_kwargs,
+        )
+        out = out.transpose(1, 2).reshape(B, T, D)
+        out = self.proj_drop(self.proj(out))
+        return out
+
+
+# [MOD] Batch-first 交叉注意力：支持 Cq ≠ Ckv
+class PropeCrossAttention(nn.Module):
+    """
+    Batch-first PRoPE cross-attention wrapper.
+    query: (B, Tq, D) from target cameras (viewmats_q)
+    key/value: (B, Tk, D) from context cameras (viewmats_kv)
+    """
+    def __init__(self, embed_dim, num_heads, *, patches_x, patches_y, image_size,
+                 bias=True, attn_drop=0.0, proj_drop=0.0,
+                 freq_base=100.0, freq_scale=1.0):
+        super().__init__()
+        assert embed_dim % num_heads == 0
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.head_dim = embed_dim // num_heads
+        self.px = patches_x
+        self.py = patches_y
+        self.im = image_size
+
+        self.q_proj = nn.Linear(embed_dim, embed_dim, bias=bias)
+        self.k_proj = nn.Linear(embed_dim, embed_dim, bias=bias)
+        self.v_proj = nn.Linear(embed_dim, embed_dim, bias=bias)
+        self.out_proj = nn.Linear(embed_dim, embed_dim, bias=True)
+        self.attn_drop = nn.Dropout(attn_drop)
+        self.proj_drop = nn.Dropout(proj_drop)
+
+    def forward(self, query, key, value, *, viewmats_q, viewmats_kv, Ks_q=None, Ks_kv=None, **sdpa_kwargs):
+        B, Tq, D = query.shape
+        Bk, Tk, Dk = key.shape
+        assert (Bk, Tk, Dk) == value.shape == (B, Tk, D)
+
+        H, Hd = self.num_heads, self.head_dim
+        q = self.q_proj(query).view(B, Tq, H, Hd).transpose(1, 2)  # (B,H,Tq,Hd)
+        k = self.k_proj(key).view(B, Tk, H, Hd).transpose(1, 2)    # (B,H,Tk,Hd)
+        v = self.v_proj(value).view(B, Tk, H, Hd).transpose(1, 2)  # (B,H,Tk,Hd)
+
+        Cq = viewmats_q.shape[1]
+        Ck = viewmats_kv.shape[1]
+        assert Tq == Cq * self.px * self.py, "Tq must equal Cq*px*py"
+        assert Tk == Ck * self.px * self.py, "Tk must equal Ck*px*py"
+
+        # [MOD] 使用支持 Cq≠Ckv 的实现
+        out = prope_cross_dot_product_attention(
+            q, k, v,
+            viewmats_q=viewmats_q,
+            viewmats_kv=viewmats_kv,
+            Ks_q=Ks_q,
+            Ks_kv=Ks_kv,
+            patches_x=self.px,
+            patches_y=self.py,
+            image_width=self.im,
+            image_height=self.im,
+            **sdpa_kwargs,
+        )
+
+        out = out.transpose(1, 2).reshape(B, Tq, D)
+        out = self.proj_drop(self.out_proj(out))
+        return out
