@@ -20,7 +20,7 @@ from timm.models.vision_transformer import PatchEmbed, Mlp
 # from prope.torch import prope_dot_product_attention                     # [REMOVED]
 
 # [MOD]：仅保留最小依赖，从 prope.torch 引入 PRoPE 封装类与函数（实现不放在本文件）
-from prope.torch import PropeSelfAttention, PropeCrossAttention, prope_dot_product_attention  # [ADDED]
+from prope.torch_o import PropeSelfAttention, PropeCrossAttention, prope_dot_product_attention  # [ADDED]
 
 
 def modulate(x, shift, scale):

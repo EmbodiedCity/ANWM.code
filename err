@@ -1,119 +1,13 @@
-Using port 29529
-gps: 0
-****** Using a predefined evaluation index... data_splits/airvln_16/test/navigation_eval.pkl******
-loading
-Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
-Loading model from: /data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
-GT traj: [(0.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.6060606241226196, 0.0), (1.5151515007019043, 1.319517835518232e-14, 1.2121212482452393, 0.0), (3.0303030014038086, 2.639035671036464e-14, 2.4242424964904785, 0.0), (6.060606002807617, 5.278071342072928e-14, 3.6363637447357178, 0.0), (9.090909004211426, 7.917107182515981e-14, 5.454545497894287, 0.0), (13.636363983154297, 1.1875660773773972e-13, 7.2727274894714355, 0.0), (19.696969985961914, 1.715373177703372e-13, 9.090909004211426, 0.0), (25.75757598876953, 2.243180278029347e-13, 11.515151977539062, 0.0)]
-Candidate traj: [[[ 0.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [10.         0.         0.         0.       ]
-  [15.         0.         0.         0.       ]
-  [20.         0.         0.         0.       ]
-  [25.         0.         0.         0.       ]
-  [30.         0.         0.         0.       ]
-  [35.         0.         0.         0.       ]
-  [40.         0.         0.         0.       ]]
-
- [[ 0.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         2.         0.       ]
-  [10.         0.         2.         0.       ]
-  [10.         0.         4.         0.       ]
-  [15.         0.         4.         0.       ]
-  [15.         0.         6.         0.       ]
-  [20.         0.         6.         0.       ]
-  [20.         0.         8.         0.       ]]
-
- [[ 0.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.        -2.         0.       ]
-  [10.         0.        -2.         0.       ]
-  [10.         0.        -4.         0.       ]
-  [15.         0.        -4.         0.       ]
-  [15.         0.        -6.         0.       ]
-  [20.         0.        -6.         0.       ]
-  [20.         0.        -8.         0.       ]]
-
- [[ 0.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.2617994]
-  [ 9.829629   1.2940953  0.         0.2617994]
-  [ 9.829629   1.2940953  0.         0.5235988]
-  [14.159756   3.7940953  0.         0.5235988]
-  [14.159756   3.7940953  0.         0.7853982]
-  [17.69529    7.329629   0.         0.7853982]
-  [17.69529    7.329629   0.         1.0471976]]
-
- [[ 0.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.        -0.2617994]
-  [ 9.829629  -1.2940953  0.        -0.2617994]
-  [ 9.829629  -1.2940953  0.        -0.5235988]
-  [14.159756  -3.7940953  0.        -0.5235988]
-  [14.159756  -3.7940953  0.        -0.7853982]
-  [17.69529   -7.329629   0.        -0.7853982]
-  [17.69529   -7.329629   0.        -1.0471976]]
-
- [[ 0.         0.         0.         0.       ]
-  [ 0.         0.         2.         0.       ]
-  [ 5.         0.         2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [10.         0.         0.         0.       ]
-  [10.         0.         2.         0.       ]
-  [15.         0.         2.         0.       ]
-  [15.         0.         0.         0.       ]
-  [20.         0.         0.         0.       ]]]
-Candidate daltas: [[[ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 5.         0.         0.         0.       ]]
-
- [[ 5.         0.         0.         0.       ]
-  [ 0.         0.         2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.         2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.         2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.         2.         0.       ]]
-
- [[ 5.         0.         0.         0.       ]
-  [ 0.         0.        -2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.        -2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.        -2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.        -2.         0.       ]]
-
- [[ 5.         0.         0.         0.       ]
-  [ 0.         0.         0.         0.2617994]
-  [ 4.829629   1.2940953  0.         0.       ]
-  [ 0.         0.         0.         0.2617994]
-  [ 4.330127   2.5        0.         0.       ]
-  [ 0.         0.         0.         0.2617994]
-  [ 3.535534   3.5355337  0.         0.       ]
-  [ 0.         0.         0.         0.2617994]]
-
- [[ 5.         0.         0.         0.       ]
-  [ 0.         0.         0.        -0.2617994]
-  [ 4.829629  -1.2940953  0.         0.       ]
-  [ 0.         0.         0.        -0.2617994]
-  [ 4.330127  -2.5        0.         0.       ]
-  [ 0.         0.         0.        -0.2617994]
-  [ 3.535534  -3.5355337  0.         0.       ]
-  [ 0.         0.         0.        -0.2617994]]
-
- [[ 0.         0.         2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.        -2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.         2.         0.       ]
-  [ 5.         0.         0.         0.       ]
-  [ 0.         0.        -2.         0.       ]
-  [ 5.         0.         0.         0.       ]]]
+W0915 18:24:13.152000 2584761 site-packages/torch/distributed/run.py:793] 
+W0915 18:24:13.152000 2584761 site-packages/torch/distributed/run.py:793] *****************************************
+W0915 18:24:13.152000 2584761 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0915 18:24:13.152000 2584761 site-packages/torch/distributed/run.py:793] *****************************************
+/data1/tpz/nwm-main/isolated_nwm_infer_v7_1.py:33: DeprecationWarning: 'mode' parameter is deprecated and will be removed in Pillow 13 (2026-10-15)
+  image = Image.fromarray(img.permute(1, 2, 0).numpy(), mode='RGB')
+/data1/tpz/nwm-main/isolated_nwm_infer_v7_1.py:33: DeprecationWarning: 'mode' parameter is deprecated and will be removed in Pillow 13 (2026-10-15)
+  image = Image.fromarray(img.permute(1, 2, 0).numpy(), mode='RGB')
+/data1/tpz/nwm-main/isolated_nwm_infer_v7_1.py:33: DeprecationWarning: 'mode' parameter is deprecated and will be removed in Pillow 13 (2026-10-15)
+  image = Image.fromarray(img.permute(1, 2, 0).numpy(), mode='RGB')
+/data1/tpz/nwm-main/isolated_nwm_infer_v7_1.py:33: DeprecationWarning: 'mode' parameter is deprecated and will be removed in Pillow 13 (2026-10-15)
+  image = Image.fromarray(img.permute(1, 2, 0).numpy(), mode='RGB')
+[rank0]:[W915 19:22:24.224842550 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
