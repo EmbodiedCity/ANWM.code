@@ -17,12 +17,15 @@ import torch.nn as nn
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 
+import matplotlib
+matplotlib.use('Agg')
 from collections import OrderedDict
 from copy import deepcopy
 from time import time
 import argparse
 import logging
 import os
+import matplotlib.pyplot as plt
 import yaml
 
 import torch.distributed as dist
@@ -462,6 +465,25 @@ def evaluate(model, vae, diffusion, test_dataloaders, rank, batch_size, num_work
             score += res.sum()
             n_samples += len(res)
         break
+
+    # 保存若干可视化
+    if rank == 0:
+        os.makedirs(save_dir, exist_ok=True)
+        K = min(samples.shape[0], 10)
+        for i in range(K):
+            fig, ax = plt.subplots(1, 3, dpi=256)
+            ax[0].imshow((x_cond_pixels[i, -1].permute(1, 2, 0).detach().cpu().numpy() * 255).astype('uint8'))
+            ax[0].set_title('cond[-1]')
+            ax[0].axis('off')
+            ax[1].imshow((x_start_pixels[i].permute(1, 2, 0).detach().cpu().numpy() * 255).astype('uint8'))
+            ax[1].set_title('gt')
+            ax[1].axis('off')
+            ax[2].imshow((samples[i].permute(1, 2, 0).detach().cpu().numpy() * 255).astype('uint8'))
+            ax[2].set_title('pred')
+            ax[2].axis('off')
+            fig.tight_layout()
+            fig.savefig(f'{save_dir}/{i}.png')
+            plt.close(fig)
 
     # 在本函数中 rank==0 才会进来，这两行只是保持接口一致（不影响结果）
     dist.all_reduce(score)

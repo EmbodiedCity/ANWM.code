@@ -261,51 +261,54 @@ class CDiTBlock(nn.Module):
         self.mlp = Mlp(in_features=hidden_size, hidden_features=mlp_hidden_dim, act_layer=approx_gelu, drop=0)
 
     def forward(self, x, c, x_cond, *, viewmats, Ks=None):
-        """
-        x:       (B, P, D)           目标视图 patch tokens
-        x_cond:  (B, S*P, D) 或 (B, P, D) 当 S=0
-        viewmats:(B, S+1, 4, 4)      最后一个是 target
-        Ks:      (B, S+1, 3, 3) 或 None
-        """
         B, Lt, D = x.shape
         S1 = viewmats.shape[1]
-        S = S1 - 1
+        S  = S1 - 1
         Lk = x_cond.shape[1]
 
         # ---------- adaLN ----------
         mods = self.adaLN_modulation(c).view(B, 11, -1)
         (shift_msa, scale_msa, gate_msa,
-         shift_ca_xcond, scale_ca_xcond,
-         shift_ca_x, scale_ca_x, gate_ca_x,
-         shift_mlp, scale_mlp, gate_mlp) = mods.unbind(dim=1)
+        shift_ca_xcond, scale_ca_xcond,   # 这俩现在不再作用在 K/V 上，先保留参数位
+        shift_ca_x, scale_ca_x, gate_ca_x,
+        shift_mlp, scale_mlp, gate_mlp) = mods.unbind(dim=1)
 
         # ---------- 自注意（QKV=target；cameras=1） ----------
-        x = x + gate_msa.unsqueeze(1) * self.attn(
-            modulate(self.norm1(x), shift_msa, scale_msa),
-            viewmats_q=viewmats[:, -1:],      # target
+        msa_in  = self.norm1(x)  # 只 LN
+        msa_out = self.attn(
+            msa_in,
+            viewmats_q=viewmats[:, -1:],                      # target 相机
             Ks_q=None if Ks is None else Ks[:, -1:],
         )
+        x = x + gate_msa.unsqueeze(1) * modulate(msa_out, shift_msa, scale_msa)
 
         # ---------- 交叉注意（Q=target；KV=contexts 或回环） ----------
+        # 先根据是否有上下文视图，确定 KV 使用的相机参数（以及形状检查）
         if S > 0:
-            assert Lk == S * Lt, f"x_cond 应为 S*P（S={S}, P={Lt}），got {Lk}"
-            viewmats_kv = viewmats[:, :-1]
-            Ks_kv = None if Ks is None else Ks[:, :-1]
+            # 有 S 个上下文相机：x_cond 应该是 S*Lt 个 token
+            assert Lk == S * Lt, f"x_cond 应为 S*P（S={S}, P={Lt}），got Lk={Lk}"
+            viewmats_kv = viewmats[:, :-1]                         # (B,S,4,4)
+            Ks_kv       = None if Ks is None else Ks[:, :-1]       # (B,S,3,3) or None
         else:
+            # 无上下文：回环到 target 自身，让 cross-attn 仍然生效
             assert Lk == Lt, "S==0 时 x_cond 应为 (B,P,D)"
-            viewmats_kv = viewmats[:, -1:]
-            Ks_kv = None if Ks is None else Ks[:, -1:]
+            viewmats_kv = viewmats[:, -1:]                         # (B,1,4,4)
+            Ks_kv       = None if Ks is None else Ks[:, -1:]       # (B,1,3,3) or None
 
-        x_cond_norm = modulate(self.norm_cond(x_cond), shift_ca_xcond, scale_ca_xcond)
-        x = x + gate_ca_x.unsqueeze(1) * self.cttn(
-            query=modulate(self.norm2(x), shift_ca_x, scale_ca_x),
-            key=x_cond_norm, value=x_cond_norm,
+        q_in  = self.norm2(x)          # 只 LN
+        kv_in = self.norm_cond(x_cond) # 只 LN
+
+        ca_out = self.cttn(
+            query=q_in, key=kv_in, value=kv_in,
             viewmats_q=viewmats[:, -1:], Ks_q=None if Ks is None else Ks[:, -1:],
             viewmats_kv=viewmats_kv,     Ks_kv=Ks_kv,
         )
+        x = x + gate_ca_x.unsqueeze(1) * modulate(ca_out, shift_ca_x, scale_ca_x)
 
         # ---------- MLP ----------
-        x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm3(x), shift_mlp, scale_mlp))
+        mlp_in  = self.norm3(x)
+        mlp_out = self.mlp(mlp_in)
+        x = x + gate_mlp.unsqueeze(1) * modulate(mlp_out, shift_mlp, scale_mlp)
         return x
 
 
