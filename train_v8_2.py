@@ -8,7 +8,7 @@
 # NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
 # --------------------------------------------------------
 
-# 这个版本为加入相机编码版本（评估稳定化：rank0-only + DreamSim 单例）
+# 这个版本为加入相机编码版本
 
 import torch
 import torch.nn as nn
@@ -35,10 +35,10 @@ from torch.utils.data.distributed import DistributedSampler
 
 from diffusers.models import AutoencoderKL
 
-from isolated_nwm_infer_v7_2 import model_forward_wrapper
+from isolated_nwm_infer_v8_2 import model_forward_wrapper
 
 from distributed import init_distributed
-from models_tpz_v7_2 import CDiT_models
+from models_tpz_v8_2 import CDiT_models
 from diffusion import create_diffusion
 from datasets_v3 import TrainingDataset
 from misc import transform
@@ -326,7 +326,7 @@ def main(args):
                     torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
                 scaler.step(opt)
                 scaler.update()
-
+            
             update_ema(ema, model.module)
 
             # Log loss values:

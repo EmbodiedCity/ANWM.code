@@ -437,12 +437,12 @@ class WM_Planning_Evaluator:
             # 生成候选 trajectory poses
             candidate_trajectories = trajectory_generation(GT_traj, candidate_number=candidate_number)
             candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4] 其中 T = len_traj_pred + 1
-            print(f"GT traj: {GT_traj}")
-            print(f"Candidate traj: {candidate_trajectories}")
+            # print(f"GT traj: {GT_traj}")
+            # print(f"Candidate traj: {candidate_trajectories}")
 
             # 转换为 delta（轨迹点之间的变化）
             candidate_deltas = candidate_trajectories[:, 1:, :] - candidate_trajectories[:, :-1, :]  # [N, steps, 4]
-            print(f"Candidate daltas: {candidate_deltas}")
+            # print(f"Candidate daltas: {candidate_deltas}")
             deltas = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)
 
             cur_obs_image = obs_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1) 
@@ -450,7 +450,7 @@ class WM_Planning_Evaluator:
             cur_aug_image = aug_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1)   # (num_samples, 1, C, H, W)
             cur_cam = camera_mats[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1)          # (num_samples, num_cond+1, 4, 4)            
             # WM is stochastic, so we can repeat the evaluation of each trajectory and average to reduce variance
-            if self.num_repeat_eval * self.num_samples > 120:
+            if self.num_repeat_eval * self.num_samples > 12:
                 cur_losses = []
                 for r in range(self.num_repeat_eval):
                     preds = self.autoregressive_rollout(cur_obs_image, deltas, self.args.rollout_stride, aug_image=cur_aug_image, camera_mats=cur_cam)
@@ -539,7 +539,7 @@ class WM_Planning_Evaluator:
 
             if self.args.plot:
                 self.visualize_trajectories(dataset_name, gt_actions, image_plot_dir, 1, traj, traj_id, deltas, cur_obs_image, cur_goal_image, preds, loss, topk_idx)                    
-        
+    
         # Final rollout for selected deltas
         final_deltas = torch.cat(all_deltas, dim=0)  # [n_evals, steps, 4]
         preds = self.autoregressive_rollout(obs_image, final_deltas, self.args.rollout_stride, aug_image=aug_image, camera_mats=camera_mats)
@@ -580,9 +580,8 @@ class WM_Planning_Evaluator:
             plot_batch_final(obs_image[:, -1].to(self.device), preds, goal_image.squeeze(1).to(self.device), idxs, all_losses, save_path=img_name)
             plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_image.squeeze(1).to(self.device), idxs, save_path=traj_name)
 
-        # final_deltas 来自候选轨迹的“物理量（米/弧度）”——不要再反归一化
-        pred_actions = final_deltas[:, :, :3]        # (B, T, 3) meters
-        pred_yaw     = final_deltas[:, :, -1].sum(1) # (B,) radians
+        pred_actions = get_action_torch(final_deltas[:, :, :3], ACTION_STATS_TORCH)
+        pred_yaw = final_deltas[:, :, -1].sum(1)
         return pred_actions, pred_yaw
 
 
@@ -593,6 +592,7 @@ class WM_Planning_Evaluator:
         plot_images_with_losses(img_for_plotting, loss_for_plotting, save_path=img_name)
         plot_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}_trajs.png')
         num_plot = self.args.num_samples
+        print(num_plot)
         log_viz_single(
                         dataset_name, 
                         cur_obs_image[0], 
@@ -629,32 +629,14 @@ class WM_Planning_Evaluator:
         # Get evaluation name for logging. Should overwrite for specific experiments
         self.eval_name = f'RULE_N{self.args.num_samples}_K{self.args.topk}_RS{self.args.rollout_stride}_rep{self.args.num_repeat_eval}_OPT{self.args.opt_steps}'
         
-    def actions_to_traj(self, deltas_xyz: torch.Tensor):
-        """
-        deltas_xyz: (T, 3) 物理量“位移增量”（米）
-        返回 PoseTrajectory3D：长度为 T+1 的绝对轨迹（首点为原点）
-        """
-        deltas_xyz = deltas_xyz.detach().to(torch.float32)
-        T = deltas_xyz.shape[0]
-
-        # 累计得到绝对位置，首点为原点
-        positions_xyz = torch.zeros((T + 1, 3), dtype=torch.float32, device=deltas_xyz.device)
-        if T > 0:
-            positions_xyz[1:] = torch.cumsum(deltas_xyz, dim=0)
-
-        # 恒等四元数
-        orientations_quat_wxyz = torch.zeros((T + 1, 4), dtype=torch.float32, device=deltas_xyz.device)
-        orientations_quat_wxyz[:, -1] = 1.0
-
-        # 帧序时间戳
-        timestamps = torch.arange(T + 1, dtype=torch.float64, device=deltas_xyz.device)
-
-        # evo 期望 numpy
-        return PoseTrajectory3D(
-            positions_xyz=positions_xyz.cpu().numpy(),
-            orientations_quat_wxyz=orientations_quat_wxyz.cpu().numpy(),
-            timestamps=timestamps.cpu().numpy(),
-        )
+    def actions_to_traj(self, actions):
+        positions_xyz = torch.zeros((actions.shape[0], 3))
+        positions_xyz[:, :3] = actions
+        orientations_quat_wxyz = torch.zeros((actions.shape[0], 4)) # Define identity quaternion
+        orientations_quat_wxyz[:, -1] = 1 # Define identity quaternion
+        timestamps = torch.arange(actions.shape[0], dtype=torch.float64)
+        traj = PoseTrajectory3D(positions_xyz=positions_xyz, orientations_quat_wxyz=orientations_quat_wxyz, timestamps=timestamps)
+        return traj
     
     @torch.no_grad()
     def evaluate(self):

@@ -55,10 +55,6 @@ class TimestepEmbedder(nn.Module):
         Create sinusoidal timestep embeddings.
         t: (B,) or (B,1)
         """
-        if t.ndim > 1:
-            t = t.squeeze(-1)
-            if t.ndim > 1:
-                t = t.reshape(t.shape[0])
         half = dim // 2
         freqs = torch.exp(
             -math.log(max_period) * torch.arange(start=0, end=half, dtype=torch.float32, device=t.device) / half
@@ -70,6 +66,10 @@ class TimestepEmbedder(nn.Module):
         return embedding
 
     def forward(self, t):
+        if t.ndim > 1:
+            t = t.squeeze(-1)
+            if t.ndim > 1:
+                t = t.reshape(t.shape[0])
         t_freq = self.timestep_embedding(t, self.frequency_embedding_size)
         t_emb = self.mlp(t_freq)
         return t_emb

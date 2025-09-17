@@ -18,7 +18,7 @@ from diffusers.models import AutoencoderKL
 
 import misc
 import distributed as dist
-from models_tpz_v7_2 import CDiT_models
+from models_tpz_v8_2 import CDiT_models
 from datasets_v3 import EvalDataset
 from PIL import Image
 
@@ -89,16 +89,13 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)
         y_cond = aug.unsqueeze(2).flatten(0, 1)         # [B*num_goals, 1, 4, 28, 28]
         # print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}")
-        
-        # for v7.1 comment the following code, for v8 uncomment the following code
         # x_cond = torch.cat((x_cond, y_cond), dim=1)     # [B*num_goals, 5, 4, 28, 28]
-       
         z = torch.randn(B*num_goals, 4, latent_size, latent_size, device=device)
         y = y.flatten(0, 1)
 
         camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
         camera_mats_x_cond = camera_mats[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, 4, 4).flatten(0, 1)    # [B*num_goals, num_cond, 4, 4]
-        camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)        # [B*num_goals, 5, 4, 4]
+        # camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)        # [B*num_goals, 5, 4, 4]
                 
         # print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}, y shape: {y.size()}, rel_t shape: {rel_t.size()}")
 
@@ -117,7 +114,7 @@ def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image,
     delta = delta.unflatten(1, (-1, rollout_stride)).sum(2)
     camera_mats_goals = camera_mats_pred[:, rollout_stride-1::rollout_stride] 
     curr_obs = obs_image.clone().to(device)
-    curr_mats_ctx = camera_mats_ctx.clone().to(device)
+    curr_mats = camera_mats_ctx.clone().to(device)
     # print(f"yyy x_super shape: {x_supervised.size()}")
     sup_image = x_supervised[:, rollout_stride-1::rollout_stride]
     assert sup_image.shape == gt_image.shape, \
@@ -125,7 +122,7 @@ def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image,
 
     for i in range(gt_image.shape[1]):
         curr_delta = delta[:, i:i+1].to(device)
-        curr_mats = torch.cat([curr_mats_ctx, camera_mats_goals[:, i:i+1].to(device)], dim=1)  # [B, num_cond+1, 4, 4]
+        # curr_mats = torch.cat([curr_mats_ctx, camera_mats_goals[:, i:i+1].to(device)], dim=1)  # [B, num_cond+1, 4, 4]
         if args.gt:
             x_pred_pixels = gt_image[:, i].clone().to(device)
         else:

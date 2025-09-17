@@ -9,33 +9,13 @@
 # MAE: https://github.com/facebookresearch/mae/blob/main/models_mae.py
 # --------------------------------------------------------
 
-# For ablation studies, only use PRoPE attention in the CDiT blocks. 该版本使用官方最新版本PROPE - FROM v7.1_backup (minimal intrusion)
-# How to use PRoPE attention for self-attention:
-#
-# 1) Easiest way (fast):
-#    attn = PropeDotProductAttention(...)
-#    o = attn(q, k, v, viewmats, Ks)
-#
-# 2) More flexible way (fast) [本文件采用此法]:
-#    attn = PropeDotProductAttention(...)
-#    attn._precompute_and_cache_apply_fns(viewmats, Ks)
-#    q = attn._apply_to_q(q)
-#    k = attn._apply_to_kv(k)
-#    v = attn._apply_to_kv(v)
-#    o = F.scaled_dot_product_attention(q, k, v, **kwargs)
-#    o = attn._apply_to_o(o)
-#
-# 3) The most flexible way (slower due to recomputation):
-#    o = prope_dot_product_attention(q, k, v, ...)
-
-import math
-import numpy as np
+# 继承自v7.1 backup prope minimal intrusion，加入了相机位姿编码，self_attention模块
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-
+import numpy as np
+import math
 from timm.models.vision_transformer import PatchEmbed, Attention, Mlp
-from prope.torch import PropeDotProductAttention
+from prope.torch import prope_dot_product_attention
 
 
 def modulate(x, shift, scale):
@@ -136,7 +116,7 @@ class CDiTBlock(nn.Module):
 
 class FinalLayer(nn.Module):
     """
-    The final layer of DiT (x_sup disabled).
+    The final layer of DiT.
     """
     def __init__(self, hidden_size, patch_size, out_channels):
         super().__init__()
@@ -146,10 +126,21 @@ class FinalLayer(nn.Module):
             nn.SiLU(),
             nn.Linear(hidden_size, 2 * hidden_size, bias=True)
         )
+        self.fuse_supervised = nn.Linear(hidden_size * 2, hidden_size)
+        # self.attn = CrossBatchMultiheadAttention(embed_dim=hidden_size, num_heads=8)
+        self.attn = nn.MultiheadAttention(hidden_size, num_heads=8, batch_first=True)
 
-    def forward(self, x, c, x_supervised_token=None):
+    def forward(self, x, c, x_supervised_token):
+        # print(f"x shape: {x.size()}, x_sup shape: {x_supervised_token.size()}")
         shift, scale = self.adaLN_modulation(c).chunk(2, dim=1)
         x = modulate(self.norm_final(x), shift, scale)
+        # x: [B, T, D]
+        # x_supervised_token: [B, T, D]
+        # 用一个 attention 层从 x 查询 x_supervised_token
+        # 让 x 去 attend（注意）x_supervised_token，提取相关信息以加强 x 的表示。
+        attn_output = self.attn(query=x, key=x_supervised_token, value=x_supervised_token)[0] 
+        # print(f"attn output shape: {attn_output.size()}")
+        x = self.fuse_supervised(torch.cat([x, attn_output], dim=-1))
         x = self.linear(x)
         return x
 
@@ -182,14 +173,11 @@ class CDiT(nn.Module):
         self.x_embedder = PatchEmbed(input_size, patch_size, in_channels, hidden_size, bias=True)
         self.t_embedder = TimestepEmbedder(hidden_size)
         self.y_embedder = ActionEmbedder(hidden_size)
-
-        # qkv for outer PRoPE-augmented attention encoding
         self.q_proj = nn.Linear(hidden_size, hidden_size)
         self.k_proj = nn.Linear(hidden_size, hidden_size)
         self.v_proj = nn.Linear(hidden_size, hidden_size)
-
         self.num_patches = self.x_embedder.num_patches
-        # 注意：grid_size = (H_patches, W_patches)
+        # patch 网格大小（注意顺序是 (H_patches, W_patches)）
         self.num_patches_y, self.num_patches_x = self.x_embedder.grid_size
         self.input_size = input_size
         # self.pos_embed = nn.Parameter(torch.zeros(self.context_size+1, num_patches, hidden_size), requires_grad=True) # for context and for predicted frame
@@ -197,14 +185,6 @@ class CDiT(nn.Module):
         self.final_layer = FinalLayer(hidden_size, patch_size, self.out_channels)
         self.time_embedder = TimestepEmbedder(hidden_size)
         self.initialize_weights()
-
-        # === NEW: PRoPE attention instance (class-based, fast path) ===
-        self.prope_attn = PropeDotProductAttention(
-            patches_x=self.num_patches_x,
-            patches_y=self.num_patches_y,
-            image_width=self.input_size,
-            image_height=self.input_size,
-        )
 
     def initialize_weights(self):
         # Initialize transformer layers:
@@ -215,37 +195,38 @@ class CDiT(nn.Module):
                     nn.init.constant_(module.bias, 0)
         self.apply(_basic_init)
 
-        # Initialize patch_embed like nn.Linear (instead of nn.Conv2d)
+        # Initialize (and freeze) pos_embed by sin-cos embedding:
+        # nn.init.normal_(self.pos_embed, std=0.02)
+
+        # Initialize patch_embed like nn.Linear (instead of nn.Conv2d):
         w = self.x_embedder.proj.weight.data
         nn.init.xavier_uniform_(w.view([w.shape[0], -1]))
         nn.init.constant_(self.x_embedder.proj.bias, 0)
 
-        # Initialize action embedding (x, y, z, angle)
+
+        # Initialize action embedding:
         nn.init.normal_(self.y_embedder.x_emb.mlp[0].weight, std=0.02)
         nn.init.normal_(self.y_embedder.x_emb.mlp[2].weight, std=0.02)
 
         nn.init.normal_(self.y_embedder.y_emb.mlp[0].weight, std=0.02)
         nn.init.normal_(self.y_embedder.y_emb.mlp[2].weight, std=0.02)
 
-        nn.init.normal_(self.y_embedder.z_emb.mlp[0].weight, std=0.02)
-        nn.init.normal_(self.y_embedder.z_emb.mlp[2].weight, std=0.02)
-
         nn.init.normal_(self.y_embedder.angle_emb.mlp[0].weight, std=0.02)
         nn.init.normal_(self.y_embedder.angle_emb.mlp[2].weight, std=0.02)
 
-        # Initialize timestep embedding MLPs
+        # Initialize timestep embedding MLP:
         nn.init.normal_(self.t_embedder.mlp[0].weight, std=0.02)
         nn.init.normal_(self.t_embedder.mlp[2].weight, std=0.02)
-
+        
         nn.init.normal_(self.time_embedder.mlp[0].weight, std=0.02)
         nn.init.normal_(self.time_embedder.mlp[2].weight, std=0.02)
-
-        # Zero-out adaLN modulation layers in DiT blocks
+            
+        # Zero-out adaLN modulation layers in DiT blocks:
         for block in self.blocks:
             nn.init.constant_(block.adaLN_modulation[-1].weight, 0)
             nn.init.constant_(block.adaLN_modulation[-1].bias, 0)
 
-        # Zero-out output layers
+        # Zero-out output layers:
         nn.init.constant_(self.final_layer.adaLN_modulation[-1].weight, 0)
         nn.init.constant_(self.final_layer.adaLN_modulation[-1].bias, 0)
         nn.init.constant_(self.final_layer.linear.weight, 0)
@@ -254,7 +235,7 @@ class CDiT(nn.Module):
     def unpatchify(self, x):
         """
         x: (N, T, patch_size**2 * C)
-        imgs: (N, C, H, W)
+        imgs: (N, H, W, C)
         """
         c = self.out_channels
         p = self.x_embedder.patch_size[0]
@@ -269,66 +250,65 @@ class CDiT(nn.Module):
     def forward(self, x, t, y, x_cond, rel_t, x_sup, viewmats, Ks=None):
         """
         Forward pass of DiT.
-        x:      (B*num_goals, C, H, W)
-        x_cond: (B*num_goals, num_cond+1, C, H, W)  # e.g., past frames + maybe last obs
-        t:      (B*num_goals,)
-        y:      (B*num_goals, 4)  # action (x,y,z,angle)
-        rel_t:  (B*num_goals,)
-        viewmats/Ks: camera extrinsics/intrinsics for all tokens in the same order
+        x: (N, C, H, W) tensor of spatial inputs (images or latent representations of images)
+        t: (N,) tensor of diffusion timesteps
+        y: (N,) tensor of class labels
         """
-        # v7.1: absolute pose encoding only
-        x = self.x_embedder(x)  # [B,  Np, D]
-        x_cond = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1]))
-        # x_cond: [B, T_ctx, Np, D] → [B, T_ctx*Np, D]
-        _, TT, _ = x.shape  # TT = Np (per image)
-        x_cond = x_cond.flatten(1, 2)  # [B, (num_cond+1)*Np, D]
+        x = self.x_embedder(x)         # [B*num_goals, 196, 1152] + [1, 196, 1152]
+        x_cond = self.x_embedder(x_cond.flatten(0, 1)).unflatten(0, (x_cond.shape[0], x_cond.shape[1]))  # (N, T, D), where T = H * W / patch_size ** 2.flatten(1, 2)      [B*num_goals, num_cond+1, 196, 1152]
+        x_sup = self.x_embedder(x_sup) # [B, 196, 1152]
 
+        _, TT, _ = x.shape
+        x_cond = x_cond.flatten(1, 2)         # [B*num_goals, (num_cond+1)*196, 1152]
         t = self.t_embedder(t[..., None])
-        y = self.y_embedder(y)
+        y = self.y_embedder(y) 
         time_emb = self.time_embedder(rel_t[..., None])
-        c = t + time_emb + y  # condition token
+        c = t + time_emb + y # if training on unlabeled data, dont add y.
 
-        # concat context tokens + current tokens
-        x_all = torch.cat([x_cond, x], dim=1)  # [B, T_all, D], T_all = (num_cond+1)*Np + Np
-
-        # ===== PRoPE 编码：类 + 预计算缓存；原生 SDPA 内核加速 =====
+        x_all = torch.cat([x_cond, x], dim=1)       
+        # print("x all shape:", x_all.shape)
+        # print("t shape: ", t.shape)
+        # print("y shape: ", y.shape)
+        
+        # viewmats = torch.cat([viewmats, viewmats[:, -1:]], dim=1)
+        # print(f"x_all.shape: {x_all.shape}")
+        # [B, T, D] → [B, num_heads, T, head_dim]
         B, T, D = x_all.shape
-        H = self.num_heads
+        H = self.num_heads  # num_heads
         Hd = D // H
+        q = self.q_proj(x_all)
+        k = self.k_proj(x_all)
+        v = self.v_proj(x_all)
+        # [B, T, D] → [B, T, H, Hd] → [B, H, T, Hd]
+        q = q.view(B, T, H, Hd).transpose(1, 2)
+        k = k.view(B, T, H, Hd).transpose(1, 2)
+        v = v.view(B, T, H, Hd).transpose(1, 2)
 
-        q = self.q_proj(x_all).view(B, T, H, Hd).transpose(1, 2)  # [B,H,T,Hd]
-        k = self.k_proj(x_all).view(B, T, H, Hd).transpose(1, 2)  # [B,H,T,Hd]
-        v = self.v_proj(x_all).view(B, T, H, Hd).transpose(1, 2)  # [B,H,T,Hd]
-
-        # 1) 绑定本 batch 的相机参数（缓存几何系数）
-        self.prope_attn._precompute_and_cache_apply_fns(viewmats, Ks)
-
-        # 2) 将 PRoPE 作用于 q/kv
-        q = self.prope_attn._apply_to_q(q)
-        k = self.prope_attn._apply_to_kv(k)
-        v = self.prope_attn._apply_to_kv(v)
-
-        # 3) 原生 SDPA（支持 FlashAttention/Triton 等后端）
-        x_all_encoded = F.scaled_dot_product_attention(q, k, v)  # [B,H,T,Hd]
-
-        # 4) 输出还原到模型语义空间
-        x_all_encoded = self.prope_attn._apply_to_o(x_all_encoded)  # [B,H,T,Hd]
-
-        # 5) 合并 heads → [B,T,D]
+        # ProPE attention
+        x_all_encoded = prope_dot_product_attention(
+            q, k, v,
+            viewmats=viewmats,
+            Ks=Ks,
+            patches_x=self.num_patches_x,
+            patches_y=self.num_patches_y,
+            image_width=self.input_size,
+            image_height=self.input_size,
+        )
+        
+        # [B, H, T, Hd] → [B, T, H, Hd] → [B, T, D]
+        # Hd: 每个 head 的维度，满足 Hd * H = D
+        # .flatten(2, 3) = .view(B, T, D)
         x_all_encoded = x_all_encoded.transpose(1, 2).flatten(2, 3)
-
-        # 切分回 x / x_cond 的编码
+        
         x_encoded = x_all_encoded[:, -TT:, :]
         x_cond_encoded = x_all_encoded[:, :-TT, :]
-
-        # 进入 DiT blocks（保留你原有的 adaLN + cross-attn + MLP 结构）
+        
+        # print("x shape: ", x.shape, "x_cond shape: ", x_cond.shape)
         for block in self.blocks:
             x = block(x, c, x_cond, x_encoded, x_cond_encoded)
-
-        x = self.final_layer(x, c)
+        x = self.final_layer(x, c, x_sup)
         x = self.unpatchify(x)
         return x
-
 
 #################################################################################
 #                   Sine/Cosine Positional Embedding Functions                  #
@@ -360,7 +340,7 @@ def get_2d_sincos_pos_embed_from_grid(embed_dim, grid):
     emb_h = get_1d_sincos_pos_embed_from_grid(embed_dim // 2, grid[0])  # (H*W, D/2)
     emb_w = get_1d_sincos_pos_embed_from_grid(embed_dim // 2, grid[1])  # (H*W, D/2)
 
-    emb = np.concatenate([emb_h, emb_w], axis=1)  # (H*W, D)
+    emb = np.concatenate([emb_h, emb_w], axis=1) # (H*W, D)
     return emb
 
 
