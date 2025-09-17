@@ -103,7 +103,7 @@ def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image,
     curr_obs = obs_image.clone().to(device)
     sup_image = x_supervised[:, rollout_stride-1::rollout_stride]  # (B, T_roll, C, H, W)
     assert sup_image.shape == gt_image.shape, \
-        f"x_sup_strided shape={x_sup_strided.shape} != gt shape={gt_image.shape}"
+        f"x_sup_strided shape={sup_image.shape} != gt shape={gt_image.shape}"
 
     for i in range(gt_image.shape[1]):
         curr_delta = delta[:, i:i+1].to(device)
