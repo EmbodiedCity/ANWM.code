@@ -308,10 +308,10 @@ def main(args):
                 
                 camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
                 camera_mats_x_cond = camera_mats[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, 4, 4).flatten(0, 1)    # [B*num_goals, num_cond, 4, 4]
-                camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)          # [B*num_goals, num_conds+1, 4, 4]
+                camera_mats_x_all = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)          # [B*num_goals, num_conds+1, 4, 4]
                 
                 t = torch.randint(0, diffusion.num_timesteps, (x_start.shape[0],), device=device)
-                model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1), viewmats=camera_mats_x_cond)
+                model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1), viewmats=camera_mats_x_all)
                 loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
                 loss = loss_dict["loss"].mean()
 

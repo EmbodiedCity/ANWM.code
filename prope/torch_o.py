@@ -143,6 +143,7 @@ def prope_dot_product_attention(
     assert q.shape == k.shape == v.shape
     assert viewmats.shape == (batch, cameras, 4, 4)
     assert Ks is None or Ks.shape == (batch, cameras, 3, 3)
+    # print(seqlen, cameras, patches_x, patches_y)
     assert seqlen == cameras * patches_x * patches_y
 
     # Normalize camera intrinsics.
