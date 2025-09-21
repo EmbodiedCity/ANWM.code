@@ -313,7 +313,7 @@ class CDiT(nn.Module):
         # print("Encoded", "x_cond shape: ", x_cond_encoded.shape, "x shape: ", x_encoded.shape, "x_sup shape: ", x_sup_encoded.shape)
         for block in self.blocks:
             x = block(x, c, x_cond_encoded, x_encoded, x_sup_encoded)
-        x = self.final_layer(x, c, x_sup_encoded)
+        x = self.final_layer(x, c, x_sup)
         x = self.unpatchify(x)
         return x
 

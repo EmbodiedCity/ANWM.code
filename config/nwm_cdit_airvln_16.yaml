@@ -6,7 +6,7 @@ train: True
 batch_size: 2
 num_workers: 12
 model: CDiT-XL/2
-lr: 8e-5
+lr: 8e-6
 
 # normalization for the action space
 normalize: True
