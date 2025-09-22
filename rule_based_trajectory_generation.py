@@ -9,8 +9,8 @@ from sdtw import SoftDTW
 from scipy.spatial.distance import euclidean
 
 action_space = {
-    "forward": (3.3, 0, 0, 0),
-    "backward": (-3.3, 0, 0, 0),
+    "forward": (5, 0, 0, 0),
+    "backward": (-5, 0, 0, 0),
     "up": (0, 0, 2, 0), 
     "down": (0, 0, -2, 0),
     "left": (0, 0, 0, np.pi/12),  # Turn left by 15 degrees

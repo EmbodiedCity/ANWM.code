@@ -1,4 +1,4 @@
-run_name: nwm_cdit_airvln_v8_2
+run_name: nwm_cdit_airvln_v5_2
 
 # training setup
 results_dir: logs
