@@ -53,10 +53,10 @@ def log_viz_single(dataset_name, obs_image, goal_image, preds, deltas, loss, min
     loss = loss.detach().cpu()
     actions = actions.detach().cpu()
     ##############################
-    # pred_actions = get_action_torch(deltas[:, :, :3], action_stats)
-    ndeltas = deltas[:, :, :3]
-    ndeltas = ndeltas.reshape(ndeltas.shape[0], -1, 3)
-    pred_actions = torch.cumsum(ndeltas, dim=1).to(ndeltas)
+    pred_actions = get_action_torch(deltas[:, :, :3], action_stats)
+    # ndeltas = deltas[:, :, :3]
+    # ndeltas = ndeltas.reshape(ndeltas.shape[0], -1, 3)
+    # pred_actions = torch.cumsum(ndeltas, dim=1).to(ndeltas)
     print("pred_actions",pred_actions)
     print("actions",actions)
     #################################

@@ -275,7 +275,7 @@ class WM_Planning_Evaluator:
         self.vae = AutoencoderKL.from_pretrained(f"stabilityai/sd-vae-ft-ema").to(device)
         self.model = torch.nn.parallel.DistributedDataParallel(self.model, device_ids=[self.device], find_unused_parameters=False)
         self.model_without_ddp = self.model.module
-         
+        
         self.loss_fn = lpips.LPIPS(net='alex').to(self.device)
         self.mode = 'rule' # assume RULE for planning
         self.num_samples = self.args.num_samples
@@ -442,8 +442,24 @@ class WM_Planning_Evaluator:
 
             # 转换为 delta（轨迹点之间的变化）
             candidate_deltas = candidate_trajectories[:, 1:, :] - candidate_trajectories[:, :-1, :]  # [N, steps, 4]
-            # print(f"Candidate daltas: {candidate_deltas}")
-            deltas = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)
+
+            ##### [CHANGE BLOCK - 与 CEM 保持一致的“现场归一化 + 几何 yaw(弧度)”]
+            # 目的：让 RULE 策略的模型输入与 CEM 完全一致，避免“直接用世界系 delta 未归一化”的偏差。
+            # 1) deltas_world: 世界系（米/弧度），用于 Editor / 诊断输出（人类可读）
+            deltas_world = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)  # (N, T, 4)
+            d_xyz_world  = deltas_world[..., :3]                                                   # (N, T, 3)
+
+            # 2) yaw 使用“未归一化平移”通过 atan2 几何求解（与 CEM 同步，单位=弧度）
+            delta_yaw = calculate_delta_yaw(d_xyz_world)   # (N, T, 1)
+
+            # 3) 平移通道做 min–max 到 [-1,1] 的现场归一化（yaw 不归一化）
+            mins = ACTION_STATS_TORCH['min'].to(self.device)[:3]
+            maxs = ACTION_STATS_TORCH['max'].to(self.device)[:3]
+            d_xyz_norm = ((d_xyz_world - mins) / (maxs - mins)) * 2.0 - 1.0
+
+            # 4) deltas_model: “模型版”增量 = 归一化平移 + 弧度 yaw
+            deltas_model = torch.cat([d_xyz_norm, delta_yaw], dim=-1)  # (N, T, 4)
+            ##### [END CHANGE BLOCK]
 
             cur_obs_image = obs_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1) 
             cur_goal_image = goal_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1).squeeze(1)
@@ -453,18 +469,18 @@ class WM_Planning_Evaluator:
             if self.num_repeat_eval * self.num_samples > 12:
                 cur_losses = []
                 for r in range(self.num_repeat_eval):
-                    preds = self.autoregressive_rollout(cur_obs_image, deltas, self.args.rollout_stride, aug_image=cur_aug_image, camera_mats=cur_cam)
+                    preds = self.autoregressive_rollout(cur_obs_image, deltas_model, self.args.rollout_stride, aug_image=cur_aug_image, camera_mats=cur_cam)
                     preds = preds[:, -1] # take the last predicted image
                     loss = self.loss_fn(preds.to(self.device), cur_goal_image.to(self.device)).flatten(0)
                     cur_losses.append(loss)
 
                 loss = torch.stack(cur_losses).mean(dim=0)
             else:
-                expanded_deltas = deltas.repeat(self.num_repeat_eval, 1, 1) 
-                expanded_obs_image = cur_obs_image.repeat(self.num_repeat_eval, 1, 1, 1, 1) 
-                expanded_goal_image = cur_goal_image.repeat(self.num_repeat_eval, 1, 1, 1) 
+                expanded_deltas = deltas_model.repeat(self.num_repeat_eval, 1, 1)
+                expanded_obs_image = cur_obs_image.repeat(self.num_repeat_eval, 1, 1, 1, 1)
+                expanded_goal_image = cur_goal_image.repeat(self.num_repeat_eval, 1, 1, 1)
                 expanded_aug = cur_aug_image.repeat(self.num_repeat_eval, 1, 1, 1, 1)
-                expanded_cams = cur_cam.repeat(self.num_repeat_eval, 1, 1, 1)  
+                expanded_cams = cur_cam.repeat(self.num_repeat_eval, 1, 1, 1)
 
                 preds = self.autoregressive_rollout(expanded_obs_image, expanded_deltas, self.args.rollout_stride, aug_image=expanded_aug, camera_mats=expanded_cams)
                 preds = preds[:, -1]
@@ -478,15 +494,19 @@ class WM_Planning_Evaluator:
             sorted_idx = torch.argsort(loss)
             topk_idx = sorted_idx[:self.topk]
             best_idx = sorted_idx[0]
-            best_delta = deltas[best_idx]  # [steps, 4]
 
-            all_deltas.append(best_delta.unsqueeze(0))
+            ##### [CHANGE BLOCK - 选优后双份保存：模型版用于后续；世界系用于 Editor]
+            best_delta_model = deltas_model[best_idx]  # [steps, 4] 归一化平移 + 弧度 yaw（供模型/评估用）
+            best_delta_world = deltas_world[best_idx]  # [steps, 4] 世界系（米/弧度）（供 Editor 可读）
+            ##### [END CHANGE BLOCK]
+
+            all_deltas.append(best_delta_model.unsqueeze(0))     # 最终 rollout / 评估统一用“模型版”
             all_losses.append(loss[best_idx].item())
             all_preds.append(preds[best_idx].unsqueeze(0))
 
-            # ====== NEW: 保存候选轨迹（Top-K）逐帧 PNG + metadata.json + deltas.npy ======
+            # ====== 保存候选轨迹（Top-K）逐帧 PNG + metadata.json + deltas.npy ======
             if self.args.save_preds:
-                # 如需保存全部候选，将下一行改为：topk_loop_ids = torch.arange(self.num_samples, device=loss.device)
+                # 如需保存全部候选，将下一行为：topk_loop_ids = torch.arange(self.num_samples, device=loss.device)
                 topk_loop_ids = topk_idx
 
                 editor_base_dir = dataset_save_output_dir
@@ -500,11 +520,13 @@ class WM_Planning_Evaluator:
 
                 cand_summaries = []
                 for rank, cid in enumerate(topk_loop_ids.tolist()):
-                    cand_delta = deltas[cid:cid+1]                # (1, steps, 4)
+                    cand_delta_model = deltas_model[cid:cid+1]     # (1, steps, 4) rollout 用
+                    cand_delta_world = deltas_world[cid:cid+1]     # (1, steps, 4) Editor 可读写盘
+
                     cand_seq = self.autoregressive_rollout(
-                        single_obs, cand_delta, self.args.rollout_stride,
+                        single_obs, cand_delta_model, self.args.rollout_stride,
                         aug_image=single_aug, camera_mats=single_cams
-                    )[0]                                          # -> (T,C,H,W)
+                    )[0]                                           # -> (T,C,H,W)
 
                     cand_final_lpips = float(loss[cid].item())
 
@@ -512,10 +534,10 @@ class WM_Planning_Evaluator:
                     _, meta = self._save_editor_run(
                         base_dir=editor_base_dir,
                         sid=sid,
-                        init_img=single_obs[0, -1],               # 最后一帧上下文
+                        init_img=single_obs[0, -1],                # 最后一帧上下文
                         step_seq=cand_seq,
                         goal_img=single_goal,
-                        deltas=cand_delta,
+                        deltas=cand_delta_world,                    # << 写“世界系（米/弧度）”
                         tag="candidate",
                         cand_rank=rank,
                         cand_id=int(cid),
@@ -535,12 +557,13 @@ class WM_Planning_Evaluator:
                             {"num_candidates_saved": len(cand_summaries),
                              "topk": int(len(cand_summaries)),
                              "items": cand_summaries})
-            # ====== END NEW ======
+            # ====== END ======
 
             if self.args.plot:
-                self.visualize_trajectories(dataset_name, gt_actions, image_plot_dir, 1, traj, traj_id, deltas, cur_obs_image, cur_goal_image, preds, loss, topk_idx)                    
-    
-        # Final rollout for selected deltas
+                # 可视化时传“模型版” deltas，log_viz_single 内部会 get_action_torch 反归一化（与 CEM 一致）
+                self.visualize_trajectories(dataset_name, gt_actions, image_plot_dir, 1, traj, traj_id, deltas_model, cur_obs_image, cur_goal_image, preds, loss, topk_idx)
+
+        # Final rollout for selected deltas（统一使用“模型版”）
         final_deltas = torch.cat(all_deltas, dim=0)  # [n_evals, steps, 4]
         preds = self.autoregressive_rollout(obs_image, final_deltas, self.args.rollout_stride, aug_image=aug_image, camera_mats=camera_mats)
         preds_completed = preds
@@ -549,11 +572,10 @@ class WM_Planning_Evaluator:
         loss = self.loss_fn(preds.to(self.device), goal_image.squeeze(1).to(self.device)).flatten(0)
 
         if self.args.save_preds:
-            # 注意：此处应保存 final_deltas（不是局部循环里的 deltas）
+            # 注意：此处应保存 final_deltas（“模型版”），与 CEM 的评估/可视化管线一致
             save_planning_pred(dataset_save_output_dir, n_evals, idxs, obs_image, goal_image, preds, final_deltas, loss, gt_actions, preds_completed)
 
-        # ============== NEW: 保存逐帧 PNG + metadata.json（Editor 友好） ==============
-        # 逐帧 loss：LPIPS(frame, goal)；对 init、每个 step 与 goal 都计算（goal 自己设 0.0）
+        # ============== 保存逐帧 PNG + metadata.json（Editor 友好） ==============
         if self.args.save_preds:
             B = obs_image.shape[0]
             init_imgs = obs_image[:, -1]          # (B,C,H,W)
@@ -566,13 +588,13 @@ class WM_Planning_Evaluator:
                     init_img=init_imgs[b],
                     step_seq=preds_completed[b],   # (T,C,H,W)
                     goal_img=goal_imgs[b],
-                    deltas=final_deltas[b:b+1],    # (1, steps, 4) 原始未聚合，函数内部会聚合并累计pose
+                    deltas=final_deltas[b:b+1],    # 这里保持写“模型版”；若要世界系可自行替换为对应缓存
                     tag="final",
                     cand_rank=None,
                     cand_id=None,
                     extra_meta={"final_lpips": float(loss[b].item())}
                 )
-        # ==========================================================================
+        # ======================================================================
 
         if self.args.plot:
             img_name = os.path.join(image_plot_dir, f'FINAL_{idx_string}.png')
@@ -580,6 +602,7 @@ class WM_Planning_Evaluator:
             plot_batch_final(obs_image[:, -1].to(self.device), preds, goal_image.squeeze(1).to(self.device), idxs, all_losses, save_path=img_name)
             plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_image.squeeze(1).to(self.device), idxs, save_path=traj_name)
 
+        # 反归一化还原累计位姿，用于评估指标（保持与 CEM 的 get_action_torch 用法一致）
         pred_actions = get_action_torch(final_deltas[:, :, :3], ACTION_STATS_TORCH)
         pred_yaw = final_deltas[:, :, -1].sum(1)
         return pred_actions, pred_yaw
@@ -608,6 +631,7 @@ class WM_Planning_Evaluator:
                     )
     
     def autoregressive_rollout(self, obs_image, deltas, rollout_stride, aug_image, camera_mats):
+        # deltas: 期望为“模型版”（归一化平移 + 弧度 yaw）
         deltas = deltas.unflatten(1, (-1, rollout_stride)).sum(2)
         preds = []
         curr_obs = obs_image.clone().to(self.device)
