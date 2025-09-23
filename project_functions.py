@@ -339,3 +339,91 @@ def resize_image_half(rgb_img):
     resized_height = original_height // 2
     resized_img = cv2.resize(rgb_img, (resized_width, resized_height))
     return resized_img
+
+# seq2seq
+def project_to_2d_image_seq2(K, points_cam, colors, image_size):
+    """
+    将目标相机坐标系下的点云 (N,3) 用 z-buffer 投影到一张 (H,W,3) 图像
+    K: (3,3), points_cam: (N,3) [X,Y,Z], colors: (N,3) uint8, image_size: (H,W)
+    """
+    fx, fy = K[0,0], K[1,1]
+    cx, cy = K[0,2], K[1,2]
+    H, W = image_size
+
+    X, Y, Z = points_cam[:,0], points_cam[:,1], points_cam[:,2]
+    front = Z > 1e-6
+    X, Y, Z, colors = X[front], Y[front], Z[front], colors[front]
+
+    u = (X * fx / Z + cx)
+    v = (Y * fy / Z + cy)
+    in_img = (u >= 0) & (u < W) & (v >= 0) & (v < H)
+    u = u[in_img].astype(np.int32)
+    v = v[in_img].astype(np.int32)
+    z = Z[in_img]
+    colors = colors[in_img].astype(np.uint8)
+
+    # z-buffer：同像素保留最近深度
+    lin = v * W + u
+    order = np.argsort(z)           # 近 -> 远
+    lin_sorted = lin[order]
+    _, keep = np.unique(lin_sorted, return_index=True)
+    sel = order[keep]
+
+    img = np.zeros((H, W, 3), dtype=np.uint8)
+    img[v[sel], u[sel]] = colors[sel]
+    return img
+
+
+def reproject_depth_to_other_pose_seq2(K, depth_seq, rgb_seq, poses_src_seq, pose_dst):
+    """
+    多帧 → 一张图：复用你已有的单帧函数 reproject_depth_to_other_pose，再用上面的 z-buffer 合成。
+    depth_seq: (T,H,W), rgb_seq: (T,H,W,3), poses_src_seq: (T,4,4), pose_dst: (4,4)
+    """
+    T, H, W = depth_seq.shape
+    pts_list, col_list = [], []
+    for i in range(T):
+        pts_i, col_i = reproject_depth_to_other_pose(K, depth_seq[i], rgb_seq[i], poses_src_seq[i], pose_dst)
+        pts_list.append(pts_i)     # 在目标相机系下的 (Ni,3)
+        col_list.append(col_i)     # (Ni,3)
+
+    points_cam = np.concatenate(pts_list, axis=0)
+    colors     = np.concatenate(col_list, axis=0)
+    return points_cam, colors
+
+def reproject_depth_to_other_pose_seq2seq(K, depth_maps, rgb_imgs, poses_src, poses_dst):
+    """
+    批量处理多个视角的重投影
+    
+    参数:
+        K: (3, 3)
+        depth_maps: (H, W)
+        rgb_imgs: (H, W, 3)
+        poses_src: (4, 4)
+        poses_dst: (goal_time_seq_len, 4, 4)
+    """
+    B = poses_dst.shape[0]
+    points_3d_all = []
+    colors_all = []
+
+    for i in range(B):
+        points_3d, colors = reproject_depth_to_other_pose_seq2(
+            K,
+            depth_maps,
+            rgb_imgs,
+            poses_src,
+            poses_dst[i]
+        )
+        points_3d_all.append(points_3d)
+        colors_all.append(colors)
+
+    return points_3d_all, colors_all
+
+def project_to_2d_image_seq2seq(K, points_3d, colors, image_size):
+    B = len(points_3d)
+    images = []
+
+    for i in range(B):
+        image = project_to_2d_image_seq2(K, points_3d[i], colors[i], image_size)
+        images.append(image)
+
+    return np.stack(images, axis=0)  # shape: (B, H, W, 3)

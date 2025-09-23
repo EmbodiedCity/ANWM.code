@@ -1,143 +1,16 @@
-W0920 23:09:22.338000 639176 site-packages/torch/distributed/run.py:793] 
-W0920 23:09:22.338000 639176 site-packages/torch/distributed/run.py:793] *****************************************
-W0920 23:09:22.338000 639176 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0920 23:09:22.338000 639176 site-packages/torch/distributed/run.py:793] *****************************************
-W0920 23:11:28.827000 639176 site-packages/torch/distributed/elastic/agent/server/api.py:704] Received Signals.SIGINT death signal, shutting down workers
-W0920 23:11:28.828000 639176 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 639257 closing signal SIGINT
-W0920 23:11:28.829000 639176 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 639258 closing signal SIGINT
-W0920 23:11:28.829000 639176 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 639259 closing signal SIGINT
-W0920 23:11:28.829000 639176 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 639260 closing signal SIGINT
-W0920 23:11:28.830000 639176 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 639261 closing signal SIGINT
-[rank1]: Traceback (most recent call last):
-[rank1]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 309, in <module>
-[rank1]:     main(args)
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank1]:     return func(*args, **kwargs)
-[rank1]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 272, in main
-[rank1]:     for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image, camera_mats_ctx, camera_mats_pred) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
-[rank1]:   File "/data1/tpz/nwm-main/distributed.py", line 222, in log_every
-[rank1]:     for obj in iterable:
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 701, in __next__
-[rank1]:     data = self._next_data()
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1448, in _next_data
-[rank1]:     idx, data = self._get_data()
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1402, in _get_data
-[rank1]:     success, data = self._try_get_data()
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1243, in _try_get_data
-[rank1]:     data = self._data_queue.get(timeout=timeout)
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/queue.py", line 180, in get
-[rank1]:     self.not_empty.wait(remaining)
-[rank1]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/threading.py", line 324, in wait
-[rank1]:     gotit = waiter.acquire(True, timeout)
-[rank1]: KeyboardInterrupt
-[rank0]: Traceback (most recent call last):
-[rank0]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 309, in <module>
-[rank0]:     main(args)
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank0]:     return func(*args, **kwargs)
-[rank0]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 272, in main
-[rank0]:     for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image, camera_mats_ctx, camera_mats_pred) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
-[rank0]:   File "/data1/tpz/nwm-main/distributed.py", line 222, in log_every
-[rank0]:     for obj in iterable:
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 701, in __next__
-[rank0]:     data = self._next_data()
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1448, in _next_data
-[rank0]:     idx, data = self._get_data()
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1402, in _get_data
-[rank0]:     success, data = self._try_get_data()
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1243, in _try_get_data
-[rank0]:     data = self._data_queue.get(timeout=timeout)
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/queue.py", line 180, in get
-[rank0]:     self.not_empty.wait(remaining)
-[rank0]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/threading.py", line 324, in wait
-[rank0]:     gotit = waiter.acquire(True, timeout)
-[rank0]: KeyboardInterrupt
-[rank2]: Traceback (most recent call last):
-[rank2]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 309, in <module>
-[rank2]:     main(args)
-[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank2]:     return func(*args, **kwargs)
-[rank2]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 272, in main
-[rank2]:     for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image, camera_mats_ctx, camera_mats_pred) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
-[rank2]:   File "/data1/tpz/nwm-main/distributed.py", line 222, in log_every
-[rank2]:     for obj in iterable:
-[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 701, in __next__
-[rank2]:     data = self._next_data()
-[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1448, in _next_data
-[rank2]:     idx, data = self._get_data()
-[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1402, in _get_data
-[rank2]:     success, data = self._try_get_data()
-[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1243, in _try_get_data
-[rank2]:     data = self._data_queue.get(timeout=timeout)
-[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/queue.py", line 180, in get
-[rank2]:     self.not_empty.wait(remaining)
-[rank2]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/threading.py", line 324, in wait
-[rank2]:     gotit = waiter.acquire(True, timeout)
-[rank2]: KeyboardInterrupt
-[rank4]: Traceback (most recent call last):
-[rank4]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 309, in <module>
-[rank4]:     main(args)
-[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank4]:     return func(*args, **kwargs)
-[rank4]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 272, in main
-[rank4]:     for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image, camera_mats_ctx, camera_mats_pred) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
-[rank4]:   File "/data1/tpz/nwm-main/distributed.py", line 222, in log_every
-[rank4]:     for obj in iterable:
-[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 701, in __next__
-[rank4]:     data = self._next_data()
-[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1448, in _next_data
-[rank4]:     idx, data = self._get_data()
-[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1402, in _get_data
-[rank4]:     success, data = self._try_get_data()
-[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1243, in _try_get_data
-[rank4]:     data = self._data_queue.get(timeout=timeout)
-[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/queue.py", line 180, in get
-[rank4]:     self.not_empty.wait(remaining)
-[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/threading.py", line 324, in wait
-[rank4]:     gotit = waiter.acquire(True, timeout)
-[rank4]: KeyboardInterrupt
-[rank3]: Traceback (most recent call last):
-[rank3]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 309, in <module>
-[rank3]:     main(args)
-[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-[rank3]:     return func(*args, **kwargs)
-[rank3]:   File "/data1/tpz/nwm-main/isolated_nwm_infer_v8_2.py", line 272, in main
-[rank3]:     for data_iter_step, (idxs, obs_image, gt_image, delta, aug_image, camera_mats_ctx, camera_mats_pred) in enumerate(metric_logger.log_every(curr_data_loader, print_freq, header)):
-[rank3]:   File "/data1/tpz/nwm-main/distributed.py", line 222, in log_every
-[rank3]:     for obj in iterable:
-[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 701, in __next__
-[rank3]:     data = self._next_data()
-[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1448, in _next_data
-[rank3]:     idx, data = self._get_data()
-[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1402, in _get_data
-[rank3]:     success, data = self._try_get_data()
-[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1243, in _try_get_data
-[rank3]:     data = self._data_queue.get(timeout=timeout)
-[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/queue.py", line 180, in get
-[rank3]:     self.not_empty.wait(remaining)
-[rank3]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/threading.py", line 324, in wait
-[rank3]:     gotit = waiter.acquire(True, timeout)
-[rank3]: KeyboardInterrupt
-[rank0]:[W920 23:11:32.281429447 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
-Traceback (most recent call last):
-  File "/data1/tpz/anaconda3/envs/nwm3/bin/torchrun", line 8, in <module>
-    sys.exit(main())
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
-    return f(*args, **kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
-    run(args)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
-    elastic_launch(
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
-    return launch_agent(self._config, self._entrypoint, list(args))
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
-    result = agent.run()
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
-    result = f(*args, **kwargs)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
-    result = self._invoke_run(role)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 855, in _invoke_run
-    time.sleep(monitor_interval)
-  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
-    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
-torch.distributed.elastic.multiprocessing.api.SignalException: Process 639176 got signal: 2
+W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] 
+W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] *****************************************
+W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] *****************************************
+[[34m2025-09-23 19:25:51[0m] Experiment directory created at logs/nwm_cdit_airvln_v5_3
+/data1/tpz/nwm-main/train_v5.py:142: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler()
+/data1/tpz/nwm-main/train_v5.py:142: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler()
+/data1/tpz/nwm-main/train_v5.py:142: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler()
+/data1/tpz/nwm-main/train_v5.py:142: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler()
+/data1/tpz/nwm-main/train_v5.py:142: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler()
+[[34m2025-09-23 19:26:22[0m] CDiT Parameters: 1,131,390,752

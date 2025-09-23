@@ -35,7 +35,7 @@ from diffusers.models import AutoencoderKL
 from distributed import init_distributed
 from models_tpz_v5 import CDiT_models
 from diffusion import create_diffusion
-from datasets_v2 import TrainingDataset
+from datasets_v4 import TrainingDataset
 from misc import transform
 
 #################################################################################
