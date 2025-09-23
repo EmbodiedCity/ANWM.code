@@ -432,22 +432,25 @@ class WM_Planning_Evaluator:
             # 转换为 delta（轨迹点之间的变化）
             candidate_deltas = candidate_trajectories[:, 1:, :] - candidate_trajectories[:, :-1, :]  # [N, steps, 4]
 
-            ##### [CHANGE BLOCK - 与 CEM 保持一致的“现场归一化 + 几何 yaw(弧度)”]
-            # 目的：让 RULE 策略的模型输入与 CEM 完全一致，避免“直接用世界系 delta 未归一化”的偏差。
-            # 1) deltas_world: 世界系（米/弧度），用于 Editor / 诊断输出（人类可读）
-            deltas_world = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)  # (N, T, 4)
-            d_xyz_world  = deltas_world[..., :3]                                                   # (N, T, 3)
+            ##### [CHANGE BLOCK - 与 CEM 保持一致：米→waypoint→[-1,1]；yaw=弧度不归一化]
+            # 目的：RULE 的模型输入与 CEM 完全一致。规则生成器输出是“米(m)”→必须先除 spacing 转 waypoint 单位，再做 min–max 到 [-1,1]
+            deltas_world = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)  # (N, T, 4) 世界系：米/弧度
+            spacing = float(data_config[dataset_name]['metric_waypoint_spacing'])                    # m per waypoint
 
-            # 2) yaw 使用“未归一化平移”通过 atan2 几何求解（与 CEM 同步，单位=弧度）
-            delta_yaw = calculate_delta_yaw(d_xyz_world)   # (N, T, 1)
+            # 1) 平移通道：米 → waypoint
+            d_xyz_waypt = deltas_world[..., :3] / spacing                                           # (N, T, 3)
 
-            # 3) 平移通道做 min–max 到 [-1,1] 的现场归一化（yaw 不归一化）
+            # 2) 现场归一化到 [-1,1]（使用训练时统计的 min/max；它们是按 waypoint 单位统计的）
             mins = ACTION_STATS_TORCH['min'].to(self.device)[:3]
             maxs = ACTION_STATS_TORCH['max'].to(self.device)[:3]
-            d_xyz_norm = ((d_xyz_world - mins) / (maxs - mins)) * 2.0 - 1.0
+            d_xyz_norm = ((d_xyz_waypt - mins) / (maxs - mins)) * 2.0 - 1.0                         # (N, T, 3)
 
-            # 4) deltas_model: “模型版”增量 = 归一化平移 + 弧度 yaw
-            deltas_model = torch.cat([d_xyz_norm, delta_yaw], dim=-1)  # (N, T, 4)
+            # 3) yaw：用几何方式（atan2）计算，每步为“弧度”，保持未归一化
+            #    注意：atan2 对正比例缩放不敏感，所以在米或waypoint里计算都等价；为清晰，这里用 waypoint 量。
+            delta_yaw = calculate_delta_yaw(d_xyz_waypt)                                            # (N, T, 1), radians
+
+            # 4) 模型输入：归一化的平移 + 弧度 yaw
+            deltas_model = torch.cat([d_xyz_norm, delta_yaw], dim=-1)                               # (N, T, 4)
             ##### [END CHANGE BLOCK]
 
             cur_obs_image = obs_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1)
@@ -485,12 +488,11 @@ class WM_Planning_Evaluator:
             topk_idx = sorted_idx[:self.topk]
             best_idx = sorted_idx[0]
 
-            ##### [CHANGE BLOCK - 选优后双份保存：模型版用于后续；世界系用于 Editor]
-            best_delta_model = deltas_model[best_idx]  # [steps, 4] 归一化平移 + 弧度 yaw（供模型/评估用）
-            best_delta_world = deltas_world[best_idx]  # [steps, 4] 世界系（米/弧度）（供 Editor 可读）
-            ##### [END CHANGE BLOCK]
+            # 保留两份：模型用（归一化平移+弧度yaw）；可读保存用（世界系 米/弧度）
+            best_delta_model = deltas_model[best_idx]  # [steps, 4]
+            best_delta_world = deltas_world[best_idx]  # [steps, 4]
 
-            all_deltas.append(best_delta_model.unsqueeze(0))     # 最终 rollout / 评估统一用“模型版”
+            all_deltas.append(best_delta_model.unsqueeze(0))     # 评估和最终 rollout 统一用“模型版”
             all_losses.append(loss[best_idx].item())
             all_preds.append(preds[best_idx].unsqueeze(0))
 
