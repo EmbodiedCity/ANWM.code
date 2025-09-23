@@ -414,6 +414,12 @@ class WM_Planning_Evaluator:
         all_losses = []
         all_preds = []
 
+        # [NEW] 为每个样本收集一致性与 APE 统计（Top-K 范围内）
+        agree_flags_all = []
+        selected_apes_all = []
+        oracle_min_apes_all = []
+        # [END NEW]
+
         for traj in range(n_evals):
             traj_id = int(idxs.flatten()[traj].item())
 
@@ -488,6 +494,38 @@ class WM_Planning_Evaluator:
             topk_idx = sorted_idx[:self.topk]
             best_idx = sorted_idx[0]
 
+            # ====== [NEW] Top-K 内部 APE 一致性评估（逐 episode，不跨样本） ======
+            gt_traj_this = self.actions_to_traj(gt_actions[traj, :, :3])
+            cids = topk_idx.tolist()
+
+            ape_partial = []
+            for cid in cids:
+                cand_actions = get_action_torch(
+                    deltas_model[cid:cid+1, :, :3], ACTION_STATS_TORCH
+                )[0]  # (T,3) cpu
+                cand_traj = self.actions_to_traj(cand_actions)
+                cand_ate, _, _ = self.eval_metrics(gt_traj_this, cand_traj)
+                ape_partial.append((int(cid), float(cand_ate)))
+
+            # 构造长度为 num_samples 的 ape_tensor，Top-K 外为 inf，便于索引
+            ape_tensor = torch.full((self.num_samples,), float("inf"), device=loss.device)
+            for cid, ate_val in ape_partial:
+                ape_tensor[cid] = ate_val
+
+            # 仅在 Top-K 内部找最小 APE 的索引
+            local_best = topk_idx[torch.argmin(ape_tensor[topk_idx])]
+            min_ape_idx = int(local_best.item())
+
+            agree_minloss_minape = int(int(best_idx.item()) == min_ape_idx)
+            selected_ape = float(ape_tensor[int(best_idx.item())].item())
+            oracle_min_ape = float(ape_tensor[min_ape_idx].item())
+
+            # 收集到 batch 级列表
+            agree_flags_all.append(agree_minloss_minape)
+            selected_apes_all.append(selected_ape)
+            oracle_min_apes_all.append(oracle_min_ape)
+            # ====== [END NEW] ======
+
             # 保留两份：模型用（归一化平移+弧度yaw）；可读保存用（世界系 米/弧度）
             best_delta_model = deltas_model[best_idx]  # [steps, 4]
             best_delta_world = deltas_world[best_idx]  # [steps, 4]
@@ -522,6 +560,8 @@ class WM_Planning_Evaluator:
 
                     cand_final_lpips = float(loss[cid].item())
 
+                    # [NEW] 该候选的 APE（来自上面的 ape_tensor）
+                    cand_ape_val = float(ape_tensor[int(cid)].item())
                     # 保存到 run_xxx/candidates/cand_yyy/
                     _, meta = self._save_editor_run(
                         base_dir=editor_base_dir,
@@ -533,13 +573,15 @@ class WM_Planning_Evaluator:
                         tag="candidate",
                         cand_rank=rank,
                         cand_id=int(cid),
-                        extra_meta={"final_lpips": cand_final_lpips}
+                        extra_meta={"final_lpips": cand_final_lpips,
+                                   "cand_ape": cand_ape_val}       # [NEW]
                     )
 
                     cand_summaries.append({
                         "rank": rank,
                         "cand_id": int(cid),
-                        "final_lpips": cand_final_lpips
+                        "final_lpips": cand_final_lpips,
+                        "cand_ape": cand_ape_val                   # [NEW]
                     })
 
                 # 候选汇总
@@ -584,7 +626,12 @@ class WM_Planning_Evaluator:
                     tag="final",
                     cand_rank=None,
                     cand_id=None,
-                    extra_meta={"final_lpips": float(loss[b].item())}
+                    extra_meta={
+                        "final_lpips": float(loss[b].item()),
+                        "selected_ape": float(selected_apes_all[b]),      # [NEW]
+                        "oracle_min_ape": float(oracle_min_apes_all[b]),  # [NEW]
+                        "agree_minloss_minape": int(agree_flags_all[b])   # [NEW]
+                    }
                 )
         # ======================================================================
 
@@ -597,7 +644,15 @@ class WM_Planning_Evaluator:
         # 反归一化还原累计位姿，用于评估指标（保持与 CEM 的 get_action_torch 用法一致）
         pred_actions = get_action_torch(final_deltas[:, :, :3], ACTION_STATS_TORCH)
         pred_yaw = final_deltas[:, :, -1].sum(1)
-        return pred_actions, pred_yaw
+
+        # [NEW] 将 batch 级一致性统计返回给 evaluate()
+        agree_tensor = torch.tensor(agree_flags_all, dtype=torch.float32)
+        selected_apes_tensor = torch.tensor(selected_apes_all, dtype=torch.float32)
+        oracle_min_apes_tensor = torch.tensor(oracle_min_apes_all, dtype=torch.float32)
+        # [END NEW]
+
+        # [NEW] 多返回三个：一致性标志、选中候选的 APE、Top-K 最小 APE
+        return pred_actions, pred_yaw, agree_tensor, selected_apes_tensor, oracle_min_apes_tensor
 
     def visualize_trajectories(self, dataset_name, gt_actions, image_plot_dir, i, traj, traj_id, deltas, cur_obs_image, cur_goal_image, preds, loss, topk_idx):
         img_for_plotting = torch.cat([cur_goal_image[0:1].to(self.device), preds])
@@ -672,7 +727,8 @@ class WM_Planning_Evaluator:
                 camera_ctx  = camera_ctx[:, -self.num_cond:]
                 camera_mats = torch.cat([camera_ctx, camera_goal], dim=1)  # (B, num_cond+1, 4, 4)
                 with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
-                    pred_actions, pred_yaw = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image, camera_mats=camera_mats)
+                    # [NEW] 接收 Top-K 一致性/APE 统计
+                    pred_actions, pred_yaw, agree_flags, selected_apes, oracle_min_apes = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image, camera_mats=camera_mats)
                 for i in range(len(obs_image)):
                     pred_traj_i = self.actions_to_traj(pred_actions[i, :, :3])
                     gt_traj_i = self.actions_to_traj(gt_actions[i, :, :3])
@@ -691,6 +747,13 @@ class WM_Planning_Evaluator:
                     metric_logger.meters['{}_rpe_trans'.format(dataset_name)].update(rpe_trans, n=1)
                     metric_logger.meters['{}_pos_diff_norm'.format(dataset_name)].update(pos_diff_norm, n=1)
                     metric_logger.meters['{}_yaw_diff_norm'.format(dataset_name)].update(yaw_diff_norm, n=1)
+
+                    # [NEW] 新增 Top-K 一致性与 APE 统计
+                    metric_logger.meters['{}_agree_minloss_minape'.format(dataset_name)].update(float(agree_flags[i].item()), n=1)
+                    metric_logger.meters['{}_selected_ape'.format(dataset_name)].update(float(selected_apes[i].item()), n=1)
+                    metric_logger.meters['{}_oracle_min_ape'.format(dataset_name)].update(float(oracle_min_apes[i].item()), n=1)
+                    # [END NEW]
+
             output_fn = os.path.join(self.args.save_output_dir, f'{dataset_name}_{self.eval_name}.json')
             save_metric_to_disk(metric_logger, output_fn)
 
