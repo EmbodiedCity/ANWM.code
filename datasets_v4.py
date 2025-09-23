@@ -223,8 +223,11 @@ class TrainingDataset(BaseDataset):
             goal_context = [(f_curr, t) for t in goal_time]
             context = true_context + goal_context
 
-            # 原始观测图像堆叠（供模型输入）
             obs_image = torch.stack([self.transform(Image.open(get_data_path(self.data_folder, f, t))) for f, t in context])
+            # aug
+            rgb_imgs = [cv2.imread(get_data_path(self.data_folder, f_img, t_img)) for f_img, t_img in true_context]
+            rgb_imgs = [cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB) for rgb_img in rgb_imgs]
+            rgb_imgs = np.stack(rgb_imgs, axis=0) 
 
             # Load other trajectory data
             curr_traj_data = self._get_trajectory(f_curr)
@@ -234,31 +237,35 @@ class TrainingDataset(BaseDataset):
             goal_pos[:, :3] = normalize_data(goal_pos[:, :3], self.ACTION_STATS)
 
             # 使用多历史帧 → 多目标帧重投影（不再传单帧 rgb）
-            projected_images = self._compute_projected_images(curr_traj_data, context_times, goal_time)  # (B,H,W,3)
+            projected_images = self._compute_projected_images(curr_traj_data, context_times, rgb_imgs, goal_time)  # (B,H,W,3)
 
             # 转成张量
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
             # # ===================== 保存图像 =====================
-            # vis_root = './visualizations'
+            # vis_root = './visualizations-seq2seq'
             # sample_dir = os.path.join(vis_root, f'{self.dataset_name}', f'sample_{i}')
             # os.makedirs(sample_dir, exist_ok=True)
-
-            # # 1. 保存 curr_frame
-            # curr_img_save_path = os.path.join(sample_dir, 'curr_frame.png')
-            # Image.fromarray(rgb_img).save(curr_img_save_path)
-
-            # # 2. 保存 goal_frame
-            # for idx, (f_curr, t_goal) in enumerate(goal_context):
-            #     goal_img_path = get_data_path(self.data_folder, f_curr, t_goal)
-            #     goal_img = Image.open(goal_img_path)
-            #     goal_img.save(os.path.join(sample_dir, f'goal_{idx}.png'))
-
-            # # 3. 保存 projected goal frame
-            # for idx, proj_img in enumerate(projected_images):
-            #     proj_img_save_path = os.path.join(sample_dir, f'projected_goal_{idx}.png')
-            #     Image.fromarray(proj_img).save(proj_img_save_path)
+            # # 1) 历史帧（rgb_imgs: (T,H,W,3)）
+            # T = rgb_imgs.shape[0]
+            # for t_idx in range(T):
+            #     img_t = rgb_imgs[t_idx]
+            #     if img_t.dtype != np.uint8:
+            #         img_t = np.clip(img_t, 0, 255).astype(np.uint8)
+            #     Image.fromarray(img_t).save(os.path.join(sample_dir, f'hist_{t_idx:03d}.png'))
+            # # 2) 目标 GT 帧（与 goal_context 对齐）
+            # for j, (_, t_goal) in enumerate(goal_context):
+            #     p = get_data_path(self.data_folder, f_curr, int(t_goal))
+            #     gt = Image.open(p).convert("RGB")
+            #     gt.save(os.path.join(sample_dir, f'gt_{j:03d}_t{int(t_goal)}.png'))
+            # # 3) 投影结果（projected_images: (B,H,W,3)）
+            # B = projected_images.shape[0]
+            # for j in range(B):
+            #     proj = projected_images[j]
+            #     if proj.dtype != np.uint8:
+            #         proj = np.clip(proj, 0, 255).astype(np.uint8)
+            #     Image.fromarray(proj).save(os.path.join(sample_dir, f'proj_{j:03d}.png'))
             # # ====================================================
 
             return (
@@ -312,8 +319,12 @@ class EvalDataset(BaseDataset):
             actions[:, :3] = normalize_data(actions[:, :3], self.ACTION_STATS)
             delta = get_delta_np(actions)
 
+            rgb_imgs = [cv2.imread(get_data_path(self.data_folder, f_img, t_img)) for f_img, t_img in context]
+            rgb_imgs = [cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB) for rgb_img in rgb_imgs]
+            rgb_imgs = np.stack(rgb_imgs, axis=0) 
+
             # 多历史帧 → 多目标帧重投影（B 张投影图）
-            projected_images = self._compute_projected_images(curr_traj_data, context_times, pred_image, np.array(pred_times))
+            projected_images = self._compute_projected_images(curr_traj_data, context_times, rgb_imgs, np.array(pred_times))
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
@@ -374,7 +385,10 @@ class TrajectoryEvalDataset(BaseDataset):
             curr_traj_data = self._get_trajectory(f_curr)
             # Compute actions, goal_pos, projected images
             actions, goal_pos = self._compute_actions(curr_traj_data, curr_time, np.array([goal_time]))
-            projected_images = self._compute_projected_images(curr_traj_data, context_times, np.array([goal_time]))
+            rgb_imgs = [cv2.imread(get_data_path(self.data_folder, f_img, t_img)) for f_img, t_img in context]
+            rgb_imgs = [cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB) for rgb_img in rgb_imgs]
+            rgb_imgs = np.stack(rgb_imgs, axis=0) 
+            projected_images = self._compute_projected_images(curr_traj_data, context_times, rgb_imgs, np.array([goal_time]))
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 

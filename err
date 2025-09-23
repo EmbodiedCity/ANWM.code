@@ -1,8 +1,8 @@
-W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] 
-W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] *****************************************
-W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
-W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] *****************************************
-[[34m2025-09-23 19:25:51[0m] Experiment directory created at logs/nwm_cdit_airvln_v5_3
+W0923 20:46:44.747000 3146432 site-packages/torch/distributed/run.py:793] 
+W0923 20:46:44.747000 3146432 site-packages/torch/distributed/run.py:793] *****************************************
+W0923 20:46:44.747000 3146432 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0923 20:46:44.747000 3146432 site-packages/torch/distributed/run.py:793] *****************************************
+[[34m2025-09-23 20:46:49[0m] Experiment directory created at logs/nwm_cdit_airvln_v5_3
 /data1/tpz/nwm-main/train_v5.py:142: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
   scaler = torch.cuda.amp.GradScaler()
 /data1/tpz/nwm-main/train_v5.py:142: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
@@ -13,4 +13,104 @@ W0923 19:25:45.227000 3065915 site-packages/torch/distributed/run.py:793] ******
   scaler = torch.cuda.amp.GradScaler()
 /data1/tpz/nwm-main/train_v5.py:142: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
   scaler = torch.cuda.amp.GradScaler()
-[[34m2025-09-23 19:26:22[0m] CDiT Parameters: 1,131,390,752
+[[34m2025-09-23 20:47:20[0m] CDiT Parameters: 1,131,390,752
+[[34m2025-09-23 20:58:11[0m] Dataset contains 337,818 images
+[[34m2025-09-23 20:58:11[0m] Training for 300 epochs...
+[[34m2025-09-23 20:58:11[0m] Beginning epoch 0...
+[[34m2025-09-23 21:01:02[0m] (step=0000100) Train Loss: 0.3268, Train Steps/Sec: 0.59, Samples/Sec: 23.44
+[[34m2025-09-23 21:02:08[0m] (step=0000200) Train Loss: 0.2069, Train Steps/Sec: 1.51, Samples/Sec: 60.39
+[[34m2025-09-23 21:03:14[0m] (step=0000300) Train Loss: 0.2030, Train Steps/Sec: 1.52, Samples/Sec: 60.92
+[[34m2025-09-23 21:04:20[0m] (step=0000400) Train Loss: 0.1924, Train Steps/Sec: 1.51, Samples/Sec: 60.25
+[[34m2025-09-23 21:05:27[0m] (step=0000500) Train Loss: 0.1996, Train Steps/Sec: 1.50, Samples/Sec: 60.14
+[[34m2025-09-23 21:06:33[0m] (step=0000600) Train Loss: 0.1980, Train Steps/Sec: 1.51, Samples/Sec: 60.50
+W0923 21:06:55.877000 3146432 site-packages/torch/distributed/elastic/agent/server/api.py:704] Received Signals.SIGINT death signal, shutting down workers
+W0923 21:06:55.879000 3146432 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3146518 closing signal SIGINT
+W0923 21:06:55.884000 3146432 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3146519 closing signal SIGINT
+W0923 21:06:55.885000 3146432 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3146520 closing signal SIGINT
+W0923 21:06:55.885000 3146432 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3146521 closing signal SIGINT
+W0923 21:06:55.889000 3146432 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 3146522 closing signal SIGINT
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/data1/tpz/nwm-main/train_v5.py", line 448, in <module>
+[rank0]:     main(args)
+[rank0]:   File "/data1/tpz/nwm-main/train_v5.py", line 319, in main
+[rank0]:     running_loss += loss.detach().item()
+[rank0]: KeyboardInterrupt
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/data1/tpz/nwm-main/train_v5.py", line 448, in <module>
+[rank3]:     main(args)
+[rank3]:   File "/data1/tpz/nwm-main/train_v5.py", line 319, in main
+[rank3]:     running_loss += loss.detach().item()
+[rank3]: KeyboardInterrupt
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/data1/tpz/nwm-main/train_v5.py", line 448, in <module>
+[rank2]:     main(args)
+[rank2]:   File "/data1/tpz/nwm-main/train_v5.py", line 319, in main
+[rank2]:     running_loss += loss.detach().item()
+[rank2]: KeyboardInterrupt
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/data1/tpz/nwm-main/train_v5.py", line 448, in <module>
+[rank4]:     main(args)
+[rank4]:   File "/data1/tpz/nwm-main/train_v5.py", line 283, in main
+[rank4]:     x = tokenizer.encode(x).latent_dist.sample().mul_(0.18215)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/diffusers/utils/accelerate_utils.py", line 46, in wrapper
+[rank4]:     return method(self, *args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/diffusers/models/autoencoders/autoencoder_kl.py", line 278, in encode
+[rank4]:     h = self._encode(x)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/diffusers/models/autoencoders/autoencoder_kl.py", line 252, in _encode
+[rank4]:     enc = self.encoder(x)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/diffusers/models/autoencoders/vae.py", line 168, in forward
+[rank4]:     sample = down_block(sample)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/diffusers/models/unets/unet_2d_blocks.py", line 1442, in forward
+[rank4]:     hidden_states = resnet(hidden_states, temb=None)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/diffusers/models/resnet.py", line 327, in forward
+[rank4]:     hidden_states = self.norm1(hidden_states)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/modules/normalization.py", line 313, in forward
+[rank4]:     return F.group_norm(input, self.num_groups, self.weight, self.bias, self.eps)
+[rank4]:   File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/nn/functional.py", line 2955, in group_norm
+[rank4]:     return torch.group_norm(
+[rank4]: KeyboardInterrupt
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/data1/tpz/nwm-main/train_v5.py", line 448, in <module>
+[rank1]:     main(args)
+[rank1]:   File "/data1/tpz/nwm-main/train_v5.py", line 319, in main
+[rank1]:     running_loss += loss.detach().item()
+[rank1]: KeyboardInterrupt
+[rank0]:[W923 21:06:56.978143567 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+Traceback (most recent call last):
+  File "/data1/tpz/anaconda3/envs/nwm3/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
+    result = agent.run()
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
+    result = self._invoke_run(role)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 855, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/data1/tpz/anaconda3/envs/nwm3/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 3146432 got signal: 2
