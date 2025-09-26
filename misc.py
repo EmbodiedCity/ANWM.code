@@ -57,8 +57,8 @@ def log_viz_single(dataset_name, obs_image, goal_image, preds, deltas, loss, min
     # ndeltas = deltas[:, :, :3]
     # ndeltas = ndeltas.reshape(ndeltas.shape[0], -1, 3)
     # pred_actions = torch.cumsum(ndeltas, dim=1).to(ndeltas)
-    print("pred_actions",pred_actions)
-    print("actions",actions)
+    # print("pred_actions",pred_actions)
+    # print("actions",actions)
     #################################
     plot_array = plot_images_and_actions(dataset_name, viz_obs_image, viz_goal_image, pred_actions, actions, min_idx, loss=loss)
 

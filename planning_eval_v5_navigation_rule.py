@@ -661,7 +661,7 @@ class WM_Planning_Evaluator:
         plot_images_with_losses(img_for_plotting, loss_for_plotting, save_path=img_name)
         plot_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}_trajs.png')
         num_plot = self.args.num_samples
-        print(num_plot)
+        # print(num_plot)
         log_viz_single(
             dataset_name,
             cur_obs_image[0],
