@@ -249,6 +249,7 @@ class WM_Planning_Evaluator:
                 pin_memory=True,
                 drop_last=False
             )
+            # curr_data_loader = [next(iter(curr_data_loader))] 
             self.datasets[dataset_name] = curr_data_loader
 
         # Loading Model

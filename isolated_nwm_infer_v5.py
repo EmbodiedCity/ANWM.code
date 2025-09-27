@@ -21,7 +21,7 @@ import distributed as dist
 from models_tpz_v5 import CDiT_models
 from datasets_v4 import EvalDataset
 from PIL import Image
-
+from torch.utils.data import Subset
 
 def save_image(output_file, img, unnormalize_img):
     img = img.detach().cpu()
@@ -224,7 +224,8 @@ def main(args):
     datasets = {}
 
     for dataset_name in dataset_names:
-        dataset_val = get_dataset_eval(config, dataset_name, args.eval_type, predefined_index=True)
+        dataset_val = get_dataset_eval(config, dataset_name, args.eval_type, predefined_index=False)
+        dataset_val = Subset(dataset_val, list(range(1000)))
 
         if len(dataset_val) % num_tasks != 0:
             print('Warning: Enabling distributed evaluation with an eval dataset not divisible by process number. '

@@ -80,13 +80,11 @@ def plot_images_with_losses(preds, losses, save_path="predictions_with_losses.pn
         nrow += 1
     grid_img = vutils.make_grid(preds, nrow=ncol, padding=2)
     np_grid = grid_img.to(torch.float32).permute(1, 2, 0).cpu().numpy()
-    
     fig, ax = plt.subplots(figsize=(50, 50))
     ax.imshow(np_grid)
     ax.axis("off")
 
     img_height, img_width = np_grid.shape[0] // nrow, np_grid.shape[1] // ncol
-
     # Overlay the losses on each image
     for idx, loss in enumerate(losses):
         row = idx // ncol
@@ -97,9 +95,8 @@ def plot_images_with_losses(preds, losses, save_path="predictions_with_losses.pn
             text = f"GT Goal"
         else:
             text = f"ID: {idx - 1}  Loss: {loss:.2f}"
-        ax.text(x + img_width / 2, y + 15, text, color="white", 
+        ax.text(x + img_width / 2, y + 15, text, color="white",
                 ha="center", va="top", fontsize=50, backgroundcolor="black")
-
     plt.savefig(save_path, bbox_inches="tight")
     plt.close()
 
@@ -110,23 +107,20 @@ def plot_batch_final(init_imgs, pred_imgs, goal_imgs, idxs, losses, save_path="f
     ncol = init_imgs.shape[0]
     grid_img = vutils.make_grid(imgs_for_plotting, nrow=ncol, padding=2)
     np_grid = grid_img.to(torch.float32).permute(1, 2, 0).cpu().numpy()
-    
     fig, ax = plt.subplots(figsize=(ncol * 10, 30))  # Adjust size as needed
     ax.imshow(np_grid)
     ax.axis("off")
 
     img_height, img_width = np_grid.shape[0] // 3, np_grid.shape[1] // ncol
-
     # Overlay the IDs and losses on each image pair in the grid
     for i in range(ncol):
         x = i * img_width
         y_pred = img_height
-        ax.text(x + img_width / 2, y_pred + 15, f"ID: {int(idxs[i].item())} Loss: {losses[i]:.2f}", 
+        ax.text(x + img_width / 2, y_pred + 15, f"ID: {int(idxs[i].item())} Loss: {losses[i]:.2f}",
                 color="white", ha="center", va="top", fontsize=40, backgroundcolor="black")
-
     plt.savefig(save_path, bbox_inches="tight")
     plt.close()
-    
+
 def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path="trajectory_grid.png"):
     """
     Visualize a batch of image trajectories:
@@ -152,7 +146,6 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
 
     # Stack all batch trajectories vertically: shape → (B*(T+2), C, H, W)
     imgs_for_plotting = torch.cat(imgs_for_plotting, dim=0)
-
     # Create image grid: (B rows, T+2 cols)
     grid_img = vutils.make_grid(imgs_for_plotting, nrow=T+2, padding=2)
     np_grid = grid_img.permute(1, 2, 0).cpu().numpy()
@@ -174,7 +167,6 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
                 label = f"Step {t}"
             ax.text(x + img_width / 2, y + 20, label, color="white",
                     ha="center", va="top", fontsize=16, backgroundcolor="black")
-
     plt.savefig(save_path, bbox_inches="tight")
     plt.close()
 
@@ -193,27 +185,27 @@ def get_dataset_eval(config, dataset_name, predefined_index=True):
                 min_dist_cat=config["trajectory_eval_distance"]["min_dist_cat"],
                 max_dist_cat=config["trajectory_eval_distance"]["max_dist_cat"],
                 len_traj_pred=config["trajectory_eval_len_traj_pred"],
-                traj_stride=config["traj_stride"], 
+                traj_stride=config["traj_stride"],
                 context_size=config["trajectory_eval_context_size"],
                 normalize=config["normalize"],
                 transform=transform,
                 predefined_index=predefined_index,
                 traj_names="rollout_traj_names.txt"
             )
-    
+
     return dataset
 
 class WM_Planning_Evaluator:
     def __init__(self, args):
-        super().__init__()  
+        super().__init__()
         self.args = args
         self.exp = args.exp
         _, _, device, _ = dist.init_distributed()
         self.device = torch.device(device)
-        
+
         num_tasks = dist.get_world_size()
         global_rank = dist.get_rank()
-        
+
         # Setting up Config
         # self.exp_eval = f'{self.exp}_nomad_eval' # local paths etc.
         self.exp_eval = self.exp
@@ -230,35 +222,35 @@ class WM_Planning_Evaluator:
         latent_size = self.config['image_size'] // 8
         self.latent_size = self.config['image_size'] // 8
         self.num_cond = self.config['eval_context_size']
-        
+
         # logging directory
         if self.args.save_preds:
             exp_name = os.path.basename(self.args.exp).split('.')[0]
             self.args.save_output_dir = os.path.join(args.output_dir, exp_name)
             os.makedirs(self.args.save_output_dir, exist_ok=True)
-                
+
         # Loading Datasets
         self.dataset_names = self.args.datasets.split(',')
         self.datasets = {}
         for dataset_name in self.dataset_names:
             dataset_val = get_dataset_eval(self.config, dataset_name, predefined_index=True)
-            
+
             if len(dataset_val) % num_tasks != 0:
                 print('Warning: Enabling distributed evaluation with an eval dataset not divisible by process number. '
-                        'This will slightly alter validation results as extra duplicate entries are added to achieve '
-                        'equal num of samples per-process.')
+                      'This will slightly alter validation results as extra duplicate entries are added to achieve '
+                      'equal num of samples per-process.')
             sampler_val = torch.utils.data.DistributedSampler(
                 dataset_val, num_replicas=num_tasks, rank=global_rank, shuffle=False)
 
             curr_data_loader = torch.utils.data.DataLoader(
-                                dataset_val, sampler=sampler_val,
-                                batch_size=self.args.batch_size,
-                                num_workers=self.args.num_workers,
-                                pin_memory=True,
-                                drop_last=False
-                            )
+                dataset_val, sampler=sampler_val,
+                batch_size=self.args.batch_size,
+                num_workers=self.args.num_workers,
+                pin_memory=True,
+                drop_last=False
+            )
             self.datasets[dataset_name] = curr_data_loader
-        
+
         # Loading Model
         print("loading")
         model = CDiT_models[self.config['model']](
@@ -275,7 +267,7 @@ class WM_Planning_Evaluator:
         self.vae = AutoencoderKL.from_pretrained(f"stabilityai/sd-vae-ft-ema").to(device)
         self.model = torch.nn.parallel.DistributedDataParallel(self.model, device_ids=[self.device], find_unused_parameters=False)
         self.model_without_ddp = self.model.module
-         
+
         self.loss_fn = lpips.LPIPS(net='alex').to(self.device)
         self.mode = 'rule' # assume RULE for planning
         self.num_samples = self.args.num_samples
@@ -409,19 +401,24 @@ class WM_Planning_Evaluator:
         return run_dir, meta
     # ====== END NEW ======
 
-        
     def generate_actions(self, dataset_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, len_traj_pred, aug_image, camera_mats):
-        idx_string = "_".join(map(str, idxs.flatten().int().tolist())) 
+        idx_string = "_".join(map(str, idxs.flatten().int().tolist()))
         image_plot_dir = os.path.join(dataset_save_output_dir, 'plots')
         os.makedirs(image_plot_dir, exist_ok=True)
         videos_plot_dir = os.path.join(dataset_save_output_dir, 'videos')
         os.makedirs(videos_plot_dir, exist_ok=True)
-        
+
         n_evals = obs_image.shape[0]
-        candidate_number = self.num_samples 
+        candidate_number = self.num_samples
         all_deltas = []
         all_losses = []
         all_preds = []
+
+        # [NEW] 为每个样本收集一致性与 APE 统计（Top-K 范围内）
+        agree_flags_all = []
+        selected_apes_all = []
+        oracle_min_apes_all = []
+        # [END NEW]
 
         for traj in range(n_evals):
             traj_id = int(idxs.flatten()[traj].item())
@@ -437,34 +434,52 @@ class WM_Planning_Evaluator:
             # 生成候选 trajectory poses
             candidate_trajectories = trajectory_generation(GT_traj, candidate_number=candidate_number)
             candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4] 其中 T = len_traj_pred + 1
-            print(f"GT traj: {GT_traj}")
-            print(f"Candidate traj: {candidate_trajectories}")
 
             # 转换为 delta（轨迹点之间的变化）
             candidate_deltas = candidate_trajectories[:, 1:, :] - candidate_trajectories[:, :-1, :]  # [N, steps, 4]
-            print(f"Candidate daltas: {candidate_deltas}")
-            deltas = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)
 
-            cur_obs_image = obs_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1) 
+            ##### [CHANGE BLOCK - 与 CEM 保持一致：米→waypoint→[-1,1]；yaw=弧度不归一化]
+            # 目的：RULE 的模型输入与 CEM 完全一致。规则生成器输出是“米(m)”→必须先除 spacing 转 waypoint 单位，再做 min–max 到 [-1,1]
+            deltas_world = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)  # (N, T, 4) 世界系：米/弧度
+            spacing = float(data_config[dataset_name]['metric_waypoint_spacing'])                    # m per waypoint
+
+            # 1) 平移通道：米 → waypoint
+            d_xyz_waypt = deltas_world[..., :3] / spacing                                           # (N, T, 3)
+
+            # 2) 现场归一化到 [-1,1]（使用训练时统计的 min/max；它们是按 waypoint 单位统计的）
+            mins = ACTION_STATS_TORCH['min'].to(self.device)[:3]
+            maxs = ACTION_STATS_TORCH['max'].to(self.device)[:3]
+            d_xyz_norm = ((d_xyz_waypt - mins) / (maxs - mins)) * 2.0 - 1.0                         # (N, T, 3)
+
+            # 3) yaw：用几何方式（atan2）计算，每步为“弧度”，保持未归一化
+            #    注意：atan2 对正比例缩放不敏感，所以在米或waypoint里计算都等价；为清晰，这里用 waypoint 量。
+            delta_yaw = calculate_delta_yaw(d_xyz_waypt)                                            # (N, T, 1), radians
+
+            # 4) 模型输入：归一化的平移 + 弧度 yaw
+            deltas_model = torch.cat([d_xyz_norm, delta_yaw], dim=-1)                               # (N, T, 4)
+            ##### [END CHANGE BLOCK]
+
+            cur_obs_image = obs_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1)
             cur_goal_image = goal_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1).squeeze(1)
             cur_aug_image = aug_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1)   # (num_samples, 1, C, H, W)
-            cur_cam = camera_mats[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1)          # (num_samples, num_cond+1, 4, 4)            
+            cur_cam = camera_mats[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1)          # (num_samples, num_cond+1, 4, 4)
+
             # WM is stochastic, so we can repeat the evaluation of each trajectory and average to reduce variance
-            if self.num_repeat_eval * self.num_samples > 120:
+            if self.num_repeat_eval * self.num_samples > 12:
                 cur_losses = []
                 for r in range(self.num_repeat_eval):
-                    preds = self.autoregressive_rollout(cur_obs_image, deltas, self.args.rollout_stride, aug_image=cur_aug_image, camera_mats=cur_cam)
+                    # 使用“模型版”增量进行 rollout（与 CEM 对齐）
+                    preds = self.autoregressive_rollout(cur_obs_image, deltas_model, self.args.rollout_stride, aug_image=cur_aug_image, camera_mats=cur_cam)
                     preds = preds[:, -1] # take the last predicted image
                     loss = self.loss_fn(preds.to(self.device), cur_goal_image.to(self.device)).flatten(0)
                     cur_losses.append(loss)
-
                 loss = torch.stack(cur_losses).mean(dim=0)
             else:
-                expanded_deltas = deltas.repeat(self.num_repeat_eval, 1, 1) 
-                expanded_obs_image = cur_obs_image.repeat(self.num_repeat_eval, 1, 1, 1, 1) 
-                expanded_goal_image = cur_goal_image.repeat(self.num_repeat_eval, 1, 1, 1) 
+                expanded_deltas = deltas_model.repeat(self.num_repeat_eval, 1, 1)
+                expanded_obs_image = cur_obs_image.repeat(self.num_repeat_eval, 1, 1, 1, 1)
+                expanded_goal_image = cur_goal_image.repeat(self.num_repeat_eval, 1, 1, 1)
                 expanded_aug = cur_aug_image.repeat(self.num_repeat_eval, 1, 1, 1, 1)
-                expanded_cams = cur_cam.repeat(self.num_repeat_eval, 1, 1, 1)  
+                expanded_cams = cur_cam.repeat(self.num_repeat_eval, 1, 1, 1)
 
                 preds = self.autoregressive_rollout(expanded_obs_image, expanded_deltas, self.args.rollout_stride, aug_image=expanded_aug, camera_mats=expanded_cams)
                 preds = preds[:, -1]
@@ -478,15 +493,50 @@ class WM_Planning_Evaluator:
             sorted_idx = torch.argsort(loss)
             topk_idx = sorted_idx[:self.topk]
             best_idx = sorted_idx[0]
-            best_delta = deltas[best_idx]  # [steps, 4]
 
-            all_deltas.append(best_delta.unsqueeze(0))
+            # ====== [NEW] Top-K 内部 APE 一致性评估（逐 episode，不跨样本） ======
+            gt_traj_this = self.actions_to_traj(gt_actions[traj, :, :3])
+            cids = topk_idx.tolist()
+
+            ape_partial = []
+            for cid in cids:
+                cand_actions = get_action_torch(
+                    deltas_model[cid:cid+1, :, :3], ACTION_STATS_TORCH
+                )[0]  # (T,3) cpu
+                cand_traj = self.actions_to_traj(cand_actions)
+                cand_ate, _, _ = self.eval_metrics(gt_traj_this, cand_traj)
+                ape_partial.append((int(cid), float(cand_ate)))
+
+            # 构造长度为 num_samples 的 ape_tensor，Top-K 外为 inf，便于索引
+            ape_tensor = torch.full((self.num_samples,), float("inf"), device=loss.device)
+            for cid, ate_val in ape_partial:
+                ape_tensor[cid] = ate_val
+
+            # 仅在 Top-K 内部找最小 APE 的索引
+            local_best = topk_idx[torch.argmin(ape_tensor[topk_idx])]
+            min_ape_idx = int(local_best.item())
+
+            agree_minloss_minape = int(int(best_idx.item()) == min_ape_idx)
+            selected_ape = float(ape_tensor[int(best_idx.item())].item())
+            oracle_min_ape = float(ape_tensor[min_ape_idx].item())
+
+            # 收集到 batch 级列表
+            agree_flags_all.append(agree_minloss_minape)
+            selected_apes_all.append(selected_ape)
+            oracle_min_apes_all.append(oracle_min_ape)
+            # ====== [END NEW] ======
+
+            # 保留两份：模型用（归一化平移+弧度yaw）；可读保存用（世界系 米/弧度）
+            best_delta_model = deltas_model[best_idx]  # [steps, 4]
+            best_delta_world = deltas_world[best_idx]  # [steps, 4]
+
+            all_deltas.append(best_delta_model.unsqueeze(0))     # 评估和最终 rollout 统一用“模型版”
             all_losses.append(loss[best_idx].item())
             all_preds.append(preds[best_idx].unsqueeze(0))
 
-            # ====== NEW: 保存候选轨迹（Top-K）逐帧 PNG + metadata.json + deltas.npy ======
+            # ====== 保存候选轨迹（Top-K）逐帧 PNG + metadata.json + deltas.npy ======
             if self.args.save_preds:
-                # 如需保存全部候选，将下一行改为：topk_loop_ids = torch.arange(self.num_samples, device=loss.device)
+                # 如需保存全部候选，将下一行为：topk_loop_ids = torch.arange(self.num_samples, device=loss.device)
                 topk_loop_ids = topk_idx
 
                 editor_base_dir = dataset_save_output_dir
@@ -500,32 +550,38 @@ class WM_Planning_Evaluator:
 
                 cand_summaries = []
                 for rank, cid in enumerate(topk_loop_ids.tolist()):
-                    cand_delta = deltas[cid:cid+1]                # (1, steps, 4)
+                    cand_delta_model = deltas_model[cid:cid+1]     # (1, steps, 4) rollout 用
+                    cand_delta_world = deltas_world[cid:cid+1]     # (1, steps, 4) Editor 可读写盘
+
                     cand_seq = self.autoregressive_rollout(
-                        single_obs, cand_delta, self.args.rollout_stride,
+                        single_obs, cand_delta_model, self.args.rollout_stride,
                         aug_image=single_aug, camera_mats=single_cams
-                    )[0]                                          # -> (T,C,H,W)
+                    )[0]                                           # -> (T,C,H,W)
 
                     cand_final_lpips = float(loss[cid].item())
 
+                    # [NEW] 该候选的 APE（来自上面的 ape_tensor）
+                    cand_ape_val = float(ape_tensor[int(cid)].item())
                     # 保存到 run_xxx/candidates/cand_yyy/
                     _, meta = self._save_editor_run(
                         base_dir=editor_base_dir,
                         sid=sid,
-                        init_img=single_obs[0, -1],               # 最后一帧上下文
+                        init_img=single_obs[0, -1],                # 最后一帧上下文
                         step_seq=cand_seq,
                         goal_img=single_goal,
-                        deltas=cand_delta,
+                        deltas=cand_delta_world,                    # << 写“世界系（米/弧度）”
                         tag="candidate",
                         cand_rank=rank,
                         cand_id=int(cid),
-                        extra_meta={"final_lpips": cand_final_lpips}
+                        extra_meta={"final_lpips": cand_final_lpips,
+                                   "cand_ape": cand_ape_val}       # [NEW]
                     )
 
                     cand_summaries.append({
                         "rank": rank,
                         "cand_id": int(cid),
-                        "final_lpips": cand_final_lpips
+                        "final_lpips": cand_final_lpips,
+                        "cand_ape": cand_ape_val                   # [NEW]
                     })
 
                 # 候选汇总
@@ -535,12 +591,13 @@ class WM_Planning_Evaluator:
                             {"num_candidates_saved": len(cand_summaries),
                              "topk": int(len(cand_summaries)),
                              "items": cand_summaries})
-            # ====== END NEW ======
+            # ====== END ======
 
             if self.args.plot:
-                self.visualize_trajectories(dataset_name, gt_actions, image_plot_dir, 1, traj, traj_id, deltas, cur_obs_image, cur_goal_image, preds, loss, topk_idx)                    
-        
-        # Final rollout for selected deltas
+                # 可视化时传“模型版” deltas，log_viz_single 内部会 get_action_torch 反归一化（与 CEM 一致）
+                self.visualize_trajectories(dataset_name, gt_actions, image_plot_dir, 1, traj, traj_id, deltas_model, cur_obs_image, cur_goal_image, preds, loss, topk_idx)
+
+        # Final rollout for selected deltas（统一使用“模型版”）
         final_deltas = torch.cat(all_deltas, dim=0)  # [n_evals, steps, 4]
         preds = self.autoregressive_rollout(obs_image, final_deltas, self.args.rollout_stride, aug_image=aug_image, camera_mats=camera_mats)
         preds_completed = preds
@@ -549,11 +606,10 @@ class WM_Planning_Evaluator:
         loss = self.loss_fn(preds.to(self.device), goal_image.squeeze(1).to(self.device)).flatten(0)
 
         if self.args.save_preds:
-            # 注意：此处应保存 final_deltas（不是局部循环里的 deltas）
+            # 注意：此处应保存 final_deltas（“模型版”），与 CEM 的评估/可视化管线一致
             save_planning_pred(dataset_save_output_dir, n_evals, idxs, obs_image, goal_image, preds, final_deltas, loss, gt_actions, preds_completed)
 
-        # ============== NEW: 保存逐帧 PNG + metadata.json（Editor 友好） ==============
-        # 逐帧 loss：LPIPS(frame, goal)；对 init、每个 step 与 goal 都计算（goal 自己设 0.0）
+        # ============== 保存逐帧 PNG + metadata.json（Editor 友好） ==============
         if self.args.save_preds:
             B = obs_image.shape[0]
             init_imgs = obs_image[:, -1]          # (B,C,H,W)
@@ -566,13 +622,18 @@ class WM_Planning_Evaluator:
                     init_img=init_imgs[b],
                     step_seq=preds_completed[b],   # (T,C,H,W)
                     goal_img=goal_imgs[b],
-                    deltas=final_deltas[b:b+1],    # (1, steps, 4) 原始未聚合，函数内部会聚合并累计pose
+                    deltas=final_deltas[b:b+1],    # 这里保持写“模型版”；若要世界系可自行替换为对应缓存
                     tag="final",
                     cand_rank=None,
                     cand_id=None,
-                    extra_meta={"final_lpips": float(loss[b].item())}
+                    extra_meta={
+                        "final_lpips": float(loss[b].item()),
+                        "selected_ape": float(selected_apes_all[b]),      # [NEW]
+                        "oracle_min_ape": float(oracle_min_apes_all[b]),  # [NEW]
+                        "agree_minloss_minape": int(agree_flags_all[b])   # [NEW]
+                    }
                 )
-        # ==========================================================================
+        # ======================================================================
 
         if self.args.plot:
             img_name = os.path.join(image_plot_dir, f'FINAL_{idx_string}.png')
@@ -580,9 +641,18 @@ class WM_Planning_Evaluator:
             plot_batch_final(obs_image[:, -1].to(self.device), preds, goal_image.squeeze(1).to(self.device), idxs, all_losses, save_path=img_name)
             plot_batch_trajectories(obs_image[:, -1].to(self.device), preds_completed, goal_image.squeeze(1).to(self.device), idxs, save_path=traj_name)
 
+        # 反归一化还原累计位姿，用于评估指标（保持与 CEM 的 get_action_torch 用法一致）
         pred_actions = get_action_torch(final_deltas[:, :, :3], ACTION_STATS_TORCH)
         pred_yaw = final_deltas[:, :, -1].sum(1)
-        return pred_actions, pred_yaw
+
+        # [NEW] 将 batch 级一致性统计返回给 evaluate()
+        agree_tensor = torch.tensor(agree_flags_all, dtype=torch.float32)
+        selected_apes_tensor = torch.tensor(selected_apes_all, dtype=torch.float32)
+        oracle_min_apes_tensor = torch.tensor(oracle_min_apes_all, dtype=torch.float32)
+        # [END NEW]
+
+        # [NEW] 多返回三个：一致性标志、选中候选的 APE、Top-K 最小 APE
+        return pred_actions, pred_yaw, agree_tensor, selected_apes_tensor, oracle_min_apes_tensor
 
     def visualize_trajectories(self, dataset_name, gt_actions, image_plot_dir, i, traj, traj_id, deltas, cur_obs_image, cur_goal_image, preds, loss, topk_idx):
         img_for_plotting = torch.cat([cur_goal_image[0:1].to(self.device), preds])
@@ -591,42 +661,44 @@ class WM_Planning_Evaluator:
         plot_images_with_losses(img_for_plotting, loss_for_plotting, save_path=img_name)
         plot_name = os.path.join(image_plot_dir, f'idx{traj_id}_iter{i}_trajs.png')
         num_plot = self.args.num_samples
+        # print(num_plot)
         log_viz_single(
-                        dataset_name, 
-                        cur_obs_image[0], 
-                        cur_goal_image[0], 
-                        preds[:num_plot], 
-                        deltas[:num_plot], 
-                        loss[:num_plot], 
-                        topk_idx[0:1], 
-                        gt_actions[traj], 
-                        ACTION_STATS_TORCH, 
-                        plan_iter=i, 
-                        output_dir=plot_name
-                    )
-    
+            dataset_name,
+            cur_obs_image[0],
+            cur_goal_image[0],
+            preds[:num_plot],
+            deltas[:num_plot],         # 传“模型版” deltas，内部 get_action_torch 会按 stats 反归一化
+            loss[:num_plot],
+            topk_idx[0:1],
+            gt_actions[traj],
+            ACTION_STATS_TORCH,
+            plan_iter=i,
+            output_dir=plot_name
+        )
+
     def autoregressive_rollout(self, obs_image, deltas, rollout_stride, aug_image, camera_mats):
+        # deltas: 期望为“模型版”（归一化平移 + 弧度 yaw）
         deltas = deltas.unflatten(1, (-1, rollout_stride)).sum(2)
         preds = []
         curr_obs = obs_image.clone().to(self.device)
-        
+
         for i in range(deltas.shape[1]):
             curr_delta = deltas[:, i:i+1]
             all_models = self.model, self.diffusion, self.vae
             x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, self.args.rollout_stride, self.latent_size, num_cond=self.num_cond, device=self.device, x_supervised=aug_image, camera_mats=camera_mats)
             x_pred_pixels = x_pred_pixels.unsqueeze(1)
-            
+
             curr_obs = torch.cat((curr_obs, x_pred_pixels), dim=1) # append current prediction
             curr_obs = curr_obs[:, 1:] # remove first observation
             preds.append(x_pred_pixels)
-        
+
         preds = torch.cat(preds, 1)
         return preds
-    
+
     def get_eval_name(self):
         # Get evaluation name for logging. Should overwrite for specific experiments
         self.eval_name = f'RULE_N{self.args.num_samples}_K{self.args.topk}_RS{self.args.rollout_stride}_rep{self.args.num_repeat_eval}_OPT{self.args.opt_steps}'
-        
+
     def actions_to_traj(self, actions):
         positions_xyz = torch.zeros((actions.shape[0], 3))
         positions_xyz[:, :3] = actions
@@ -635,31 +707,32 @@ class WM_Planning_Evaluator:
         timestamps = torch.arange(actions.shape[0], dtype=torch.float64)
         traj = PoseTrajectory3D(positions_xyz=positions_xyz, orientations_quat_wxyz=orientations_quat_wxyz, timestamps=timestamps)
         return traj
-    
+
     @torch.no_grad()
     def evaluate(self):
         for dataset_name in self.dataset_names:
             metric_logger = dist.MetricLogger(delimiter="  ")
             header = 'Test:'
             eval_save_output_dir = None
-            
+
             if self.args.save_preds:
                 dataset_save_output_dir = os.path.join(self.args.save_output_dir, dataset_name)
                 os.makedirs(dataset_save_output_dir, exist_ok=True)
                 eval_save_output_dir = os.path.join(dataset_save_output_dir, self.eval_name)
                 os.makedirs(eval_save_output_dir, exist_ok=True)
-            
+
             curr_data_loader = self.datasets[dataset_name]
             for (idxs, obs_image, goal_image, gt_actions, goal_pos, aug_image, camera_ctx, camera_goal) in metric_logger.log_every(curr_data_loader, 1, header):
                 obs_image = obs_image[:, -self.num_cond:]
                 camera_ctx  = camera_ctx[:, -self.num_cond:]
                 camera_mats = torch.cat([camera_ctx, camera_goal], dim=1)  # (B, num_cond+1, 4, 4)
                 with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
-                    pred_actions, pred_yaw = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image, camera_mats=camera_mats)
+                    # [NEW] 接收 Top-K 一致性/APE 统计
+                    pred_actions, pred_yaw, agree_flags, selected_apes, oracle_min_apes = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image, camera_mats=camera_mats)
                 for i in range(len(obs_image)):
                     pred_traj_i = self.actions_to_traj(pred_actions[i, :, :3])
                     gt_traj_i = self.actions_to_traj(gt_actions[i, :, :3])
-                    
+
                     ate, rpe_trans, _ = self.eval_metrics(gt_traj_i, pred_traj_i)
 
                     pred_final_pos = pred_actions[i, -1, :3].to('cpu') # (3,)
@@ -669,20 +742,27 @@ class WM_Planning_Evaluator:
                     pos_diff_norm = torch.norm(pred_final_pos - goal_final_pos)
                     yaw_diff = pred_final_yaw - goal_final_yaw  # 
                     yaw_diff_norm = torch.atan2(torch.sin(yaw_diff), torch.cos(yaw_diff)).abs()
-                    
+
                     metric_logger.meters['{}_ate'.format(dataset_name)].update(ate, n=1)
                     metric_logger.meters['{}_rpe_trans'.format(dataset_name)].update(rpe_trans, n=1)
-                    metric_logger.meters['{}_pos_diff_norm'.format(dataset_name)].update(pos_diff_norm, n=1)   
-                    metric_logger.meters['{}_yaw_diff_norm'.format(dataset_name)].update(yaw_diff_norm, n=1)   
+                    metric_logger.meters['{}_pos_diff_norm'.format(dataset_name)].update(pos_diff_norm, n=1)
+                    metric_logger.meters['{}_yaw_diff_norm'.format(dataset_name)].update(yaw_diff_norm, n=1)
+
+                    # [NEW] 新增 Top-K 一致性与 APE 统计
+                    metric_logger.meters['{}_agree_minloss_minape'.format(dataset_name)].update(float(agree_flags[i].item()), n=1)
+                    metric_logger.meters['{}_selected_ape'.format(dataset_name)].update(float(selected_apes[i].item()), n=1)
+                    metric_logger.meters['{}_oracle_min_ape'.format(dataset_name)].update(float(oracle_min_apes[i].item()), n=1)
+                    # [END NEW]
+
             output_fn = os.path.join(self.args.save_output_dir, f'{dataset_name}_{self.eval_name}.json')
             save_metric_to_disk(metric_logger, output_fn)
 
         # gather the stats from all processes
         metric_logger.synchronize_between_processes()
-            
+
     def eval_metrics(self, traj_ref, traj_pred):
         traj_ref, traj_pred = sync.associate_trajectories(traj_ref, traj_pred)
-        
+
         result = main_ape.ape(traj_ref, traj_pred, est_name='traj',
             pose_relation=PoseRelation.translation_part, align=False, correct_scale=False)
         ate = result.stats['rmse']
@@ -698,10 +778,10 @@ class WM_Planning_Evaluator:
         rpe_trans = result.stats['rmse']
 
         return ate, rpe_trans, rpe_rot
-    
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    
+
     # Default Args
     parser.add_argument("--exp", type=str, default=None, help="experiment name")
     parser.add_argument("--ckp", type=str, default='0100000', help="experiment name")
@@ -711,7 +791,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_preds', action='store_true', default=False, help='whether to save prediction tensors or not')
     parser.add_argument("--num_workers", type=int, default=8, help="num workers")
     parser.add_argument("--batch_size", type=int, default=16, help="batch size")
-    
+
     # Planning Specific Args
     parser.add_argument("--num_samples", type=int, default=10, help="num nomad samples to predict")
     parser.add_argument("--rollout_stride", type=int, default=1, help="rollout stride")
@@ -720,7 +800,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_repeat_eval", type=int, default=1, help="number of evals for one action")
     parser.add_argument('--plot', action='store_true', default=False)
     args = parser.parse_args()
-    
+
     evaluator = WM_Planning_Evaluator(args)
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
     gpu_id = torch.cuda.current_device()  # Or args.gpu if explicitly set
