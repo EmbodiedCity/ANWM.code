@@ -36,6 +36,10 @@ from isolated_nwm_eval import save_metric_to_disk
 import distributed as dist
 from models_tpz_v5 import CDiT_models
 
+# NEW: 仅用于设置进程组超时
+import datetime  # NEW
+import torch.distributed as tdist  # NEW
+
 
 with open("config/data_config.yaml", "r") as f:
     data_config = yaml.safe_load(f)
@@ -195,13 +199,34 @@ def get_dataset_eval(config, dataset_name, predefined_index=True):
 
     return dataset
 
+# NEW: 在本脚本内初始化默认进程组，并把 collective 超时拉长
+def _init_pg_timeout(hours: int = 4) -> int:
+    """
+    初始化默认进程组，并设置更长的 collective 超时。
+    返回本进程 local_rank（可作为 GPU id）。
+    """
+    if not tdist.is_initialized():
+        local_rank = int(os.environ.get("LOCAL_RANK", 0))
+        torch.cuda.set_device(local_rank)
+        tdist.init_process_group(
+            backend="nccl",
+            init_method="env://",
+            timeout=datetime.timedelta(hours=hours),
+        )
+        return local_rank
+    return int(os.environ.get("LOCAL_RANK", 0))
+
+
 class WM_Planning_Evaluator:
     def __init__(self, args):
         super().__init__()
         self.args = args
         self.exp = args.exp
-        _, _, device, _ = dist.init_distributed()
-        self.device = torch.device(device)
+
+        # NEW: 直接在本脚本中初始化分布式进程组，设置 4 小时超时
+        _gpu_id = _init_pg_timeout(hours=4)  # NEW
+        self.device = torch.device(f"cuda:{_gpu_id}")  # NEW
+        device = self.device  # NEW: 兼容下面 to(device) 的用法
 
         num_tasks = dist.get_world_size()
         global_rank = dist.get_rank()
@@ -249,7 +274,7 @@ class WM_Planning_Evaluator:
                 pin_memory=True,
                 drop_last=False
             )
-            # curr_data_loader = [next(iter(curr_data_loader))] 
+            # curr_data_loader = [next(iter(curr_data_loader))]
             self.datasets[dataset_name] = curr_data_loader
 
         # Loading Model
@@ -266,7 +291,11 @@ class WM_Planning_Evaluator:
         self.model = torch.compile(model)
         self.diffusion = create_diffusion(str(250))
         self.vae = AutoencoderKL.from_pretrained(f"stabilityai/sd-vae-ft-ema").to(device)
-        self.model = torch.nn.parallel.DistributedDataParallel(self.model, device_ids=[self.device], find_unused_parameters=False)
+
+        # NEW: 用整数 gpu id 绑定 DDP 设备，更稳妥
+        self.model = torch.nn.parallel.DistributedDataParallel(
+            self.model, device_ids=[_gpu_id], output_device=_gpu_id, find_unused_parameters=False
+        )  # NEW
         self.model_without_ddp = self.model.module
 
         self.loss_fn = lpips.LPIPS(net='alex').to(self.device)
