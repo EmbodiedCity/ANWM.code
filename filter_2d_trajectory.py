@@ -7,8 +7,8 @@ from tqdm import tqdm
 import numpy as np
 
 # 原始 split 文件
-# split_pkl = "data_splits/airvln_16/test/dataset_dist_8_to_8_n4_len_traj_pred_8_all.pkl"
-split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n4_len_traj_pred_16.pkl"
+split_pkl = "data_splits/airvln_16/test/dataset_dist_8_to_8_n4_len_traj_pred_8_all.pkl"
+# split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n4_len_traj_pred_16.pkl"
 with open(split_pkl, "rb") as f:
     split_list = pickle.load(f)[0]
 print(f"[info] 原始 split 数量: {len(split_list)}")
@@ -47,8 +47,13 @@ for traj_id, frame_idx, min_goal_distance, max_goal_distance in tqdm(split_list,
 print(f"[summary] no-z 数量: {len(no_z_list)}")
 print("示例:", no_z_list[:5])
 
+# sample
+import random
+random.seed(1120)
+no_z_list = random.sample(no_z_list, k=100)
+
 # 保存新的 split
-out_pkl = "data_splits/airvln_16/test/rollout_2d.pkl"
+out_pkl = "data_splits/airvln_16/test/navigation_eval_2d.pkl"
 with open(out_pkl, "wb") as f:
     pickle.dump(no_z_list, f)
 

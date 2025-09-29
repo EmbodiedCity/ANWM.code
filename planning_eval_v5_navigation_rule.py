@@ -177,7 +177,7 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
 def get_dataset_eval(config, dataset_name, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]
     if predefined_index:
-        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval.pkl"
+        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval_2d.pkl"
     else:
         predefined_index = None
 
