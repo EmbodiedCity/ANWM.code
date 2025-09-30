@@ -82,7 +82,7 @@ class BaseDataset(Dataset):
         if predefined_index:
             print(f"****** Using a predefined evaluation index... {predefined_index}******")
             with open(predefined_index, "rb") as f:
-                self.index_to_data = pickle.load(f)
+                self.index_to_data = pickle.load(f)[0]
                 return
         else:
             print("****** Evaluating from NON PREDEFINED index... ******")
@@ -94,6 +94,7 @@ class BaseDataset(Dataset):
             self.index_to_data, self.goals_index = self._build_index()
             with open(index_to_data_path, "wb") as f:
                 pickle.dump((self.index_to_data, self.goals_index), f)
+            print(f"Saved index to {index_to_data_path}, total samples: {len(self.index_to_data)}")
 
     def _build_index(self, use_tqdm: bool = False):
         """

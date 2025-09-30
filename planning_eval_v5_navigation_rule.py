@@ -194,7 +194,8 @@ def get_dataset_eval(config, dataset_name, predefined_index=True):
                 normalize=config["normalize"],
                 transform=transform,
                 predefined_index=predefined_index,
-                traj_names="rollout_traj_names.txt"
+                # traj_names="rollout_traj_names.txt"
+                traj_names="traj_names.txt"
             )
 
     return dataset
