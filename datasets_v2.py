@@ -82,7 +82,7 @@ class BaseDataset(Dataset):
         if predefined_index:
             print(f"****** Using a predefined evaluation index... {predefined_index}******")
             with open(predefined_index, "rb") as f:
-                self.index_to_data = pickle.load(f)[0]
+                self.index_to_data = pickle.load(f)
                 return
         else:
             print("****** Evaluating from NON PREDEFINED index... ******")

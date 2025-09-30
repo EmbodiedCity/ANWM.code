@@ -8,7 +8,7 @@ import numpy as np
 
 # 原始 split 文件
 # split_pkl = "data_splits/airvln_16/test/dataset_dist_8_to_8_n4_len_traj_pred_8_all.pkl"
-split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n4_len_traj_pred_64.pkl"
+split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n4_len_traj_pred_16.pkl"
 
 with open(split_pkl, "rb") as f:
     split_list = pickle.load(f)[0]
