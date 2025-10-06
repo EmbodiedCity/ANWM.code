@@ -7,7 +7,7 @@
 # References:
 # NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
 # --------------------------------------------------------
-# Inherited from dataset v2
+# Inherited from dataset v2, seq2seq general version
 import cv2
 import numpy as np
 import torch

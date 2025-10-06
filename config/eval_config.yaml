@@ -9,8 +9,8 @@ traj_stride: 8
 eval_distance:
   eval_min_dist_cat: -64
   eval_max_dist_cat: 64
-eval_len_traj_pred: 64
-eval_context_size: 4
+eval_len_traj_pred: 52
+eval_context_size: 16
 
 eval_datasets:
   recon:
