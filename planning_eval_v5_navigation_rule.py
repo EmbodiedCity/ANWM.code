@@ -177,7 +177,7 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
 def get_dataset_eval(config, dataset_name, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]
     if predefined_index:
-        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval.pkl"
+        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval_16.pkl"
     else:
         predefined_index = None
 
@@ -259,7 +259,7 @@ class WM_Planning_Evaluator:
         self.dataset_names = self.args.datasets.split(',')
         self.datasets = {}
         for dataset_name in self.dataset_names:
-            dataset_val = get_dataset_eval(self.config, dataset_name, predefined_index=False)
+            dataset_val = get_dataset_eval(self.config, dataset_name, predefined_index=True)
 
             if len(dataset_val) % num_tasks != 0:
                 print('Warning: Enabling distributed evaluation with an eval dataset not divisible by process number. '
