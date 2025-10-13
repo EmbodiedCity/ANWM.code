@@ -7,9 +7,10 @@ from tqdm import tqdm
 import numpy as np
 
 # 原始 split 文件
-# split_pkl = "data_splits/airvln_16/test/dataset_dist_8_to_8_n16_len_traj_pred_8_all.pkl"
-reference_pkl = "data_splits/airvln_16/test/rollout.pkl"
-split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n16_len_traj_pred_52.pkl"
+reference_pkl = "data_splits/airvln_16/test/navigation_eval.pkl"
+split_pkl = "data_splits/airvln_16/test/dataset_dist_8_to_8_n16_len_traj_pred_8.pkl"
+# reference_pkl = "data_splits/airvln_16/test/rollout.pkl"
+# split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n16_len_traj_pred_52.pkl"
 # split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n4_len_traj_pred_64.pkl"
 
 with open(split_pkl, "rb") as f:
@@ -33,7 +34,7 @@ for traj_id, frame_idx, min_goal_distance, max_goal_distance in tqdm(split_list,
 print(f"[summary] 匹配数量: {len(matched_list)} / {len(split_list)}")
 
 # 保存新的 split（仅保留匹配项）
-out_pkl = "data_splits/airvln_16/test/rollout_16.pkl"
+out_pkl = "data_splits/airvln_16/test/navigation_eval_16.pkl"
 with open(out_pkl, "wb") as f:
     pickle.dump(matched_list, f)
 
