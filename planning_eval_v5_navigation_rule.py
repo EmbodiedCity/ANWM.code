@@ -432,7 +432,7 @@ class WM_Planning_Evaluator:
         return run_dir, meta
     # ====== END NEW ======
 
-    def generate_actions(self, dataset_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, len_traj_pred, aug_image, camera_mats):
+    def generate_actions(self, dataset_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, len_traj_pred, aug_image):
         idx_string = "_".join(map(str, idxs.flatten().int().tolist()))
         image_plot_dir = os.path.join(dataset_save_output_dir, 'plots')
         os.makedirs(image_plot_dir, exist_ok=True)
@@ -493,14 +493,13 @@ class WM_Planning_Evaluator:
             cur_obs_image = obs_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1)
             cur_goal_image = goal_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1).squeeze(1)
             cur_aug_image = aug_image[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1, 1)   # (num_samples, 1, C, H, W)
-            cur_cam = camera_mats[traj].unsqueeze(0).repeat(self.num_samples, 1, 1, 1)          # (num_samples, num_cond+1, 4, 4)
 
             # WM is stochastic, so we can repeat the evaluation of each trajectory and average to reduce variance
             if self.num_repeat_eval * self.num_samples > 12:
                 cur_losses = []
                 for r in range(self.num_repeat_eval):
                     # 使用“模型版”增量进行 rollout（与 CEM 对齐）
-                    preds = self.autoregressive_rollout(cur_obs_image, deltas_model, self.args.rollout_stride, aug_image=cur_aug_image, camera_mats=cur_cam)
+                    preds = self.autoregressive_rollout(cur_obs_image, deltas_model, self.args.rollout_stride, aug_image=cur_aug_image)
                     preds = preds[:, -1] # take the last predicted image
                     loss = self.loss_fn(preds.to(self.device), cur_goal_image.to(self.device)).flatten(0)
                     cur_losses.append(loss)
@@ -510,9 +509,8 @@ class WM_Planning_Evaluator:
                 expanded_obs_image = cur_obs_image.repeat(self.num_repeat_eval, 1, 1, 1, 1)
                 expanded_goal_image = cur_goal_image.repeat(self.num_repeat_eval, 1, 1, 1)
                 expanded_aug = cur_aug_image.repeat(self.num_repeat_eval, 1, 1, 1, 1)
-                expanded_cams = cur_cam.repeat(self.num_repeat_eval, 1, 1, 1)
 
-                preds = self.autoregressive_rollout(expanded_obs_image, expanded_deltas, self.args.rollout_stride, aug_image=expanded_aug, camera_mats=expanded_cams)
+                preds = self.autoregressive_rollout(expanded_obs_image, expanded_deltas, self.args.rollout_stride, aug_image=expanded_aug)
                 preds = preds[:, -1]
 
                 loss = self.loss_fn(preds.to(self.device), expanded_goal_image.to(self.device)).flatten(0)
@@ -576,7 +574,6 @@ class WM_Planning_Evaluator:
                 # 单样本视角（该 traj 的上下文、增强、相机、目标）
                 single_obs  = obs_image[traj:traj+1]              # (1, num_cond, C,H,W)
                 single_aug  = aug_image[traj:traj+1]              # (1, 1, C,H,W)
-                single_cams = camera_mats[traj:traj+1]            # (1, num_cond+1, 4,4)
                 single_goal = goal_image[traj].squeeze(0)         # (C,H,W)
 
                 cand_summaries = []
@@ -586,7 +583,7 @@ class WM_Planning_Evaluator:
 
                     cand_seq = self.autoregressive_rollout(
                         single_obs, cand_delta_model, self.args.rollout_stride,
-                        aug_image=single_aug, camera_mats=single_cams
+                        aug_image=single_aug
                     )[0]                                           # -> (T,C,H,W)
 
                     cand_final_lpips = float(loss[cid].item())
@@ -630,7 +627,7 @@ class WM_Planning_Evaluator:
 
         # Final rollout for selected deltas（统一使用“模型版”）
         final_deltas = torch.cat(all_deltas, dim=0)  # [n_evals, steps, 4]
-        preds = self.autoregressive_rollout(obs_image, final_deltas, self.args.rollout_stride, aug_image=aug_image, camera_mats=camera_mats)
+        preds = self.autoregressive_rollout(obs_image, final_deltas, self.args.rollout_stride, aug_image=aug_image)
         preds_completed = preds
         preds = preds[:, -1] # take the last predicted image
 
@@ -707,7 +704,7 @@ class WM_Planning_Evaluator:
             output_dir=plot_name
         )
 
-    def autoregressive_rollout(self, obs_image, deltas, rollout_stride, aug_image, camera_mats):
+    def autoregressive_rollout(self, obs_image, deltas, rollout_stride, aug_image):
         # deltas: 期望为“模型版”（归一化平移 + 弧度 yaw）
         deltas = deltas.unflatten(1, (-1, rollout_stride)).sum(2)
         preds = []
@@ -753,13 +750,11 @@ class WM_Planning_Evaluator:
                 os.makedirs(eval_save_output_dir, exist_ok=True)
 
             curr_data_loader = self.datasets[dataset_name]
-            for (idxs, obs_image, goal_image, gt_actions, goal_pos, aug_image, camera_ctx, camera_goal) in metric_logger.log_every(curr_data_loader, 1, header):
+            for (idxs, obs_image, goal_image, gt_actions, goal_pos, aug_image) in metric_logger.log_every(curr_data_loader, 1, header):
                 obs_image = obs_image[:, -self.num_cond:]
-                camera_ctx  = camera_ctx[:, -self.num_cond:]
-                camera_mats = torch.cat([camera_ctx, camera_goal], dim=1)  # (B, num_cond+1, 4, 4)
                 with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
                     # [NEW] 接收 Top-K 一致性/APE 统计
-                    pred_actions, pred_yaw, agree_flags, selected_apes, oracle_min_apes = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image, camera_mats=camera_mats)
+                    pred_actions, pred_yaw, agree_flags, selected_apes, oracle_min_apes = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image)
                 for i in range(len(obs_image)):
                     pred_traj_i = self.actions_to_traj(pred_actions[i, :, :3])
                     gt_traj_i = self.actions_to_traj(gt_actions[i, :, :3])
