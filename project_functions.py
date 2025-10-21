@@ -190,7 +190,7 @@ def reproject_depth_to_other_pose(K, depth_map, rgb_img, pose_src, pose_dst):
         points_3d_dst: (N, 3) 变换后的 3D 点
         colors: (N, 3) RGB 值
     """
-    # # 打印旋转矩阵
+    # 打印旋转矩阵
     # print("[DEBUG] pose_src rotation matrix:", pose_src)
     # print("[DEBUG] pose_dst rotation matrix:", pose_dst)
 
@@ -341,6 +341,22 @@ def resize_image_half(rgb_img):
     return resized_img
 
 # seq2seq
+def reproject_depth_to_other_pose_seq2(K, depth_seq, rgb_seq, poses_src_seq, pose_dst):
+    """
+    多帧 → 一张图：复用你已有的单帧函数 reproject_depth_to_other_pose，再用上面的 z-buffer 合成。
+    depth_seq: (T,H,W), rgb_seq: (T,H,W,3), poses_src_seq: (T,4,4), pose_dst: (4,4)
+    """
+    T, H, W = depth_seq.shape
+    pts_list, col_list = [], []
+    for i in range(T):
+        pts_i, col_i = reproject_depth_to_other_pose(K, depth_seq[i], rgb_seq[i], poses_src_seq[i], pose_dst)
+        pts_list.append(pts_i)     # 在目标相机系下的 (Ni,3)
+        col_list.append(col_i)     # (Ni,3)
+
+    points_cam = np.concatenate(pts_list, axis=0)
+    colors     = np.concatenate(col_list, axis=0)
+    return points_cam, colors
+
 def project_to_2d_image_seq2(K, points_cam, colors, image_size):
     """
     将目标相机坐标系下的点云 (N,3) 用 z-buffer 投影到一张 (H,W,3) 图像
@@ -373,22 +389,6 @@ def project_to_2d_image_seq2(K, points_cam, colors, image_size):
     img[v[sel], u[sel]] = colors[sel]
     return img
 
-
-def reproject_depth_to_other_pose_seq2(K, depth_seq, rgb_seq, poses_src_seq, pose_dst):
-    """
-    多帧 → 一张图：复用你已有的单帧函数 reproject_depth_to_other_pose，再用上面的 z-buffer 合成。
-    depth_seq: (T,H,W), rgb_seq: (T,H,W,3), poses_src_seq: (T,4,4), pose_dst: (4,4)
-    """
-    T, H, W = depth_seq.shape
-    pts_list, col_list = [], []
-    for i in range(T):
-        pts_i, col_i = reproject_depth_to_other_pose(K, depth_seq[i], rgb_seq[i], poses_src_seq[i], pose_dst)
-        pts_list.append(pts_i)     # 在目标相机系下的 (Ni,3)
-        col_list.append(col_i)     # (Ni,3)
-
-    points_cam = np.concatenate(pts_list, axis=0)
-    colors     = np.concatenate(col_list, axis=0)
-    return points_cam, colors
 
 def reproject_depth_to_other_pose_seq2seq(K, depth_maps, rgb_imgs, poses_src, poses_dst):
     """
