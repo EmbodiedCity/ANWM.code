@@ -11,7 +11,7 @@ split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n16_len_traj_pred
 DATA_ROOT, DATASET, TRAJ_PKL = "data", "airvln_16", "traj_data.pkl"
 FALLBACK_HIST_LEN = 16
 
-TARGETS_DEG = [45.0, 90.0, 135.0]   # 仍然会各自存pkl
+TARGETS_DEG = [15.0, 30.0, 45.0, 90.0, 135.0]   # 仍然会各自存pkl
 DELTA_DEG   = 5.0
 SAMPLE_K    = 100
 OUT_DIR     = "data_splits/airvln_16/test"
