@@ -89,6 +89,7 @@ class BaseDataset(Dataset):
         if _n > context_size:
             _n = context_size
         self.num_cond_pro = _n
+        print(self.num_cond_pro)
         # ========================================================================
 
         self._load_index(predefined_index)
