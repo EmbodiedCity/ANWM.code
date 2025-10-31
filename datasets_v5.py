@@ -1,6 +1,6 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # All rights reserved.
-
+#
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 # --------------------------------------------------------
@@ -20,6 +20,42 @@ import tqdm
 from torch.utils.data import Dataset
 from misc import angle_difference, get_data_path, get_delta_np, normalize_data, to_local_coords
 from project_functions import reproject_depth_to_other_pose_2seq, project_to_2d_image_2seq, reproject_depth_to_other_pose_seq2seq, project_to_2d_image_seq2seq, resize_image_half
+
+# ======== depth saving helper ========
+def save_depth_pair(depth_map, out_png16, out_vis, vmax=None):
+    if depth_map is None:
+        return
+    dm = np.asarray(depth_map)
+
+    # 16-bit 原始
+    if dm.dtype in (np.float32, np.float64):
+        mm = dm.copy()
+        mm[~np.isfinite(mm)] = 0.0
+        dmax = float(np.max(mm)) if np.isfinite(mm).any() else 0.0
+        mm = np.clip(mm, 0.0, dmax) * 1000.0
+        png16 = np.clip(np.round(mm), 0, 65535).astype(np.uint16)
+    elif dm.dtype == np.uint16:
+        png16 = dm
+    else:
+        dm_f = dm.astype(np.float32)
+        dm_f[~np.isfinite(dm_f)] = 0.0
+        dmax = float(np.max(dm_f)) if np.isfinite(dm_f).any() else 1.0
+        scale = 65535.0 / max(dmax, 1e-6)
+        png16 = np.clip(np.round(dm_f * scale), 0, 65535).astype(np.uint16)
+    Image.fromarray(png16).save(out_png16)
+
+    # 伪彩
+    vis = dm.astype(np.float32)
+    vis[~np.isfinite(vis)] = 0.0
+    if vmax is None:
+        flat = vis[np.isfinite(vis)]
+        vmax = np.percentile(flat, 95) if flat.size > 0 else (float(vis.max()) if np.isfinite(vis).any() else 1.0)
+        vmax = max(vmax, 1e-6)
+    vis_u8 = np.clip((vis / vmax) * 255.0, 0, 255).astype(np.uint8)
+    vis_color_bgr = cv2.applyColorMap(vis_u8, cv2.COLORMAP_JET)
+    vis_color_rgb = vis_color_bgr[..., ::-1]
+    Image.fromarray(vis_color_rgb).save(out_vis)
+# ===================================================
 
 class BaseDataset(Dataset):
     def __init__(
@@ -402,8 +438,23 @@ class TrainingDataset(BaseDataset):
 
             Image.fromarray(grid).save(os.path.join(sample_dir, 'grid_all.png'))
 
-            # ==========================================================================================
-
+            # ===== 保存深度（历史 + 目标） =====
+            if "depth" in curr_traj_data and curr_traj_data["depth"] is not None:
+                depth_seq = curr_traj_data["depth"]
+                for t_idx, t_ctx in enumerate(context_times):
+                    if 0 <= t_ctx < len(depth_seq):
+                        dm = depth_seq[t_ctx]
+                        out16 = os.path.join(sample_dir, f"depth_hist_{t_idx:03d}_t{t_ctx}.png")
+                        outvis = os.path.join(sample_dir, f"depth_hist_{t_idx:03d}_t{t_ctx}_vis.png")
+                        save_depth_pair(dm, out16, outvis)
+                for j, (_, t_goal) in enumerate(goal_context):
+                    tg = int(t_goal)
+                    if 0 <= tg < len(depth_seq):
+                        dm = depth_seq[tg]
+                        out16 = os.path.join(sample_dir, f"depth_gt_{j:03d}_t{tg}.png")
+                        outvis = os.path.join(sample_dir, f"depth_gt_{j:03d}_t{tg}_vis.png")
+                        save_depth_pair(dm, out16, outvis)
+            # =============================================
 
             return (
                 torch.as_tensor(obs_image, dtype=torch.float32),
@@ -456,16 +507,157 @@ class EvalDataset(BaseDataset):
             actions[:, :3] = normalize_data(actions[:, :3], self.ACTION_STATS)
             delta = get_delta_np(actions)
 
-            rgb_imgs = [cv2.imread(get_data_path(self.data_folder, f_img, t_img)) for f_img, t_img in context]
-            rgb_imgs = [cv2.cvtColor(rgb_img, cv2.COLOR_BGR2RGB) for rgb_img in rgb_imgs]
-            rgb_imgs = np.stack(rgb_imgs, axis=0) 
+            # 历史帧 RGB（list 与 np 版本）
+            rgb_list = [cv2.imread(get_data_path(self.data_folder, f_img, t_img)) for f_img, t_img in context]
+            rgb_list = [cv2.cvtColor(img, cv2.COLOR_BGR2RGB) for img in rgb_list]
+            rgb_np = np.stack(rgb_list, axis=0)
 
-            # 多历史帧 → 多目标帧重投影（B 张投影图）
-            projected_images = self._compute_projected_images(curr_traj_data, context_times, rgb_imgs, np.array(pred_times))
+            # 单历史帧 -> 多目标（逐历史帧可视化）
+            his_projected_list = []
+            for t_idx, rgb_img in enumerate(rgb_list):
+                src_time = context_times[t_idx]
+                projected_images_o = self._compute_projected_image_o(curr_traj_data, src_time, np.array(pred_times), rgb_img)
+                his_projected_list.append(projected_images_o)
+
+            # 多历史帧 -> 多目标（联合）
+            projected_images = self._compute_projected_images(curr_traj_data, context_times, rgb_np, np.array(pred_times))
             projected_tensor_list = [self.transform(Image.fromarray(img)) for img in projected_images]
             projected_tensor = torch.stack(projected_tensor_list, dim=0)
 
-            print(f"Index {i}, projected_images shape: {projected_images.shape}, projected_tensor shape: {projected_tensor.size()}")
+            # ===== 与训练保持一致的可视化 =====
+            vis_root = './visualizations-seq2seq'
+            sample_dir = os.path.join(vis_root, f'{self.dataset_name}', f'sample_{i}')
+            os.makedirs(sample_dir, exist_ok=True)
+
+            # 1) 历史原图
+            T = rgb_np.shape[0]
+            for t_idx in range(T):
+                im = rgb_np[t_idx]
+                im = np.clip(im * (255.0 ** (im.max() <= 1)), 0, 255).astype(np.uint8)
+                Image.fromarray(im).save(os.path.join(sample_dir, f'hist_{t_idx:03d}.png'))
+
+            # 2) 未来 GT（和 pred 对齐）
+            gt_imgs = []
+            for j, (_, t_pred) in enumerate(pred):
+                gt = Image.open(get_data_path(self.data_folder, f_curr, int(t_pred))).convert("RGB")
+                gt_np = np.array(gt)
+                gt_np = np.clip(gt_np * (255.0 ** (gt_np.max() <= 1)), 0, 255).astype(np.uint8)
+                gt_imgs.append(gt_np)
+                Image.fromarray(gt_np).save(os.path.join(sample_dir, f'gt_{j:03d}_t{int(t_pred)}.png'))
+
+            # 3) 联合投影
+            B = projected_images.shape[0]
+            joint_imgs = []
+            for j in range(B):
+                pj = projected_images[j]
+                pj = np.clip(pj * (255.0 ** (pj.max() <= 1)), 0, 255).astype(np.uint8)
+                joint_imgs.append(pj)
+                Image.fromarray(pj).save(os.path.join(sample_dir, f'proj_joint_{j:03d}.png'))
+
+            # 4) 单独投影（逐历史帧）
+            per_hist_rows = []
+            for t_idx, proj_o in enumerate(his_projected_list):
+                axes_equal_B = np.where(np.array(proj_o.shape) == B)[0]
+                axis = int(axes_equal_B[0])
+                arr = np.moveaxis(proj_o, axis, 0)  # (B,H,W,3)
+                row = []
+                for j in range(B):
+                    im = arr[j]
+                    im = np.clip(im * (255.0 ** (im.max() <= 1)), 0, 255).astype(np.uint8)
+                    row.append(im)
+                    Image.fromarray(im).save(os.path.join(sample_dir, f'proj_single_t{t_idx:03d}_{j:03d}.png'))
+                per_hist_rows.append(row)
+
+            # 5) 组装 grid
+            from PIL import ImageDraw, ImageFont
+            B = projected_images.shape[0]
+            max_cols = B + 1
+            pad = 4
+
+            hist_uint8 = []
+            for t_idx in range(T):
+                im = rgb_np[t_idx]
+                im = np.clip(im * (255.0 ** (im.max() <= 1)), 0, 255).astype(np.uint8)
+                hist_uint8.append(im)
+
+            gt_uint8 = []
+            for x in gt_imgs:
+                im = np.clip(x * (255.0 ** (x.max() <= 1)), 0, 255).astype(np.uint8)
+                gt_uint8.append(im)
+
+            joint_uint8 = []
+            for x in joint_imgs:
+                im = np.clip(x * (255.0 ** (x.max() <= 1)), 0, 255).astype(np.uint8)
+                joint_uint8.append(im)
+
+            label_size = (64, 48)
+            font = ImageFont.load_default()
+            label_gt = Image.new("RGB", label_size, (255, 255, 255))
+            ImageDraw.Draw(label_gt).text((4, 4), "GT", fill=(0, 0, 0), font=font)
+            label_gt_np = np.array(label_gt)
+
+            label_joint = Image.new("RGB", label_size, (255, 255, 255))
+            ImageDraw.Draw(label_joint).text((4, 4), "Joint", fill=(0, 0, 0), font=font)
+            label_joint_np = np.array(label_joint)
+
+            hist_named = []
+            for t_idx in range(T):
+                pil = Image.fromarray(hist_uint8[t_idx])
+                ImageDraw.Draw(pil).text((6, 6), f"Hist t={context_times[t_idx]}", fill=(255, 255, 255), font=font)
+                hist_named.append(np.array(pil))
+
+            rows = []
+            rows.append([label_gt_np] + gt_uint8)
+            rows.append([label_joint_np] + joint_uint8)
+            for t_idx in range(T):
+                row_hist = [hist_named[t_idx]] + per_hist_rows[t_idx]
+                rows.append(row_hist)
+
+            H, W = rows[0][1].shape[:2]
+            norm_rows = []
+            for r in rows:
+                resized = []
+                for x in r:
+                    img = Image.fromarray(x)
+                    img = img.resize((W, H), Image.BILINEAR)
+                    resized.append(np.array(img))
+                while len(resized) < max_cols:
+                    resized.append(np.full((H, W, 3), 255, np.uint8))
+                norm_rows.append(resized)
+
+            row_width = max_cols * W + (max_cols - 1) * pad
+            spacer_w = np.full((H, pad, 3), 255, np.uint8)
+            spacer_h = np.full((pad, row_width, 3), 255, np.uint8)
+
+            row_arrays = []
+            for r in norm_rows:
+                row_img = r[0]
+                for x in r[1:]:
+                    row_img = np.concatenate((row_img, spacer_w, x), axis=1)
+                row_arrays.append(row_img)
+
+            grid = row_arrays[0]
+            for rr in row_arrays[1:]:
+                grid = np.concatenate((grid, spacer_h, rr), axis=0)
+
+            Image.fromarray(grid).save(os.path.join(sample_dir, 'grid_all.png'))
+
+            # ===== 保存深度（历史 + 未来） =====
+            if "depth" in curr_traj_data and curr_traj_data["depth"] is not None:
+                depth_seq = curr_traj_data["depth"]
+                for t_idx, t_ctx in enumerate(context_times):
+                    if 0 <= t_ctx < len(depth_seq):
+                        dm = depth_seq[t_ctx]
+                        out16 = os.path.join(sample_dir, f"depth_hist_{t_idx:03d}_t{t_ctx}.png")
+                        outvis = os.path.join(sample_dir, f"depth_hist_{t_idx:03d}_t{t_ctx}_vis.png")
+                        save_depth_pair(dm, out16, outvis)
+                for j, t_pred in enumerate(pred_times):
+                    if 0 <= t_pred < len(depth_seq):
+                        dm = depth_seq[t_pred]
+                        out16 = os.path.join(sample_dir, f"depth_gt_{j:03d}_t{t_pred}.png")
+                        outvis = os.path.join(sample_dir, f"depth_gt_{j:03d}_t{t_pred}_vis.png")
+                        save_depth_pair(dm, out16, outvis)
+            # =============================================
 
             return (
                 torch.tensor([i], dtype=torch.float32), # for logging purposes
