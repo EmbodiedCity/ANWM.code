@@ -36,4 +36,4 @@ airvln_16:
   metric_waypoint_spacing: 3.30
 
 airvln_2d:
-  metric_waypoint_spacing: 4.12
+  metric_waypoint_spacing: 4.10

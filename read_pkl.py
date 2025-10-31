@@ -20,10 +20,10 @@
 #     print("❌ 没找到匹配项:", target)
 import pickle
 
-pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_16/test/rollout_2d.pkl"
+pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_16_long/test/dataset_dist_-64_to_64_n16_len_traj_pred_52.pkl"
 
 with open(pkl_path, "rb") as f:
-    data = pickle.load(f)
+    data = pickle.load(f)[0]
 
 print("✅ 成功读取:", pkl_path)
 print("数据类型:", type(data))
