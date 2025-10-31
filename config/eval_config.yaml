@@ -57,3 +57,7 @@ eval_datasets:
     data_folder: data/airvln_16
     test: data_splits/airvln_16/test/
     goals_per_obs: 4
+  airvln_2d:
+    data_folder: data/airvln_16_long
+    test: data_splits/airvln_16_long/test/
+    goals_per_obs: 4

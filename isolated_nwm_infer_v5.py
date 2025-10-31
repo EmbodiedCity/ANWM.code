@@ -19,7 +19,7 @@ from diffusers.models import AutoencoderKL
 import misc
 import distributed as dist
 from models_tpz_v5 import CDiT_models
-from datasets_v6 import EvalDataset
+from datasets_v4 import EvalDataset
 from PIL import Image
 from torch.utils.data import Subset
 
@@ -38,7 +38,7 @@ def save_image(output_file, img, unnormalize_img):
 def get_dataset_eval(config, dataset_name, eval_type, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]    
     if predefined_index:
-        predefined_index = f"data_splits/{dataset_name}/test/{eval_type}_turn_135deg.pkl"
+        predefined_index = f"data_splits/{dataset_name}/test/{eval_type}_turn_90deg.pkl"
         # predefined_index = f"data_splits/airvln_16/test/dataset_dist_-64_to_64_n4_len_traj_pred_64.pkl"
     else:
         predefined_index=None
@@ -225,7 +225,7 @@ def main(args):
     datasets = {}
 
     for dataset_name in dataset_names:
-        dataset_val = get_dataset_eval(config, dataset_name, args.eval_type, predefined_index=True)
+        dataset_val = get_dataset_eval(config, dataset_name, args.eval_type, predefined_index=False)
         # dataset_val = Subset(dataset_val, list(range(1000)))
         # print(len(dataset_val))
         if len(dataset_val) % num_tasks != 0:
