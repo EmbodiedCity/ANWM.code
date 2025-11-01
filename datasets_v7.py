@@ -7,7 +7,7 @@
 # References:
 # NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
 # --------------------------------------------------------
-# Inherited from dataset v5 and v6, for more visualization
+# Inherited from dataset v5 and v6, for visualization
 import cv2
 import numpy as np
 import torch
@@ -332,7 +332,6 @@ class TrainingDataset(BaseDataset):
                 gt = Image.open(get_data_path(self.data_folder, f_curr, int(t_goal))).convert("RGB")
                 gt_np = _to_uint8(np.array(gt))
                 gt_imgs.append(gt_np)
-                # 可保留单独 GT 存图（原逻辑），如不需要可移除
                 Image.fromarray(gt_np).save(os.path.join(sample_dir, f'gt_{j:03d}_t{int(t_goal)}.png'))
             B = len(gt_imgs)
 
@@ -440,6 +439,26 @@ class TrainingDataset(BaseDataset):
             Image.fromarray(grid).save(os.path.join(sample_dir, 'grid_all.png'))
             with open(os.path.join(sample_dir, 'mse_report.json'), 'w') as f:
                 json.dump(mse_report, f, indent=2)
+
+            # ===== 保存深度（历史 + 目标） =====
+            if "depth" in curr_traj_data and curr_traj_data["depth"] is not None:
+                depth_seq = curr_traj_data["depth"]
+                # 历史帧
+                for t_idx, t_ctx in enumerate(context_times):
+                    if 0 <= t_ctx < len(depth_seq):
+                        dm = depth_seq[t_ctx]
+                        out16 = os.path.join(sample_dir, f"depth_hist_{t_idx:03d}_t{t_ctx}.png")
+                        outvis = os.path.join(sample_dir, f"depth_hist_{t_idx:03d}_t{t_ctx}_vis.png")
+                        save_depth_pair(dm, out16, outvis)
+                # 目标帧（与 goal_context 对齐）
+                for j, (_, t_goal) in enumerate(goal_context):
+                    tg = int(t_goal)
+                    if 0 <= tg < len(depth_seq):
+                        dm = depth_seq[tg]
+                        out16 = os.path.join(sample_dir, f"depth_gt_{j:03d}_t{tg}.png")
+                        outvis = os.path.join(sample_dir, f"depth_gt_{j:03d}_t{tg}_vis.png")
+                        save_depth_pair(dm, out16, outvis)
+            # ==================================
 
             return (
                 torch.as_tensor(obs_image, dtype=torch.float32),
@@ -631,6 +650,25 @@ class EvalDataset(BaseDataset):
             Image.fromarray(grid).save(os.path.join(sample_dir, 'grid_all.png'))
             with open(os.path.join(sample_dir, 'mse_report.json'), 'w') as f:
                 json.dump(mse_report, f, indent=2)
+
+            # ===== 保存深度（历史 + 未来） =====
+            if "depth" in curr_traj_data and curr_traj_data["depth"] is not None:
+                depth_seq = curr_traj_data["depth"]
+                # 历史帧
+                for t_idx, t_ctx in enumerate(context_times):
+                    if 0 <= t_ctx < len(depth_seq):
+                        dm = depth_seq[t_ctx]
+                        out16 = os.path.join(sample_dir, f"depth_hist_{t_idx:03d}_t{t_ctx}.png")
+                        outvis = os.path.join(sample_dir, f"depth_hist_{t_idx:03d}_t{t_ctx}_vis.png")
+                        save_depth_pair(dm, out16, outvis)
+                # 未来帧（与 pred_times 对齐）
+                for j, t_pred in enumerate(pred_times):
+                    if 0 <= t_pred < len(depth_seq):
+                        dm = depth_seq[t_pred]
+                        out16 = os.path.join(sample_dir, f"depth_gt_{j:03d}_t{t_pred}.png")
+                        outvis = os.path.join(sample_dir, f"depth_gt_{j:03d}_t{t_pred}_vis.png")
+                        save_depth_pair(dm, out16, outvis)
+            # ==================================
 
             return (
                 torch.tensor([i], dtype=torch.float32),  # for logging purposes
