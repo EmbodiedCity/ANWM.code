@@ -80,6 +80,54 @@ def _mse_rgb(a_u8, b_u8):
     b = b_u8.astype(np.float32) / 255.0
     return float(np.mean((a - b) ** 2))
 
+def _psnr_rgb(a_u8, b_u8, data_range=255.0):
+    """输入 uint8 RGB，返回 PSNR（dB）。"""
+    a = a_u8.astype(np.float32)
+    b = b_u8.astype(np.float32)
+    mse = np.mean((a - b) ** 2)
+    if mse <= 1e-12:
+        return float('inf')
+    return 10.0 * np.log10((data_range ** 2) / mse)
+
+def _ssim_single_channel(x, y, data_range=255.0, ksize=11, sigma=1.5):
+    """SSIM for single channel using Gaussian window."""
+    x = x.astype(np.float32)
+    y = y.astype(np.float32)
+    # 高斯核
+    k = cv2.getGaussianKernel(ksize, sigma)
+    w = k @ k.T
+
+    # 均值
+    mu_x = cv2.filter2D(x, -1, w, borderType=cv2.BORDER_REFLECT)
+    mu_y = cv2.filter2D(y, -1, w, borderType=cv2.BORDER_REFLECT)
+
+    # 方差与协方差
+    x_sq = x * x
+    y_sq = y * y
+    xy   = x * y
+
+    sigma_x_sq = cv2.filter2D(x_sq, -1, w, borderType=cv2.BORDER_REFLECT) - mu_x * mu_x
+    sigma_y_sq = cv2.filter2D(y_sq, -1, w, borderType=cv2.BORDER_REFLECT) - mu_y * mu_y
+    sigma_xy   = cv2.filter2D(xy,   -1, w, borderType=cv2.BORDER_REFLECT) - mu_x * mu_y
+
+    C1 = (0.01 * data_range) ** 2
+    C2 = (0.03 * data_range) ** 2
+
+    num = (2 * mu_x * mu_y + C1) * (2 * sigma_xy + C2)
+    den = (mu_x * mu_y + C1) * (sigma_x_sq + sigma_y_sq + C2)
+    ssim_map = num / (den + 1e-12)
+    return float(np.mean(ssim_map))
+
+def _ssim_rgb(a_u8, b_u8, data_range=255.0):
+    """RGB SSIM：对三个通道分别算 SSIM 后取平均。"""
+    if a_u8.ndim == 2:
+        return _ssim_single_channel(a_u8, b_u8, data_range=data_range)
+    assert a_u8.shape == b_u8.shape and a_u8.shape[2] == 3
+    s0 = _ssim_single_channel(a_u8[..., 0], b_u8[..., 0], data_range=data_range)
+    s1 = _ssim_single_channel(a_u8[..., 1], b_u8[..., 1], data_range=data_range)
+    s2 = _ssim_single_channel(a_u8[..., 2], b_u8[..., 2], data_range=data_range)
+    return float((s0 + s1 + s2) / 3.0)
+
 class BaseDataset(Dataset):
     def __init__(
         self,
@@ -337,13 +385,13 @@ class TrainingDataset(BaseDataset):
 
             # 为 grid 准备：GT 行
             rows = []
-            label_size = (64, 48)
+            label_size = (128, 60)
             font = ImageFont.load_default()
             label_gt = Image.new("RGB", label_size, (255, 255, 255))
             ImageDraw.Draw(label_gt).text((4, 4), "GT", fill=(0, 0, 0), font=font)
             rows.append([np.array(label_gt)] + gt_imgs)
 
-            mse_report = {}          # {k: {"per_goal": [...], "mean": x}}
+            metrics_report = {}  # {k: {"mse":{"per_goal":[], "mean":x}, "psnr":{...}, "ssim":{...}}}
             joint_rows_uint8 = []    # 多个 k 的行
             save_per_k = False       # 不单独保存每个 k 的结果
 
@@ -357,21 +405,32 @@ class TrainingDataset(BaseDataset):
 
                 proj_k = self._compute_projected_images(curr_traj_data, cond_times_k, cond_rgbs_k_np, goal_time)  # (B,H,W,3)
                 joint_uint8_k = []
-                per_goal_mse = []
+                per_goal_mse, per_goal_psnr, per_goal_ssim = [], [], []
                 for j in range(B):
                     pj = _to_uint8(proj_k[j])
                     joint_uint8_k.append(pj)
+
                     mse_j = _mse_rgb(pj, gt_imgs[j])
+                    psnr_j = _psnr_rgb(pj, gt_imgs[j])
+                    ssim_j = _ssim_rgb(pj, gt_imgs[j])
+
                     per_goal_mse.append(mse_j)
+                    per_goal_psnr.append(psnr_j)
+                    per_goal_ssim.append(ssim_j)
+
                     if save_per_k:
                         Image.fromarray(pj).save(os.path.join(sample_dir, f'proj_joint_k{k_eff}_{j:03d}.png'))
 
-                mse_mean = float(np.mean(per_goal_mse)) if per_goal_mse else float('nan')
-                mse_report[str(k_eff)] = {"per_goal": per_goal_mse, "mean": mse_mean}
+                metrics_report[str(k_eff)] = {
+                    "mse":  {"per_goal": per_goal_mse,  "mean": float(np.mean(per_goal_mse)) if per_goal_mse else float('nan')},
+                    "psnr": {"per_goal": per_goal_psnr, "mean": float(np.mean([x for x in per_goal_psnr if np.isfinite(x)])) if per_goal_psnr else float('nan')},
+                    "ssim": {"per_goal": per_goal_ssim, "mean": float(np.mean(per_goal_ssim)) if per_goal_ssim else float('nan')},
+                }
 
-                # 行左侧标签写上 k 与 MSE
+                # 行左侧标签写上 k 与三指标
+                text = f"Joint@k={k_eff}\nMSE={metrics_report[str(k_eff)]['mse']['mean']:.4f}\nPSNR={metrics_report[str(k_eff)]['psnr']['mean']:.2f} dB\nSSIM={metrics_report[str(k_eff)]['ssim']['mean']:.4f}"
                 label_joint = Image.new("RGB", label_size, (255, 255, 255))
-                ImageDraw.Draw(label_joint).text((4, 4), f"Joint@k={k_eff}\nMSE={mse_mean:.4f}", fill=(0, 0, 0), font=font)
+                ImageDraw.Draw(label_joint).text((4, 4), text, fill=(0, 0, 0), font=font)
                 joint_rows_uint8.append([np.array(label_joint)] + joint_uint8_k)
 
             # ========== 逐历史帧单独投影（原逻辑保留） ==========
@@ -400,12 +459,10 @@ class TrainingDataset(BaseDataset):
                 ImageDraw.Draw(pil).text((6, 6), f"Hist t={context_times[t_idx]}", fill=(255, 255, 255), font=font)
                 hist_named.append(np.array(pil))
 
-            # rows: [GT] + [多行 Joint@k] + [每个历史帧的一行]
             rows += joint_rows_uint8
             for t_idx in range(T):
                 rows.append([hist_named[t_idx]] + per_hist_rows[t_idx])
 
-            # 统一到相同尺寸（以 GT 第一张为基准）
             H, W = rows[0][1].shape[:2]
             max_cols = B + 1
             pad = 4
@@ -437,8 +494,8 @@ class TrainingDataset(BaseDataset):
                 grid = np.concatenate((grid, spacer_h, rr), axis=0)
 
             Image.fromarray(grid).save(os.path.join(sample_dir, 'grid_all.png'))
-            with open(os.path.join(sample_dir, 'mse_report.json'), 'w') as f:
-                json.dump(mse_report, f, indent=2)
+            with open(os.path.join(sample_dir, 'metrics_report.json'), 'w') as f:
+                json.dump(metrics_report, f, indent=2)
 
             # ===== 保存深度（历史 + 目标） =====
             if "depth" in curr_traj_data and curr_traj_data["depth"] is not None:
@@ -552,13 +609,13 @@ class EvalDataset(BaseDataset):
 
             # 为 grid 准备：GT 行
             rows = []
-            label_size = (64, 48)
+            label_size = (128, 60)
             font = ImageFont.load_default()
             label_gt = Image.new("RGB", label_size, (255, 255, 255))
             ImageDraw.Draw(label_gt).text((4, 4), "GT", fill=(0, 0, 0), font=font)
             rows.append([np.array(label_gt)] + gt_imgs)
 
-            mse_report = {}
+            metrics_report = {}
             joint_rows_uint8 = []
             save_per_k = False
 
@@ -572,19 +629,31 @@ class EvalDataset(BaseDataset):
 
                 proj_k = self._compute_projected_images(curr_traj_data, cond_times_k, cond_rgbs_k_np, np.array(pred_times))
                 joint_uint8_k = []
-                per_goal_mse = []
+                per_goal_mse, per_goal_psnr, per_goal_ssim = [], [], []
                 for j in range(B):
                     pj = _to_uint8(proj_k[j])
                     joint_uint8_k.append(pj)
+
                     mse_j = _mse_rgb(pj, gt_imgs[j])
+                    psnr_j = _psnr_rgb(pj, gt_imgs[j])
+                    ssim_j = _ssim_rgb(pj, gt_imgs[j])
+
                     per_goal_mse.append(mse_j)
+                    per_goal_psnr.append(psnr_j)
+                    per_goal_ssim.append(ssim_j)
+
                     if save_per_k:
                         Image.fromarray(pj).save(os.path.join(sample_dir, f'proj_joint_k{k_eff}_{j:03d}.png'))
-                mse_mean = float(np.mean(per_goal_mse)) if per_goal_mse else float('nan')
-                mse_report[str(k_eff)] = {"per_goal": per_goal_mse, "mean": mse_mean}
 
+                metrics_report[str(k_eff)] = {
+                    "mse":  {"per_goal": per_goal_mse,  "mean": float(np.mean(per_goal_mse)) if per_goal_mse else float('nan')},
+                    "psnr": {"per_goal": per_goal_psnr, "mean": float(np.mean([x for x in per_goal_psnr if np.isfinite(x)])) if per_goal_psnr else float('nan')},
+                    "ssim": {"per_goal": per_goal_ssim, "mean": float(np.mean(per_goal_ssim)) if per_goal_ssim else float('nan')},
+                }
+
+                text = f"Joint@k={k_eff}\nMSE={metrics_report[str(k_eff)]['mse']['mean']:.4f}\nPSNR={metrics_report[str(k_eff)]['psnr']['mean']:.2f} dB\nSSIM={metrics_report[str(k_eff)]['ssim']['mean']:.4f}"
                 label_joint = Image.new("RGB", label_size, (255, 255, 255))
-                ImageDraw.Draw(label_joint).text((4, 4), f"Joint@k={k_eff}\nMSE={mse_mean:.4f}", fill=(0, 0, 0), font=font)
+                ImageDraw.Draw(label_joint).text((4, 4), text, fill=(0, 0, 0), font=font)
                 joint_rows_uint8.append([np.array(label_joint)] + joint_uint8_k)
 
             # ========== 逐历史帧单独投影（原逻辑保留） ==========
@@ -648,8 +717,8 @@ class EvalDataset(BaseDataset):
                 grid = np.concatenate((grid, spacer_h, rr), axis=0)
 
             Image.fromarray(grid).save(os.path.join(sample_dir, 'grid_all.png'))
-            with open(os.path.join(sample_dir, 'mse_report.json'), 'w') as f:
-                json.dump(mse_report, f, indent=2)
+            with open(os.path.join(sample_dir, 'metrics_report.json'), 'w') as f:
+                json.dump(metrics_report, f, indent=2)
 
             # ===== 保存深度（历史 + 未来） =====
             if "depth" in curr_traj_data and curr_traj_data["depth"] is not None:
