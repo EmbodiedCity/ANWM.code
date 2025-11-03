@@ -3,6 +3,8 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
+# PE-Field: Positional Encoding Field for 3D-aware positional encoding
+
 from distributed import init_distributed
 import torch
 torch.backends.cuda.matmul.allow_tf32 = True
@@ -18,7 +20,7 @@ from diffusers.models import AutoencoderKL
 
 import misc
 import distributed as dist
-from models_zwc_v9 import CDiT_models
+from models_tpz_v9 import CDiT_models
 from datasets_v3 import EvalDataset
 from PIL import Image
 
@@ -64,6 +66,10 @@ def get_dataset_eval(config, dataset_name, eval_type, predefined_index=True):
 
 @torch.no_grad()
 def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, latent_size, device, num_cond, num_goals=1, rel_t=None, progress=False, x_supervised=None, camera_mats=None):
+    """
+    Forward wrapper for CDiT v9 with PE-Field.
+    Note: pix_coords_downs is set to None. If you have depth information, compute it from depth and camera parameters.
+    """
     model, diffusion, vae = all_models
     x = curr_obs.to(device)
     y = curr_delta.to(device)
@@ -96,13 +102,19 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         z = torch.randn(B*num_goals, 4, latent_size, latent_size, device=device)
         y = y.flatten(0, 1)
 
-        camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
-        camera_mats_x_cond = camera_mats[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, 4, 4).flatten(0, 1)    # [B*num_goals, num_cond, 4, 4]
-        camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)        # [B*num_goals, 5, 4, 4]
+        # PE-Field: pix_coords_downs is None for now
+        # TODO: If you have depth information, compute pix_coords_downs from:
+        #   - depth maps (from MoGe or other depth estimation)
+        #   - camera intrinsics (K)
+        #   - camera extrinsics (viewmats/c2w)
+        # See PE-Field/infer_viewchanger_single_v2.py for reference implementation
+        # Format: List[torch.Tensor], each tensor shape [N_patches, 3] for (z, u, v)
+        pix_coords_downs = None
                 
         # print(f"x_cond shape: {x_cond.size()}, y cond shape: {y_cond.size()}, y shape: {y.size()}, rel_t shape: {rel_t.size()}")
 
-        model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1), viewmats=camera_mats_x_cond)
+        # Note: viewmats and Ks are kept for compatibility but not used in PE-Field version
+        model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1), pix_coords_downs=pix_coords_downs)
         samples = diffusion.p_sample_loop(
                 model.forward, z.shape, z, clip_denoised=False, model_kwargs=model_kwargs, progress=progress, device=device
         )
@@ -111,21 +123,25 @@ def model_forward_wrapper(all_models, curr_obs, curr_delta, num_timesteps, laten
         return torch.clip(samples, -1., 1.)
 
 def generate_rollout(args, output_dir, rollout_fps, idxs, all_models, obs_image, gt_image, delta, num_cond, device, x_supervised, camera_mats_ctx, camera_mats_pred):
-    print(f"idxs: {idxs}")
+    # print(f"idxs: {idxs}")
     rollout_stride = args.input_fps // rollout_fps
     gt_image = gt_image[:, rollout_stride-1::rollout_stride]
     delta = delta.unflatten(1, (-1, rollout_stride)).sum(2)
     camera_mats_goals = camera_mats_pred[:, rollout_stride-1::rollout_stride] 
     curr_obs = obs_image.clone().to(device)
     curr_mats_ctx = camera_mats_ctx.clone().to(device)
-    print(f"yyy x_super shape: {x_supervised.size()}")
+    # print(f"yyy x_super shape: {x_supervised.size()}")
+    sup_image = x_supervised[:, rollout_stride-1::rollout_stride]
+    assert sup_image.shape == gt_image.shape, \
+        f"x_sup_strided shape={sup_image.shape} != gt shape={gt_image.shape}"
+
     for i in range(gt_image.shape[1]):
         curr_delta = delta[:, i:i+1].to(device)
         curr_mats = torch.cat([curr_mats_ctx, camera_mats_goals[:, i:i+1].to(device)], dim=1)  # [B, num_cond+1, 4, 4]
         if args.gt:
             x_pred_pixels = gt_image[:, i].clone().to(device)
         else:
-            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, rollout_stride, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=x_supervised, camera_mats=curr_mats)
+            x_pred_pixels = model_forward_wrapper(all_models, curr_obs, curr_delta, rollout_stride, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=sup_image[:, i:i+1], camera_mats=curr_mats)
 
         curr_obs = torch.cat((curr_obs, x_pred_pixels.unsqueeze(1)), dim=1) # append current prediction
         curr_obs = curr_obs[:, 1:] # remove first observation
@@ -141,7 +157,7 @@ def generate_time_original(args, output_dir, idxs, all_models, obs_image, gt_out
             x_pred_pixels = model_forward_wrapper(all_models, obs_image, curr_delta, timestep, args.latent_size, num_cond=num_cond, num_goals=1, device=device, x_supervised=x_supervised)
         visualize_preds(output_dir, idxs, sec, x_pred_pixels)
 
-def generate_time(args, output_dir, idxs, all_models, obs_image, gt_output, delta, secs, num_cond, device, x_supervised):
+def generate_time(args, output_dir, idxs, all_models, obs_image, gt_output, delta, secs, num_cond, device, x_supervised, camera_mats_ctx=None, camera_mats_pred=None):
     eval_timesteps = [sec * args.input_fps for sec in secs]
     num_goals = len(secs)
     B = obs_image.size(0)
@@ -168,10 +184,16 @@ def generate_time(args, output_dir, idxs, all_models, obs_image, gt_output, delt
         x_pred_pixels = torch.stack(x_pred_pixels, dim=1)  # (B, num_goals, C, H, W)
     else:
         # 3. 执行一次 forward，预测多个目标时间点
+        # Note: camera_mats not used in PE-Field version, but kept for compatibility
+        camera_mats_dummy = None
+        if camera_mats_ctx is not None and camera_mats_pred is not None:
+            # Create dummy camera mats for compatibility (not used)
+            camera_mats_dummy = torch.cat([camera_mats_ctx, camera_mats_pred[:, eval_timesteps]], dim=1).to(device)
+        
         x_pred_pixels = model_forward_wrapper(
             all_models, obs_image, delta_goals, max(eval_timesteps),
             args.latent_size, num_cond=num_cond, num_goals=num_goals,
-            device=device, x_supervised=x_supervised,
+            device=device, x_supervised=x_supervised, camera_mats=camera_mats_dummy,
         )  # 返回 (B * num_goals, C, H, W)
         x_pred_pixels = x_pred_pixels.view(B, num_goals, *x_pred_pixels.shape[1:])  # (B, num_goals, C, H, W)
 
@@ -224,7 +246,7 @@ def main(args):
     print("loading")
     model_lst = (None, None, None)
     if not args.gt:
-        model = CDiT_models[config['model']](context_size=num_cond+1, input_size=latent_size, in_channels=4)
+        model = CDiT_models[config['model']](context_size=num_cond, input_size=latent_size, in_channels=4)
         print(f'loading model from {config["results_dir"]}/{config["run_name"]}/checkpoints/{args.ckp}.pth.tar')
         ckp = torch.load(f'{config["results_dir"]}/{config["run_name"]}/checkpoints/{args.ckp}.pth.tar', map_location='cpu', weights_only=False)
         print(model.load_state_dict(ckp["ema"], strict=True))
@@ -241,7 +263,7 @@ def main(args):
     datasets = {}
 
     for dataset_name in dataset_names:
-        dataset_val = get_dataset_eval(config, dataset_name, args.eval_type, predefined_index=False)
+        dataset_val = get_dataset_eval(config, dataset_name, args.eval_type, predefined_index=True)
 
         if len(dataset_val) % num_tasks != 0:
             print('Warning: Enabling distributed evaluation with an eval dataset not divisible by process number. '
@@ -273,7 +295,7 @@ def main(args):
                 obs_image = obs_image[:, -num_cond:].to(device)
                 gt_image = gt_image.to(device)
                 num_cond = config["context_size"]
-                print(f"xxxx aug_img shape: {aug_image.size()}")
+                # print(f"xxxx aug_img shape: {aug_image.size()}")
                 if args.eval_type == 'rollout':
                     for rollout_fps in args.rollout_fps_values:
                         curr_rollout_output_dir = os.path.join(dataset_save_output_dir, f'rollout_{rollout_fps}fps')
@@ -306,3 +328,4 @@ if __name__ == "__main__":
     args.rollout_fps_values = [int(fps) for fps in args.rollout_fps_values.split(',')]
     
     main(args)
+

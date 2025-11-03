@@ -6,9 +6,10 @@
 # --------------------------------------------------------
 # References:
 # NoMaD, GNM, ViNT: https://github.com/robodhruv/visualnav-transformer
+# PE-Field: Positional Encoding Field for 3D-aware positional encoding
 # --------------------------------------------------------
 
-# 这个版本为加入相机编码版本
+# Training script for CDiT v9 with PE-Field positional encoding
 
 import torch
 import torch.nn as nn
@@ -38,7 +39,7 @@ from diffusers.models import AutoencoderKL
 from isolated_nwm_infer_v9 import model_forward_wrapper
 
 from distributed import init_distributed
-from models_zwc_v9 import CDiT_models
+from models_tpz_v9 import CDiT_models
 from diffusion import create_diffusion
 from datasets_v3 import TrainingDataset
 from misc import transform
@@ -98,7 +99,7 @@ def create_logger(logging_dir):
 
 def main(args):
     """
-    Trains a new CDiT model.
+    Trains a new CDiT model with PE-Field positional encoding.
     """
     assert torch.cuda.is_available(), "Training currently requires at least one GPU."
 
@@ -133,7 +134,7 @@ def main(args):
 
     assert config['image_size'] % 8 == 0, "Image size must be divisible by 8 (for the VAE encoder)."
     num_cond = config['context_size']
-    model = CDiT_models[config['model']](context_size=num_cond+1, input_size=latent_size, in_channels=4).to(device)
+    model = CDiT_models[config['model']](context_size=num_cond, input_size=latent_size, in_channels=4).to(device)
     # print(model)
     ema = deepcopy(model).to(device)  # Create an EMA of the model for use after training
     requires_grad(ema, False)
@@ -195,7 +196,6 @@ def main(args):
 
     for dataset_name in config["datasets"]:
         data_config = config["datasets"][dataset_name]
-
         for data_split_type in ["train", "test"]:
             if data_split_type in data_config:
                     goals_per_obs = int(data_config["goals_per_obs"])
@@ -229,6 +229,9 @@ def main(args):
                         predefined_index=None,
                         traj_stride=1,
                     )
+                    
+                    print("loading dataset")
+
                     if data_split_type == "train":
                         train_dataset.append(dataset)
                     else:
@@ -269,6 +272,7 @@ def main(args):
     start_time = time()
 
     logger.info(f"Training for {args.epochs} epochs...")
+    logger.info("Note: PE-Field pix_coords_downs is set to None. If you have depth information, modify the code to compute pix_coords_downs from depth and camera parameters.")
     for epoch in range(start_epoch, args.epochs):
         sampler.set_epoch(epoch)
         logger.info(f"Beginning epoch {epoch}...")
@@ -286,7 +290,9 @@ def main(args):
                     B, T = x.shape[:2]
                     x = x.flatten(0,1)
                     x = tokenizer.encode(x).latent_dist.sample().mul_(0.18215)
-                    x = x.unflatten(0, (B, T))
+                    x = x.unflatten(0, (B, T))                          # [B, num_goals+num_conds, 4, 28, 28]
+                    # print("x shape, ", x.shape)
+                    
                     # aug same as x
                     B_aug, T_aug = aug.shape[:2]
                     aug = aug.flatten(0,1)
@@ -294,74 +300,41 @@ def main(args):
                     aug = aug.unflatten(0, (B_aug, T_aug))              # [B, num_goals, 4, 28, 28]
                     # print(f'aug latent shape: {aug.size()}')
 
+                num_goals = T - num_cond
+                x_start = x[:, num_cond:].flatten(0, 1)             # [B*num_goals, 4, 28, 28]
+                x_cond = x[:, :num_cond].unsqueeze(1).expand(B, num_goals, num_cond, x.shape[2], x.shape[3], x.shape[4]).flatten(0, 1)      # [B*num_goals, num_cond, 4, 28, 28]
+                y_cond = aug.unsqueeze(2).flatten(0, 1)             # [B*num_goals, 1, 4, 28, 28]
+
                 y = y.flatten(0, 1)
                 rel_t = rel_t.flatten(0, 1)
-                print(y.shape, rel_t.shape)
                 
-                camera_mats_x_start = camera_mats[:, num_cond:].unsqueeze(2).flatten(0, 1)   # [B*num_goals, 1, 4, 4]
-                camera_mats_x_cond = torch.cat((camera_mats_x_cond, camera_mats_x_start), dim=1)
+                # PE-Field: pix_coords_downs is None for now
+                # TODO: If you have depth information, compute pix_coords_downs from:
+                #   - depth maps (from MoGe or other depth estimation)
+                #   - camera intrinsics (K)
+                #   - camera extrinsics (viewmats/c2w)
+                # See PE-Field/infer_viewchanger_single_v2.py for reference implementation
+                # Format: List[torch.Tensor], each tensor shape [N_patches, 3] for (z, u, v)
+                pix_coords_downs = None
                 
-                t = torch.randint(0, diffusion.num_timesteps, (x.shape[0],), device=device)
-                model_kwargs = dict(y=y, rel_t=rel_t, viewmats=camera_mats_x_cond)
-                loss_dict = diffusion.training_losses(model, x, t, model_kwargs)
+                t = torch.randint(0, diffusion.num_timesteps, (x_start.shape[0],), device=device)
+                # Note: viewmats and Ks are kept for compatibility but not used in PE-Field version
+                model_kwargs = dict(y=y, x_cond=x_cond, rel_t=rel_t, x_sup=y_cond.squeeze(1), pix_coords_downs=pix_coords_downs)
+                loss_dict = diffusion.training_losses(model, x_start, t, model_kwargs)
                 loss = loss_dict["loss"].mean()
 
-            opt.zero_grad(set_to_none=True)
-
-            if bfloat_enable:                      # AMP / bfloat16 分支
-                scaler.scale(loss).backward()
-                # **关键**：unscale 把缩放后的梯度写回 param.grad
-                scaler.unscale_(opt)
-                # —— 如需梯度裁剪，在 unscale 之后、step 之前做 ——
-                if config.get('grad_clip_val', 0) > 0:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(),
-                        max_norm=config['grad_clip_val']
-                    )
-            else:                                  # 纯 FP32 分支
+            opt.zero_grad()
+            if not bfloat_enable:
                 loss.backward()
+                opt.step()
+            else:
+                scaler.scale(loss).backward()
                 if config.get('grad_clip_val', 0) > 0:
-                    torch.nn.utils.clip_grad_norm_(
-                        model.parameters(),
-                        max_norm=config['grad_clip_val']
-                    )
-
-            # ------------------- 4) 梯度探针 ----------------------
-            keywords = [
-                # ".attn.qkv.weight", ".attn.proj.weight",
-                # ".mlp.fc1.weight", ".mlp.fc2.weight",
-                "adaLN_modulation", "gate", "blocks.0", "x_embedder.proj.weight"
-            ]
-            # 打印几层代表性的 grad_norm，看是否非零
-            with torch.no_grad():
-                for n, p in model.module.named_parameters():   # DDP → .module
-                    if p.grad is None:
-                        continue
-                    # 按需修改关键词；建议先看 gate / 第 0 个 block
-                    if any(k in n for k in
-                        keywords):
-                        print(f"{n:<60} grad_norm={p.grad.norm():.3e}")
-                # 只跑前 N 步就停止调试
-                # if train_steps >= 20:  break
-
-            # ------------------- 5) 参数更新 ----------------------
-            if bfloat_enable:
+                    scaler.unscale_(opt)
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
                 scaler.step(opt)
                 scaler.update()
-            else:
-                opt.step()
-            # if not bfloat_enable:
-            #     opt.zero_grad()
-            #     loss.backward()
-            #     opt.step()
-            # else:
-            #     scaler.scale(loss).backward()
-            #     if config.get('grad_clip_val', 0) > 0:
-            #         scaler.unscale_(opt)
-            #         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config['grad_clip_val'])
-            #     scaler.step(opt)
-            #     scaler.update()
-            
+
             update_ema(ema, model.module)
 
             # Log loss values:
@@ -498,3 +471,4 @@ def get_args_parser():
 if __name__ == "__main__":
     args = get_args_parser().parse_args()
     main(args)
+
