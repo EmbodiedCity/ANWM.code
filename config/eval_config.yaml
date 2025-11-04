@@ -2,7 +2,7 @@ trajectory_eval_distance:
   min_dist_cat: 8
   max_dist_cat: 8
 trajectory_eval_len_traj_pred: 8
-trajectory_eval_context_size: 16
+trajectory_eval_context_size: 4
 traj_stride: 8
 
 # distance bounds for distance and action and distance predictions 

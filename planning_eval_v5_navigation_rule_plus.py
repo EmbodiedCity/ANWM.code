@@ -263,7 +263,7 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
 def get_dataset_eval(config, dataset_name, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]
     if predefined_index:
-        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval_16.pkl"
+        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval.pkl"
     else:
         predefined_index = None
 
@@ -609,6 +609,8 @@ class WM_Planning_Evaluator:
         agree_flags_all = []
         selected_apes_all = []
         oracle_min_apes_all = []
+        # [SR NEW] 收集 noisy-GT 选择率（每样本一个 0/1）
+        sr_flags_all = []
         # [END NEW]
 
         for traj in range(n_evals):
@@ -670,6 +672,14 @@ class WM_Planning_Evaluator:
             sorted_idx = torch.argsort(loss)
             topk_idx = sorted_idx[:self.topk]
             best_idx = sorted_idx[0]
+
+            # ---------- [SR NEW] 以第 0 个候选（噪声GT轨迹）的 LPIPS 与全局最优 LPIPS 比较 ----------
+            noisy_idx  = 0  # trajectory_generation_random(...,1) 放在前面，所以第0号是“GT+noise”
+            loss_noisy = float(loss[noisy_idx].item())
+            best_loss  = float(loss[best_idx].item())
+            sr_flag    = 1.0 if loss_noisy <= best_loss else 0.0
+            sr_flags_all.append(sr_flag)
+            # ------------------------------------------------------------------------------------
 
             # ======== [SAMPLE PANEL CALL] one figure per sample ========
             try:
@@ -833,8 +843,9 @@ class WM_Planning_Evaluator:
         agree_tensor = torch.tensor(agree_flags_all, dtype=torch.float32)
         selected_apes_tensor = torch.tensor(selected_apes_all, dtype=torch.float32)
         oracle_min_apes_tensor = torch.tensor(oracle_min_apes_all, dtype=torch.float32)
+        sr_tensor = torch.tensor(sr_flags_all, dtype=torch.float32)  # [SR NEW] 每样本 0/1
 
-        return pred_actions, pred_yaw, agree_tensor, selected_apes_tensor, oracle_min_apes_tensor
+        return pred_actions, pred_yaw, agree_tensor, selected_apes_tensor, oracle_min_apes_tensor, sr_tensor
 
     def visualize_trajectories(self, dataset_name, gt_actions, image_plot_dir, i, traj, traj_id, deltas, cur_obs_image, cur_goal_image, preds, loss, topk_idx):
         img_for_plotting = torch.cat([cur_goal_image[0:1].to(self.device), preds])
@@ -946,7 +957,9 @@ class WM_Planning_Evaluator:
             for (idxs, obs_image, goal_image, gt_actions, goal_pos, aug_image) in metric_logger.log_every(curr_data_loader, 1, header):
                 obs_image = obs_image[:, -self.num_cond:]
                 with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
-                    pred_actions, pred_yaw, agree_flags, selected_apes, oracle_min_apes = self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image)
+                    # [SR NEW] 多接收一个 sr_tensor
+                    pred_actions, pred_yaw, agree_flags, selected_apes, oracle_min_apes, sr_tensor = \
+                        self.generate_actions(eval_save_output_dir, dataset_name, idxs, obs_image, goal_image, gt_actions, self.config["trajectory_eval_len_traj_pred"], aug_image=aug_image)
                 for i in range(len(obs_image)):
                     pred_traj_i = self.actions_to_traj(pred_actions[i, :, :3])
                     gt_traj_i = self.actions_to_traj(gt_actions[i, :, :3])
@@ -969,6 +982,7 @@ class WM_Planning_Evaluator:
                     metric_logger.meters['{}_agree_minloss_minape'.format(dataset_name)].update(float(agree_flags[i].item()), n=1)
                     metric_logger.meters['{}_selected_ape'.format(dataset_name)].update(float(selected_apes[i].item()), n=1)
                     metric_logger.meters['{}_oracle_min_ape'.format(dataset_name)].update(float(oracle_min_apes[i].item()), n=1)
+                    metric_logger.meters['{}_sr'.format(dataset_name)].update(float(sr_tensor[i].item()), n=1)  # [SR NEW]
 
                 # ======== [B BEGIN] 每个 batch 结束后增量导出一张 live 面板 ========
                 try:

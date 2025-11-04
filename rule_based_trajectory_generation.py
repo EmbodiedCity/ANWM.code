@@ -107,10 +107,7 @@ def trajectory_generation_rule_based(GT_trajectory, candidate_number=10):
             steps=steps,
             rule_sequence=rule_seq
         )
-        # Ensure the trajectory is valid (not too similar to GT)
-        # Use Soft-DTW to estimate similarity between two trajectories
-        if trajectory_similarity(trajectory, GT_trajectory) < 0.85:  # Adjust threshold as needed
-            candidate_trajectoires.append(trajectory)
+        candidate_trajectoires.append(trajectory)
         i += 1
 
     return candidate_trajectoires
