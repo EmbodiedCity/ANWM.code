@@ -10,3 +10,4 @@ data_splits/**/dataset*.pkl
 data
 .git
 compare_videos/
+visualizations-seq2seq/

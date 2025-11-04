@@ -24,7 +24,8 @@ from PIL import ImageDraw, ImageFont
 # ======== [PANEL END]   extra imports for paper panel ========
 
 from diffusers.models import AutoencoderKL
-from rule_based_trajectory_generation import trajectory_generation_rule_based as trajectory_generation
+from rule_based_trajectory_generation import trajectory_generation_rule_based
+from noise_trajectory_generation import trajectory_generation_random
 
 ### evo evaluation library ###
 from evo.core.trajectory import PoseTrajectory3D
@@ -622,7 +623,7 @@ class WM_Planning_Evaluator:
             GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz, gt_yaw)]
 
             # 生成候选 trajectory poses
-            candidate_trajectories = trajectory_generation(GT_traj, candidate_number=candidate_number)
+            candidate_trajectories = trajectory_generation_random(GT_traj, candidate_number=1) + trajectory_generation_rule_based(GT_traj, candidate_number=candidate_number-1)
             candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4] 其中 T = len_traj_pred + 1
 
             # 转换为 delta（轨迹点之间的变化）
