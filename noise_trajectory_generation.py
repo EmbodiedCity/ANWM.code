@@ -110,7 +110,7 @@ def trajectory_generation_random(GT_trajectory, candidate_number=10):
         )
         # Ensure the trajectory is valid (not too similar to GT)
         # Use Soft-DTW to estimate similarity between two trajectories
-        if trajectory_similarity(trajectory, GT_trajectory) < 0.085:  # Adjust threshold as needed
+        if trajectory_similarity(trajectory, GT_trajectory) < 0.85 and trajectory_similarity(trajectory, GT_trajectory) > 0.5:  # Adjust threshold as needed
             candidate_trajectoires.append(trajectory)
 
     return candidate_trajectoires

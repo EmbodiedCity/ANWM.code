@@ -145,7 +145,7 @@ def _stack_images_grid(img_paths, cols=4, unit_h=360, pad=12, bg=(255,255,255), 
                 cap = cap[:57] + "..."
             # ======== [A FIX BEGIN] Pillow>=10 兼容文本测量 ========
             try:
-                bbox = draw.textbbox((0, 0), cap, font=font)  # (l, t, r, b)
+                bbox = draw.textbbox((0, 0), cap, font=font)  # (l,t,r,b)
                 tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
             except Exception:
                 try:
@@ -526,11 +526,12 @@ class WM_Planning_Evaluator:
                                  cand_deltas_world_list,            # [ (T,4) x K ] in meters/rad
                                  cand_losses_list,                  # [float] length=K
                                  out_path: str,
-                                 goal_xy=None,                      # (x,y) in meters for blue point
+                                 goal_xy=None,                      # (x,y) or (x,y,z)
                                  labels=None):                      # ["P1","P2","P3"]
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
         import numpy as np
+        from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
         def _to_np01(tchw):
             x = tchw.detach().to(torch.float32).cpu()
@@ -547,7 +548,7 @@ class WM_Planning_Evaluator:
         goal_np = _to_np01(goal_img_tchw)
         preds_np = [_to_np01(p) for p in cand_pred_tchw_list]
 
-        # 布局：Obs | Goal | Traj | Pred1 | Pred2 | Pred3
+        # 布局：Obs | Goal | Traj(3D) | Pred1 | Pred2 | Pred3
         ncols = 3 + K
         fig_w = 4 * ncols
         fig, axes = plt.subplots(1, ncols, figsize=(fig_w, 4), constrained_layout=True)
@@ -557,21 +558,35 @@ class WM_Planning_Evaluator:
         # 1) Goal
         axes[1].imshow(goal_np); axes[1].set_title("Goal"); axes[1].axis("off")
 
-        # 2) Trajectory plot
-        ax_traj = axes[2]
+        # 2) Trajectory plot —— 3D 版本
+        ax_traj = fig.add_subplot(1, ncols, 3, projection="3d")
         color_cycle = ["#F4A259", "#E4572E", "#2FBF71", "#4C78A8", "#B279A2"]
+
         for i, dw in enumerate(cand_deltas_world_list):
-            dw = np.asarray(dw)  # (T,4)
-            xy = dw[:, :2].cumsum(axis=0)  # 起点(0,0)累加
-            ax_traj.plot(xy[:, 0], xy[:, 1], color=color_cycle[i % len(color_cycle)], linewidth=3)
-            x0, y0 = (xy[0, 0] if xy.shape[0] > 0 else 0.0), (xy[0, 1] if xy.shape[0] > 0 else 0.0)
-            ax_traj.text(x0, y0 + 0.05, labels[i], fontsize=10,
-                         color=color_cycle[i % len(color_cycle)], weight="bold")
+            dw = np.asarray(dw)  # (T, 4)
+            xyz = dw[:, :3].cumsum(axis=0)  # 起点(0,0,0) 累加
+            xs, ys, zs = xyz[:, 0], xyz[:, 1], xyz[:, 2]
+            ax_traj.plot3D(xs, ys, zs, color=color_cycle[i % len(color_cycle)], linewidth=3)
+            if xyz.shape[0] > 0:
+                x0, y0, z0 = xyz[0, 0], xyz[0, 1], xyz[0, 2]
+            else:
+                x0 = y0 = z0 = 0.0
+            ax_traj.text(x0, y0, z0, labels[i],
+                         fontsize=9, color=color_cycle[i % len(color_cycle)], weight="bold")
+
+        # goal_xy 兼容 2D/3D：2D 时 z=0
         if goal_xy is not None:
-            ax_traj.scatter([goal_xy[0]], [goal_xy[1]], c="#2066E0", s=60, label="Goal")
-            ax_traj.text(goal_xy[0]+0.03, goal_xy[1], "Goal", color="#2066E0", fontsize=10)
-        ax_traj.set_title("Trajectories"); ax_traj.set_xlabel("X (m)"); ax_traj.set_ylabel("Y (m)")
-        ax_traj.grid(True, alpha=0.3)
+            gx, gy = float(goal_xy[0]), float(goal_xy[1])
+            gz = float(goal_xy[2]) if (isinstance(goal_xy, (list, tuple, np.ndarray)) and len(goal_xy) >= 3) else 0.0
+            ax_traj.scatter(gx, gy, gz, c="#2066E0", s=40, depthshade=True)
+            ax_traj.text(gx, gy, gz, "Goal", color="#2066E0", fontsize=9)
+
+        ax_traj.set_title("Trajectories (3D)")
+        ax_traj.set_xlabel("X (m)")
+        ax_traj.set_ylabel("Y (m)")
+        ax_traj.set_zlabel("Z (m)")
+        ax_traj.view_init(elev=22, azim=-60)
+        ax_traj.grid(True, alpha=0.2)
 
         # 3..) Predictions with Loss
         best_j = int(np.argmin(np.asarray(cand_losses_list)))
@@ -616,24 +631,25 @@ class WM_Planning_Evaluator:
         for traj in range(n_evals):
             traj_id = int(idxs.flatten()[traj].item())
 
-            # === 构造 GT 轨迹（含起点），用于你的随机轨迹生成器 ===
+            # === 构造 GT 轨迹（含起点）
             gt_deltas_xyz = gt_actions[traj, :, :3].to('cpu').numpy()  # [T, 3]
             gt_xyz = np.concatenate([np.zeros((1, 3), dtype=np.float32),
                                      np.cumsum(gt_deltas_xyz, axis=0).astype(np.float32)], axis=0)  # [T+1, 3]
             T = gt_xyz.shape[0]
-            gt_yaw = np.zeros((T,), dtype=np.float32)  # 相似度只用 xyz，yaw 给 0 即可
+            gt_yaw = np.zeros((T,), dtype=np.float32)
             GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz, gt_yaw)]
 
             # 生成候选 trajectory poses
-            candidate_trajectories = trajectory_generation_random(GT_traj, candidate_number=1) + trajectory_generation_rule_based(GT_traj, candidate_number=candidate_number-1)
-            candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4] 其中 T = len_traj_pred + 1
+            candidate_trajectories = trajectory_generation_random(GT_traj, candidate_number=1) + \
+                                     trajectory_generation_rule_based(GT_traj, candidate_number=candidate_number-1)
+            candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4]
 
             # 转换为 delta（轨迹点之间的变化）
             candidate_deltas = candidate_trajectories[:, 1:, :] - candidate_trajectories[:, :-1, :]  # [N, steps, 4]
 
             ##### [CHANGE BLOCK - 与 CEM 保持一致：米→waypoint→[-1,1]；yaw=弧度不归一化]
-            deltas_world = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)  # (N, T, 4) 世界系：米/弧度
-            spacing = float(data_config[dataset_name]['metric_waypoint_spacing'])                    # m per waypoint
+            deltas_world = torch.tensor(candidate_deltas, dtype=torch.float32, device=self.device)  # (N, T, 4)
+            spacing = float(data_config[dataset_name]['metric_waypoint_spacing'])
             d_xyz_waypt = deltas_world[..., :3] / spacing
             mins = ACTION_STATS_TORCH['min'].to(self.device)[:3]
             maxs = ACTION_STATS_TORCH['max'].to(self.device)[:3]
@@ -673,21 +689,21 @@ class WM_Planning_Evaluator:
             topk_idx = sorted_idx[:self.topk]
             best_idx = sorted_idx[0]
 
-            # ---------- [SR NEW] 以第 0 个候选（噪声GT轨迹）的 LPIPS 与全局最优 LPIPS 比较 ----------
-            noisy_idx  = 0  # trajectory_generation_random(...,1) 放在前面，所以第0号是“GT+noise”
+            # ---------- [SR NEW] 噪声GT 是否被选中 ----------
+            noisy_idx  = 0  # 第 0 个是 random(GT+noise)
             loss_noisy = float(loss[noisy_idx].item())
             best_loss  = float(loss[best_idx].item())
             sr_flag    = 1.0 if loss_noisy <= best_loss else 0.0
             sr_flags_all.append(sr_flag)
-            # ------------------------------------------------------------------------------------
+            # ---------------------------------------------
 
-            # ======== [SAMPLE PANEL CALL] one figure per sample ========
+            # ======== [SAMPLE PANEL CALL] 每样本一张图，轨迹窗为 3D ========
             try:
                 panel_ids = topk_idx[:3].tolist()  # Top-3
                 cand_pred_list = [preds[i].detach().cpu() for i in panel_ids]
                 cand_dw_list   = [deltas_world[i].detach().cpu().numpy() for i in panel_ids]
                 cand_loss_list = [float(loss[i].item()) for i in panel_ids]
-                goal_xy = gt_xyz[-1, :2]
+                goal_xyz = gt_xyz[-1, :3]  # <<< 改为 3D 终点
                 self.save_single_sample_panel(
                     obs_img_tchw = obs_image[traj, -1],
                     goal_img_tchw = goal_image[traj].squeeze(0),
@@ -695,7 +711,7 @@ class WM_Planning_Evaluator:
                     cand_deltas_world_list = cand_dw_list,
                     cand_losses_list = cand_loss_list,
                     out_path = os.path.join(image_plot_dir, f"sample_panel_idx{traj_id}.png"),
-                    goal_xy = goal_xy,
+                    goal_xy = goal_xyz,  # <<< 传入 3D
                     labels = [f"P{i+1}" for i in range(len(panel_ids))]
                 )
             except Exception as e:
