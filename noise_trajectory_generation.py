@@ -17,6 +17,119 @@ action_space = {
     "right": (0, 0, 0, -np.pi/12)  # Turn right by 15 degrees
 }
 
+def random_trajectory_v2(gt_traj, pos_std = 1.0, yaw_std = 1.0, clip_tol=1.0, eps=1e-6):
+    """
+    在每步位移的单位方向上添加高斯噪声（沿位移方向），返回加噪轨迹
+    
+    参数:
+        gt_traj: list of (x, y, z, yaw)
+            原始无人机轨迹
+        pos_std: float
+            位置增量噪声标准差（米）
+        yaw_std: float
+            偏航角增量噪声标准差（弧度）
+    
+    返回:
+        noise_traj: list of (x, y, z, yaw)
+    """
+    gt_traj = np.array(gt_traj, dtype=float)
+    noise_traj = [gt_traj[0].copy()]  # 起点不加噪
+    # step_len = 5.0  # 固定水平位移长度
+
+    for i in range(1, len(gt_traj)):
+        # # 新版本1 对yaw加噪声，位置按固定步长移动
+        # delta = gt_traj[i] - gt_traj[i - 1]          # 真正的增量 (dx,dy,dz,dyaw)
+        # prev = noise_traj[-1]
+        # gt_yaw = gt_traj[i][3]
+        # # 1️⃣ 在yaw上加高斯噪声
+        # noisy_yaw = gt_yaw + np.random.normal(0.0, yaw_std)
+
+        # pos_delta = delta[:3]
+        # pos_norm = np.linalg.norm(pos_delta)
+        # if pos_norm > eps:
+        #     # 2️⃣ 保证水平位移长度固定为 step_len
+        #     dx = step_len * np.cos(noisy_yaw)
+        #     dy = step_len * np.sin(noisy_yaw)
+
+        #     # 3️⃣ 垂直方向加独立噪声
+        #     dz = (gt_traj[i][2] - gt_traj[i-1][2]) + np.random.normal(0.0, pos_std)
+        #     # dz = gt_traj[i][2] - gt_traj[i-1][2]  # 保持垂直位移不变
+        # else:
+        #     dx, dy = 0.0, 0.0
+        #     dz = 0.0
+        # # 4️⃣ 更新位置
+        # new_point = np.array([
+        #     prev[0] + dx,
+        #     prev[1] + dy,
+        #     prev[2] + dz,
+        #     noisy_yaw
+        # ])
+        # noise_traj.append(new_point)
+
+        # # 旧版本2 对单位向量加噪声
+        # delta = gt_traj[i] - gt_traj[i - 1]          # 真正的增量 (dx,dy,dz,dyaw)
+        # delta_noisy = delta.copy()
+
+        # # 位置部分 (x,y,z)
+        # pos_delta = delta[:3]
+        # pos_norm = np.linalg.norm(pos_delta)
+        # if pos_norm > eps:
+        #     u = pos_delta / pos_norm      # 单位方向向量 (3,)
+        #     r = np.random.normal(0.0, pos_std)  # 标量噪声（可能为正或负）
+        #     delta_noisy[:3] += u * r
+        # # else: pos_delta 近似为 0，不在位置上加噪
+
+        # # 偏航部分 (yaw) —— 1D 情况，用符号表示方向
+        # yaw_delta = delta[3]
+        # # if abs(yaw_delta) > eps:
+        # #     sign = np.sign(yaw_delta)    # +1 或 -1
+        # r_yaw = np.random.normal(0.0, yaw_std)
+        # delta_noisy[3] += r_yaw
+        # # else: yaw_delta 近似为 0，不在 yaw 上加噪
+
+        # # 从上一步累积得到新的位置
+        # new_point = noise_traj[-1] + delta_noisy
+        # noise_traj.append(new_point)
+
+        # 旧版本：对每个维度单独判断是否加噪声
+        delta = gt_traj[i] - gt_traj[i - 1]
+        delta_noisy = delta.copy()
+
+        # 对每个维度单独判断是否加噪声
+        for j in range(4):
+            # if delta[j] != 0:  # 只对非零位移维度加噪声
+            std = pos_std if j < 3 else yaw_std
+            delta_noisy[j] += np.random.normal(0, std)
+
+        # 计算在累积后的 yaw（以当前累积轨迹的最后yaw为基准 + yaw增量）
+        prev_yaw = noise_traj[-1][3]
+        new_yaw = prev_yaw + delta_noisy[3]
+
+        # 目标的水平增量（基于 new_yaw）
+        target_dx = 5 * np.cos(new_yaw)
+        target_dy = 5 * np.sin(new_yaw)
+
+        # 用 clip 限制 dx, dy 在 [target - tol, target + tol] 范围内
+        delta_noisy[0] = np.clip(delta_noisy[0], target_dx - clip_tol, target_dx + clip_tol)
+        delta_noisy[1] = np.clip(delta_noisy[1], target_dy - clip_tol, target_dy + clip_tol)
+
+        pos_delta = delta[:3]
+        pos_norm = np.linalg.norm(pos_delta)
+        if pos_norm < eps: # 仅转向 没有位移
+            delta_noisy[0] = 0.0
+            delta_noisy[1] = 0.0
+            delta_noisy[2] = 0.0
+        if pos_delta[0] == 0 and pos_delta[1] == 0: # 仅垂直位移
+            delta_noisy[0] = 0.0
+            delta_noisy[1] = 0.0
+        if pos_delta[2] == 0: # 仅水平位移
+            delta_noisy[2] = 0.0
+        # 累积得到下一点
+        new_point = noise_traj[-1] + delta_noisy
+        noise_traj.append(new_point)
+    
+    return noise_traj
+
 def random_trajectory(start, steps=6):
     trajectory = [start]
     current_pos = np.array(start[:4], dtype=float)  # (x, y, z, yaw) - 确保为浮点类型
@@ -85,14 +198,14 @@ def trajectory_similarity(traj1, traj2):
     similarity_score = 1 - (distance / max_distance)
     return similarity_score
 
-def trajectory_generation_random(GT_trajectory, candidate_number=10):
+def trajectory_generation_random(GT_trajectory, candidate_number):
     """
     生成多个轨迹的函数
     
     参数:
     start_pos: tuple - 起始坐标 (x, y, z, yaw)
-    steps: int - 每条轨迹的步数，默认6步
-    candidate_number: int - 候选轨迹数量，默认20条
+    steps: int - 每条轨迹的步数
+    candidate_number: int - 候选轨迹数量
     
     返回:
     list - 包含多个轨迹的列表，每个轨迹是一个包含坐标点的列表
@@ -104,14 +217,17 @@ def trajectory_generation_random(GT_trajectory, candidate_number=10):
     while len(candidate_trajectoires) < candidate_number:
         # Generate a random starting direction
         starting_yaw = np.random.uniform(-np.pi, np.pi)
-        trajectory = random_trajectory(
-            (start_pos[0], start_pos[1], start_pos[2], starting_yaw),
-            steps
-        )
+        # trajectory = random_trajectory(
+        #     (start_pos[0], start_pos[1], start_pos[2], starting_yaw),
+        #     steps
+        # )
+        trajectory = random_trajectory_v2(GT_trajectory)
         # Ensure the trajectory is valid (not too similar to GT)
         # Use Soft-DTW to estimate similarity between two trajectories
-        if trajectory_similarity(trajectory, GT_trajectory) < 0.85 and trajectory_similarity(trajectory, GT_trajectory) > 0.5:  # Adjust threshold as needed
+        if 0.5 < trajectory_similarity(trajectory, GT_trajectory) < 0.8:  # Adjust threshold as needed
+            print(f"similarity: {trajectory_similarity(trajectory, GT_trajectory)}")
             candidate_trajectoires.append(trajectory)
+        # print(f"similarity: {trajectory_similarity(trajectory, GT_trajectory)}")
 
     return candidate_trajectoires
 
@@ -181,23 +297,55 @@ def plot_3d_trajectories(GT_trajectory, candidate_trajectoires, save_path="./plo
 if __name__ == "__main__":
     # Initiate
     origin_crd = (0.0, 0.0, 0.0, 0.0)  # (x, y, z, yaw)
-    candidate_number = 10
+    candidate_number = 5
     # step_number = 6
 
     candidate_trajectoires = []
 
     GT_traj = [
         (0.0, 0.0, 0.0, 1.57), (0.0, 5.0, 0.0, 1.57), (0.0, 10.0, 0.0, 1.57), (0.0, 10.0, 0.0, 1.83), (0.0, 10.0, 0.0, 2.09), (0.0, 10.0, 2.0, 2.09), (-2.5, 14.3, 2.0, 2.09), (-3, 18.6, 2.0, 2.09), (-3, 18.6, 4.0, 2.09) ]
-
+    GT_traj_4 = [
+        (0.0, 0.0, 0.0, -1.5708),           # start yaw = -pi/2 (facing -y)
+        (0.0, 0.0, 2.0, -1.5708),          # up
+        (0.0, 0.0, 4.0, -1.5708),          # up
+        (0.0, -5.0, 4.0, -1.5708),         # forward (toward -y)
+        (0.0, -10.0, 4.0, -1.5708),        # forward
+        (0.0, -10.0, 2.0, -1.5708),        # down
+        (0.0, -10.0, 0.0, -1.5708),        # down
+        (0.0, -10.0, 0.0, -1.3090),        # left (yaw increases by pi/12)
+        (1.2941, -14.8296, 0.0, -1.3090)   # forward (with new yaw)
+    ]
+    GT_traj_3 = [
+        (0.0, 0.0, 0.0, 0.0),
+        (5.0, 0.0, 0.0, 0.0),
+        (5.0, 0.0, 0.0, -0.2618),           # right turn
+        (9.8296, -1.2941, 0.0, -0.2618),    # forward
+        (9.8296, -1.2941, 0.0, -0.5236),    # right
+        (7.8657, -5.0, 0.0, -0.5236),       # forward
+        (7.8657, -5.0, 0.0, -0.7854),       # right
+        (12.1958, -8.5355, 0.0, -0.7854)    # forward
+    ]
+    GT_traj_4 = [
+        (0.0, 0.0, 0.0, 0.5236),            # start yaw = pi/6
+        (4.3301, 2.5, 0.0, 0.5236),         # forward
+        (4.3301, 2.5, 0.0, 0.7854),         # left
+        (7.8657, 6.0355, 0.0, 0.7854),      # forward
+        (7.8657, 6.0355, 0.0, 0.5236),      # right
+        (12.1958, 8.5355, 0.0, 0.5236),     # forward
+        (12.1958, 8.5355, 0.0, 0.7854),     # left
+        (15.7313, 12.0711, 0.0, 0.7854)     # forward
+    ]
     # Generate candidate trajectories
     candidate_trajectoires = trajectory_generation_random(
-        GT_traj, 
+        GT_traj_3, 
         candidate_number=candidate_number
     )
-    
+    print(f"GT_traj: {GT_traj_3}")
+    for i, traj in enumerate(candidate_trajectoires):
+        print(f"Candidate Traj {i+1}: {traj}")
     # Plot the trajectories
     plot_3d_trajectories(
-        GT_traj,
+        GT_traj_3,
         candidate_trajectoires, 
         save_path="./plot", 
         filename=f"trajectories_GT_with_noise_{datetime.datetime.now():%m-%d_%H-%M-%S}.png"

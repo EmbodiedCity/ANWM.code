@@ -19,8 +19,9 @@
 # else:
 #     print("❌ 没找到匹配项:", target)
 import pickle
+import numpy as np
 
-pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_2d/test/rollout.pkl"
+pkl_path = "/data1/tpz/nwm-main/data/airvln_16/3A3KKYU7QBF7NLUJ5LVEB19F5RQMW4_processed/traj_data.pkl"
 
 with open(pkl_path, "rb") as f:
     data = pickle.load(f)
@@ -33,11 +34,13 @@ if isinstance(data, dict):
     print("\n字典的键:")
     for key in data.keys():
         print("  ", key)
-    print("\n示例键对应的值:\n", data[next(iter(data))])
+    for key, value in list(data.items()):
+        print(f"value shape: {np.array(value).shape}")
+        print(f"键: {key}\n对应的值:\n", value)
 elif isinstance(data, list):
     print("\n列表长度:", len(data))
     print("第一个元素类型:", type(data[0]))
-    for i, item in enumerate(data):
+    for i, item in enumerate(data[:75]):
         print(f"\n第 {i} 个元素内容:\n", item)
     # print("第一个元素内容示例:\n", data[0])
 else:
