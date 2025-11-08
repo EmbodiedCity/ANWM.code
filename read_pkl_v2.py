@@ -21,7 +21,7 @@
 import pickle
 import numpy as np
 
-pkl_path = "/data1/tpz/nwm-main/data/airvln_16_long/random_walk_data_env_16_h35+10_random_traj_0_5_processed/traj_data.pkl"
+pkl_path = "/data1/tpz/nwm-main/data/airvln_16/3A3KKYU7QBF7NLUJ5LVEB19F5RQMW4_processed/traj_data.pkl"
 
 with open(pkl_path, "rb") as f:
     data = pickle.load(f)
@@ -31,10 +31,10 @@ print("数据类型:", type(data))
 
 # 如果是 dict，就打印键
 if isinstance(data, dict):
-    # print("\n字典的键:")
-    # for key in data.keys():
-    #     print("  ", key)
-    for key, value in list(data.items())[1:3]:
+    print("\n字典的键:")
+    for key in data.keys():
+        print("  ", key)
+    for key, value in list(data.items()):
         print(f"value shape: {np.array(value).shape}")
         print(f"键: {key}\n对应的值:\n", value)
 elif isinstance(data, list):
