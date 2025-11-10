@@ -8,7 +8,8 @@ import numpy as np
 
 # 原始 split 文件
 # split_pkl = "data_splits/airvln_16/test/dataset_dist_8_to_8_n4_len_traj_pred_8_all.pkl"
-split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n4_len_traj_pred_16.pkl"
+# split_pkl = "data_splits/airvln_16/test/dataset_dist_-64_to_64_n4_len_traj_pred_16.pkl"
+split_pkl = "data_splits/airvln_16/test/dataset_dist_8_to_8_n16_len_traj_pred_8.pkl"
 
 with open(split_pkl, "rb") as f:
     split_list = pickle.load(f)[0]
@@ -32,7 +33,7 @@ for traj_id, frame_idx, min_goal_distance, max_goal_distance in tqdm(split_list,
     dz = diff_traj[:, 2]
     # print(f"{traj_id}: frame_idx={frame_idx}, dz.min={dz.min():.6f}, dz.max={dz.max():.6f}")
     # print("dz:", np.round(dz[:20], 6).tolist())
-    start = frame_idx
+    start = frame_idx - 15
     end   = frame_idx + max_goal_distance
     gt_slice = gt_traj[start:end]
     print(f"start={start}, end={end}, slice_len={gt_slice.shape[0]}")
@@ -49,12 +50,12 @@ print(f"[summary] no-z 数量: {len(no_z_list)}")
 print("示例:", no_z_list[:5])
 
 # sample
-# import random
-# random.seed(1120)
-# no_z_list = random.sample(no_z_list, k=100)
+import random
+random.seed(1120)
+no_z_list = random.sample(no_z_list, k=100)
 
 # 保存新的 split
-out_pkl = "data_splits/airvln_16/test/rollout_2d.pkl"
+out_pkl = "data_splits/airvln_16/test/navigation_eval_16_2d.pkl"
 with open(out_pkl, "wb") as f:
     pickle.dump(no_z_list, f)
 

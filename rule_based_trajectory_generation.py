@@ -87,11 +87,11 @@ def trajectory_generation_rule_based(GT_trajectory, candidate_number=10):
 
     # 定义多种rule（可以继续扩展）
     rule_sequences = [
-        ["forward"] * steps,                        # 一直前进
         ["forward", "up"] * (steps // 2),           # 前进 + 上升
         ["forward", "down"] * (steps // 2),         # 前进 + 下降
         ["forward", "left"] * (steps // 2),         # 前进 + 左转
         ["forward", "right"] * (steps // 2),        # 前进 + 右转
+        ["forward"] * steps,                        # 一直前进
         ["up", "forward", "down", "forward"],       # 上升-前进-下降-前进
         ["forward", "forward", "left", "forward"],  # 前进-前进-左转-前进
     ]

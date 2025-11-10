@@ -128,7 +128,13 @@ def random_trajectory_v2(gt_traj, pos_std = 1.0, yaw_std = 1.0, clip_tol=1.0, ep
         new_point = noise_traj[-1] + delta_noisy
         noise_traj.append(new_point)
     
-    return noise_traj
+    # 确保返回的轨迹起点与(0,0,0,0)对齐
+    noise_traj = np.array(noise_traj, dtype=float)
+    start_offset = noise_traj[0, :].copy()  # 保存起点偏移
+    noise_traj = noise_traj - start_offset  # 将整个轨迹平移到以(0,0,0,0)为起点
+    noise_traj[0, :] = 0.0  # 确保起点精确为(0,0,0,0)
+    
+    return noise_traj.tolist()
 
 def random_trajectory(start, steps=6):
     trajectory = [start]
@@ -221,10 +227,10 @@ def trajectory_generation_random(GT_trajectory, candidate_number):
         #     (start_pos[0], start_pos[1], start_pos[2], starting_yaw),
         #     steps
         # )
-        trajectory = random_trajectory_v2(GT_trajectory)
+        trajectory = random_trajectory_v2(GT_trajectory, pos_std = 0.1, yaw_std = 0.1)
         # Ensure the trajectory is valid (not too similar to GT)
         # Use Soft-DTW to estimate similarity between two trajectories
-        if 0.5 < trajectory_similarity(trajectory, GT_trajectory) < 0.8:  # Adjust threshold as needed
+        if True or 0.5 < trajectory_similarity(trajectory, GT_trajectory) < 0.8:  # Adjust threshold as needed
             print(f"similarity: {trajectory_similarity(trajectory, GT_trajectory)}")
             candidate_trajectoires.append(trajectory)
         # print(f"similarity: {trajectory_similarity(trajectory, GT_trajectory)}")

@@ -11,6 +11,7 @@ torch.backends.cudnn.allow_tf32 = True
 import argparse
 import yaml
 import os
+import pickle
 import numpy as np
 import lpips
 import torchvision.utils as vutils
@@ -344,7 +345,12 @@ class WM_Planning_Evaluator:
         # Loading Datasets
         self.dataset_names = self.args.datasets.split(',')
         self.datasets = {}
+        # Load pre-sampled candidate trajectories from pkl files
         for dataset_name in self.dataset_names:
+            candidate_traj_path = f"data_splits/{dataset_name}/test/{dataset_name}_{self.args.num_samples}_trajectories.pkl"
+            with open(candidate_traj_path, "rb") as f:
+                self.sampled_trajectories = pickle.load(f)
+            print(f"Loaded {len(self.sampled_trajectories)} pre-sampled candidate trajectories from {candidate_traj_path}")
             dataset_val = get_dataset_eval(self.config, dataset_name, predefined_index=True)
 
             if len(dataset_val) % num_tasks != 0:
@@ -639,10 +645,9 @@ class WM_Planning_Evaluator:
             gt_yaw = np.zeros((T,), dtype=np.float32)
             GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz, gt_yaw)]
 
-            # 生成候选 trajectory poses
-            candidate_trajectories = trajectory_generation_random(GT_traj, candidate_number=1) + \
-                                     trajectory_generation_rule_based(GT_traj, candidate_number=candidate_number-1)
-            candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4]
+            # 从pkl文件加载候选轨迹
+            candidate_trajectories = self.sampled_trajectories[traj_id]  # [N, T+1, 4]
+            candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)
 
             # 转换为 delta（轨迹点之间的变化）
             candidate_deltas = candidate_trajectories[:, 1:, :] - candidate_trajectories[:, :-1, :]  # [N, steps, 4]
@@ -746,6 +751,85 @@ class WM_Planning_Evaluator:
             selected_apes_all.append(selected_ape)
             oracle_min_apes_all.append(oracle_min_ape)
             # ====== [END NEW] ======
+
+            # ====== [DETAIL RECORD] 收集所有候选轨迹的详细指标（不改变原有逻辑） ======
+            if self.args.save_preds:
+                # 计算所有候选轨迹的APE（用于详细记录）
+                all_candidate_metrics = []
+                for cid in range(self.num_samples):
+                    cand_actions = get_action_torch(
+                        deltas_model[cid:cid+1, :, :3], ACTION_STATS_TORCH
+                    )[0]  # (T,3) cpu
+                    cand_traj = self.actions_to_traj(cand_actions)
+                    cand_ate, cand_rpe_trans, cand_rpe_rot = self.eval_metrics(gt_traj_this, cand_traj)
+                    all_candidate_metrics.append({
+                        "candidate_id": int(cid),
+                        "loss": float(loss[cid].item()),
+                        "ape": float(cand_ate),
+                        "rpe_trans": float(cand_rpe_trans),
+                        "rpe_rot": float(cand_rpe_rot),
+                        "is_topk": int(cid in topk_idx.tolist()),
+                        "is_selected": int(cid == best_idx.item()),
+                        "is_noisy_gt": int(cid == noisy_idx)
+                    })
+                
+                # 计算selected在APE排序中的位置
+                ape_sorted = sorted([(cid, all_candidate_metrics[cid]["ape"]) for cid in range(self.num_samples)], 
+                                  key=lambda x: x[1])
+                ape_rank_of_selected = -1
+                for rank, (cid, _) in enumerate(ape_sorted):
+                    if cid == best_idx.item():
+                        ape_rank_of_selected = rank
+                        break
+                
+                # 构建详细记录
+                sample_detail = {
+                    "traj_id": int(traj_id),
+                    "model_selection": {
+                        "selected_candidate_id": int(best_idx.item()),
+                        "selected_loss": float(loss[best_idx.item()].item()),
+                        "selected_ape": float(selected_ape),
+                        "selected_rank": int(torch.where(sorted_idx == best_idx)[0].item())
+                    },
+                    "oracle_selection": {
+                        "oracle_candidate_id": int(min_ape_idx),
+                        "oracle_ape": float(oracle_min_ape),
+                        "oracle_loss": float(loss[min_ape_idx].item()),
+                        "oracle_rank": int(torch.where(sorted_idx == min_ape_idx)[0].item()) if min_ape_idx in sorted_idx else -1
+                    },
+                    "noisy_gt": {
+                        "candidate_id": int(noisy_idx),
+                        "loss": float(loss_noisy),
+                        "ape": float(all_candidate_metrics[noisy_idx]["ape"]),
+                        "is_selected": int(sr_flag),
+                        "rank": int(torch.where(sorted_idx == noisy_idx)[0].item()) if noisy_idx in sorted_idx else -1
+                    },
+                    "consistency": {
+                        "agree_minloss_minape": int(agree_minloss_minape),
+                        "loss_rank_of_oracle": int(torch.where(sorted_idx == min_ape_idx)[0].item()) if min_ape_idx in sorted_idx else -1,
+                        "ape_rank_of_selected": ape_rank_of_selected
+                    },
+                    "all_candidates": all_candidate_metrics,
+                    "topk_ids": topk_idx.tolist(),
+                    "gt_trajectory": {
+                        "num_steps": int(T),
+                        "final_position": [float(gt_xyz[-1, 0]), float(gt_xyz[-1, 1]), float(gt_xyz[-1, 2])],
+                        "total_distance": float(np.linalg.norm(gt_xyz[-1, :3]))
+                    },
+                    "config": {
+                        "num_samples": int(self.num_samples),
+                        "topk": int(self.topk),
+                        "num_repeat_eval": int(self.num_repeat_eval),
+                        "rollout_stride": int(self.args.rollout_stride)
+                    }
+                }
+                
+                # 保存到JSON文件
+                detail_dir = os.path.join(dataset_save_output_dir, "case_details")
+                _ensure_dir(detail_dir)
+                detail_file = os.path.join(detail_dir, f"case_{traj_id:04d}.json")
+                _write_json(detail_file, sample_detail)
+            # ====== [END DETAIL RECORD] ======
 
             # 保留两份：模型用（归一化平移+弧度yaw）；可读保存用（世界系 米/弧度）
             best_delta_model = deltas_model[best_idx]
