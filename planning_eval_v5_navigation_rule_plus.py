@@ -36,7 +36,7 @@ import evo.main_rpe as main_rpe
 from evo.core.metrics import PoseRelation
 
 from diffusion import create_diffusion
-from datasets_v4 import TrajectoryEvalDataset
+from datasets_v2 import TrajectoryEvalDataset
 from isolated_nwm_infer_v5 import model_forward_wrapper
 from misc import calculate_delta_yaw, get_action_torch, save_planning_pred, log_viz_single, transform, unnormalize_data
 from isolated_nwm_eval import save_metric_to_disk
@@ -336,11 +336,14 @@ class WM_Planning_Evaluator:
         self.latent_size = self.config['image_size'] // 8
         self.num_cond = self.config['eval_context_size']
 
-        # logging directory
-        if self.args.save_preds:
+        # 总是设置 save_output_dir（用于保存指标文件），即使 save_preds 为 False
+        if self.args.output_dir is not None:
             exp_name = os.path.basename(self.args.exp).split('.')[0]
             self.args.save_output_dir = os.path.join(args.output_dir, exp_name)
-            os.makedirs(self.args.save_output_dir, exist_ok=True)
+            os.makedirs(self.args.save_output_dir, exist_ok=True)  # 所有 rank 都创建目录（os.makedirs 是安全的）
+        else:
+            # 如果没有指定 output_dir，使用当前目录
+            self.args.save_output_dir = "."
 
         # Loading Datasets
         self.dataset_names = self.args.datasets.split(',')
@@ -1074,19 +1077,19 @@ class WM_Planning_Evaluator:
                     yaw_diff = pred_final_yaw - goal_final_yaw
                     yaw_diff_norm = torch.atan2(torch.sin(yaw_diff), torch.cos(yaw_diff)).abs()
 
-                    metric_logger.meters['{}_ate'.format(dataset_name)].update(ate, n=1)
-                    metric_logger.meters['{}_rpe_trans'.format(dataset_name)].update(rpe_trans, n=1)
-                    metric_logger.meters['{}_pos_diff_norm'.format(dataset_name)].update(pos_diff_norm, n=1)
-                    metric_logger.meters['{}_yaw_diff_norm'.format(dataset_name)].update(yaw_diff_norm, n=1)
+                    metric_logger.meters[f'{dataset_name}_ate'].update(ate, n=1)
+                    metric_logger.meters[f'{dataset_name}_rpe_trans'].update(rpe_trans, n=1)
+                    metric_logger.meters[f'{dataset_name}_pos_diff_norm'].update(pos_diff_norm, n=1)
+                    metric_logger.meters[f'{dataset_name}_yaw_diff_norm'].update(yaw_diff_norm, n=1)
 
-                    metric_logger.meters['{}_agree_minloss_minape'.format(dataset_name)].update(float(agree_flags[i].item()), n=1)
-                    metric_logger.meters['{}_selected_ape'.format(dataset_name)].update(float(selected_apes[i].item()), n=1)
-                    metric_logger.meters['{}_oracle_min_ape'.format(dataset_name)].update(float(oracle_min_apes[i].item()), n=1)
-                    metric_logger.meters['{}_sr'.format(dataset_name)].update(float(sr_tensor[i].item()), n=1)  # [SR NEW]
+                    metric_logger.meters[f'{dataset_name}_agree_minloss_minape'].update(float(agree_flags[i].item()), n=1)
+                    metric_logger.meters[f'{dataset_name}_selected_ape'].update(float(selected_apes[i].item()), n=1)
+                    metric_logger.meters[f'{dataset_name}_oracle_min_ape'].update(float(oracle_min_apes[i].item()), n=1)
+                    metric_logger.meters[f'{dataset_name}_sr'].update(float(sr_tensor[i].item()), n=1)  # [SR NEW]
 
                 # ======== [B BEGIN] 每个 batch 结束后增量导出一张 live 面板 ========
                 try:
-                    if dist.get_rank() == 0 and self.args.save_preds and self.args.plot:
+                    if self.args.save_preds and self.args.plot:
                         self.make_paper_panel_for_dataset(
                             dataset_name=dataset_name,
                             out_name="paper_panel_live.png",
@@ -1101,12 +1104,13 @@ class WM_Planning_Evaluator:
                     print(f"[panel][live warn] {e}")
                 # ======== [B END]   每个 batch 结束后增量导出一张 live 面板 ========
 
+            # 所有 rank 都调用 save_metric_to_disk（内部会处理同步，只在 rank0 写文件）
             output_fn = os.path.join(self.args.save_output_dir, f'{dataset_name}_{self.eval_name}.json')
             save_metric_to_disk(metric_logger, output_fn)
 
-            # ======== [PANEL BEGIN] auto make paper panel on rank 0 ========
+            # ======== [PANEL BEGIN] auto make paper panel ========
             try:
-                if dist.get_rank() == 0 and self.args.save_preds:
+                if self.args.save_preds:
                     self.make_paper_panel_for_dataset(
                         dataset_name=dataset_name,
                         out_name="paper_panel.png",
@@ -1119,8 +1123,9 @@ class WM_Planning_Evaluator:
                     )
             except Exception as e:
                 print(f"[panel][warn] failed to build panel for {dataset_name}: {e}")
-            # ======== [PANEL END]   auto make paper panel on rank 0 ========
+            # ======== [PANEL END]   auto make paper panel ========
 
+        # gather the stats from all processes
         metric_logger.synchronize_between_processes()
 
     def eval_metrics(self, traj_ref, traj_pred):

@@ -52,6 +52,7 @@ for i in range(len(dataset)):
                              trajectory_generation_rule_based(GT_traj, candidate_number=candidate_number-1)
     candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4]
     all_sampled_trajectories[int(idxs.item())] = candidate_trajectories
+    print(f"Processed {i+1}/{len(dataset)} trajectories", end='\r')
 
 save_path = f"data_splits/{dataset_name}/test/{dataset_name}_{candidate_number}_trajectories.pkl"
 os.makedirs(os.path.dirname(save_path), exist_ok=True)

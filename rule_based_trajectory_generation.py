@@ -1,6 +1,6 @@
 # A 3D trajectory genration module for a drone. Generates several trajectories by rule-based methods.
 # Trajectory is a sequence of 3D points of (x,y,z,yaw).
-
+import random
 import datetime
 import os
 import numpy as np
@@ -83,32 +83,65 @@ def trajectory_generation_rule_based(GT_trajectory, candidate_number=10):
     """
     candidate_trajectoires = []
     start_pos = GT_trajectory[0]  # Use the first point of GT trajectory as the start position
+    end_pos = GT_trajectory[-1]   # Use the last point of GT trajectory as the end position
+
+    start_pos = list(start_pos)
+    start_pos[-1] = end_pos[-1]  # Align starting yaw with GT end yaw
+    start_pos = tuple(start_pos)
+
     steps = len(GT_trajectory) - 1  # Use the length of GT trajectory minus one for steps
 
-    # 定义多种rule（可以继续扩展）
+    # 定义多种rule，符合无人机飞行常理，避免与GT yaw 相似，添加转向动作，左转1条，右转1条，上升1条，下降1条
     rule_sequences = [
+        ["left", "forward", "up", "forward"] * (steps // 4),  # 左转 + 前进 + 上升 + 前进
+        ["right", "forward", "up", "forward"] * (steps // 4), # 右转 + 前进 + 上升 + 前进
+        ["left", "forward", "down", "forward"] * (steps // 4),  # 左转 + 前进 + 下降 + 前进
+        ["right", "forward", "down", "forward"] * (steps // 4), # 右转 + 前进 + 下降 + 前进
+        ["left", "forward"] * (steps // 2),          # 左转 + 前进
+        ["right", "forward"] * (steps // 2),         # 右转 + 前进
         ["forward", "up"] * (steps // 2),           # 前进 + 上升
-        ["forward", "down"] * (steps // 2),         # 前进 + 下降
-        ["forward", "left"] * (steps // 2),         # 前进 + 左转
-        ["forward", "right"] * (steps // 2),        # 前进 + 右转
-        ["forward"] * steps,                        # 一直前进
-        ["up", "forward", "down", "forward"],       # 上升-前进-下降-前进
-        ["forward", "forward", "left", "forward"],  # 前进-前进-左转-前进
+        ["left", "left", "forward", "left"] * (steps // 4),    # 三次左转 + 前进
+        ["right", "right", "forward", "right"] * (steps // 4),  # 三次右转 + 前进
+        ["up", "up", "left", "forward"] * (steps // 4),       # 上升-上升-左转-前进
+        ["up", "up", "right", "forward"] * (steps // 4),       # 上升-上升-右转-前进
+        ["down", "down", "left", "forward"] * (steps // 4),   # 下降-下降-左转-前进
+        ["down", "down", "right", "forward"] * (steps // 4),    # 下降-下降-右转-前进
+        ["forward", "left", "forward", "right"] * (steps // 4),    # 蛇形前进（左-右交替）
+        ["up", "forward", "down", "forward"] * (steps // 4),       # 上下起伏前进
+        ["left", "forward", "right", "forward"] * (steps // 4),    # 左右摆动前进
+        ["up", "forward", "up", "forward"] * (steps // 4),         # 逐步上升式前进
+        ["down", "forward", "down", "forward"] * (steps // 4),     # 逐步下降式前进
+        ["forward", "forward", "left", "up"] * (steps // 4),       # 前进两步左转上升
+        ["forward", "forward", "right", "down"] * (steps // 4)    # 前进两步右转下降
     ]
 
     i = 0
+    selected_rules = random.sample(rule_sequences, len(rule_sequences))
+
+    # for rule_seq in selected_rules:
+    #     trajectory = rule_based_trajectory(
+    #         start=start_pos,
+    #         steps=steps,
+    #         rule_sequence=rule_seq
+    #     )
+    #     candidate_trajectoires.append(trajectory)
 
     while len(candidate_trajectoires) < candidate_number:
         # Generate a random starting direction
         # starting_yaw = np.random.uniform(-np.pi, np.pi)
-        rule_seq = rule_sequences[i % len(rule_sequences)]  # 循环使用不同规则
+        rule_seq = selected_rules[i]
         trajectory = rule_based_trajectory(
             start=start_pos,
             steps=steps,
             rule_sequence=rule_seq
         )
-        candidate_trajectoires.append(trajectory)
-        i += 1
+        if abs(trajectory[-1][3] - end_pos[3]) < np.pi / 4:  # Ensure yaw difference from GT end is significant
+            i += 1
+            continue
+        else:
+            candidate_trajectoires.append(trajectory)
+            i += 1
+        # print(f"i = {i}, Generated trajectory with rule: {rule_seq}")
 
     return candidate_trajectoires
 
@@ -178,7 +211,7 @@ def plot_3d_trajectories(GT_trajectory, candidate_trajectoires, save_path="./plo
 if __name__ == "__main__":
     # Initiate
     origin_crd = (0.0, 0.0, 0.0, 0.0)  # (x, y, z, yaw)
-    candidate_number = 8
+    candidate_number = 4
     # step_number = 6
 
     candidate_trajectoires = []
