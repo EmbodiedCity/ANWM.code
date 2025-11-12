@@ -261,7 +261,7 @@ def plot_batch_trajectories(init_imgs, pred_imgs_seq, goal_imgs, idxs, save_path
 def get_dataset_eval(config, dataset_name, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]
     if predefined_index:
-        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval_16_2d.pkl"
+        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval_16_long.pkl"
     else:
         predefined_index = None
 
@@ -347,7 +347,7 @@ class WM_Planning_Evaluator:
         self.datasets = {}
         # Load pre-sampled candidate trajectories from pkl files
         for dataset_name in self.dataset_names:
-            candidate_traj_path = f"data_splits/{dataset_name}/test/{dataset_name}_{self.args.num_samples}_trajectories_2d.pkl"
+            candidate_traj_path = f"data_splits/{dataset_name}/test/{dataset_name}_{self.args.num_samples}_trajectories_long.pkl"
             with open(candidate_traj_path, "rb") as f:
                 self.sampled_trajectories = pickle.load(f)
             print(f"Loaded {len(self.sampled_trajectories)} pre-sampled candidate trajectories from {candidate_traj_path}")

@@ -6,9 +6,9 @@ import random
 random.seed(1120)
 
 # 输入文件路径
-input_pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_16/test/dataset_dist_8_to_8_n16_len_traj_pred_8.pkl"
+input_pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_16/test/dataset_dist_64_to_64_n16_len_traj_pred_64.pkl"
 # 输出文件路径
-output_pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_16/test/navigation_eval_16.pkl"
+output_pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_16/test/navigation_eval_16_long.pkl"
 
 print(f"正在读取文件: {input_pkl_path}")
 
