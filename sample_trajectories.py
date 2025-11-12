@@ -7,7 +7,7 @@ from noise_trajectory_generation import trajectory_generation_random
 def get_dataset_eval(config, dataset_name, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]
     if predefined_index:
-        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval_16.pkl"
+        predefined_index = f"data_splits/{dataset_name}/test/navigation_eval_16_2d.pkl"
     else:
         predefined_index = None
 
@@ -29,33 +29,36 @@ def get_dataset_eval(config, dataset_name, predefined_index=True):
 
     return dataset
 
-with open("config/eval_config.yaml", "r") as f:
-    default_config = yaml.safe_load(f)
-config = default_config
+def sample_trajectories(dim=3):
+    with open("config/eval_config.yaml", "r") as f:
+        default_config = yaml.safe_load(f)
+    config = default_config
 
-with open("config/nwm_cdit_airvln_16.yaml", "r") as f:
-    user_config = yaml.safe_load(f)
-config.update(user_config)
+    with open("config/nwm_cdit_airvln_16.yaml", "r") as f:
+        user_config = yaml.safe_load(f)
+    config.update(user_config)
 
-dataset_name, candidate_number = "airvln_16", 5
-dataset = get_dataset_eval(config, dataset_name, predefined_index=True)
-all_sampled_trajectories = {}
-for i in range(len(dataset)):
-    idxs, _, _, gt_actions, _, _ = dataset[i]
-    gt_deltas_xyz = gt_actions[:, :3].to('cpu').numpy()  # [T, 3]
-    gt_xyz = np.concatenate([np.zeros((1, 3), dtype=np.float32),
-                             np.cumsum(gt_deltas_xyz, axis=0).astype(np.float32)], axis=0)  # [T+1, 3]
-    gt_yaw = np.zeros((gt_xyz.shape[0],), dtype=np.float32)
-    GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz, gt_yaw)]
+    dataset_name, candidate_number = "airvln_16", 4
+    dataset = get_dataset_eval(config, dataset_name, predefined_index=True)
+    all_sampled_trajectories = {}
+    for i in range(len(dataset)):
+        idxs, _, _, gt_actions, _, _ = dataset[i]
+        gt_deltas_xyz = gt_actions[:, :3].to('cpu').numpy()  # [T, 3]
+        gt_xyz = np.concatenate([np.zeros((1, 3), dtype=np.float32),
+                                np.cumsum(gt_deltas_xyz, axis=0).astype(np.float32)], axis=0)  # [T+1, 3]
+        gt_yaw = np.zeros((gt_xyz.shape[0],), dtype=np.float32)
+        GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz, gt_yaw)]
 
-    candidate_trajectories = trajectory_generation_random(GT_traj, candidate_number=1) + \
-                             trajectory_generation_rule_based(GT_traj, candidate_number=candidate_number-1)
-    candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4]
-    all_sampled_trajectories[int(idxs.item())] = candidate_trajectories
-    print(f"Processed {i+1}/{len(dataset)} trajectories", end='\r')
+        candidate_trajectories = trajectory_generation_random(GT_traj, candidate_number=1, dim=dim) + \
+                                trajectory_generation_rule_based(GT_traj, candidate_number=candidate_number-1, dim=dim)
+        candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T, 4]
+        all_sampled_trajectories[int(idxs.item())] = candidate_trajectories
+        print(f"Processed {i+1}/{len(dataset)} trajectories", end='\r')
 
-save_path = f"data_splits/{dataset_name}/test/{dataset_name}_{candidate_number}_trajectories.pkl"
-os.makedirs(os.path.dirname(save_path), exist_ok=True)
-pickle.dump(all_sampled_trajectories, open(save_path, "wb"))
-print(f"Saved {len(all_sampled_trajectories)} sampled trajectories to {save_path}")
+    save_path = f"data_splits/{dataset_name}/test/{dataset_name}_{candidate_number}_trajectories_2d.pkl"
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    pickle.dump(all_sampled_trajectories, open(save_path, "wb"))
+    print(f"Saved {len(all_sampled_trajectories)} sampled trajectories to {save_path}")
 
+if __name__ == "__main__":
+    sample_trajectories(dim=2)

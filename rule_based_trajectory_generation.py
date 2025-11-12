@@ -69,7 +69,7 @@ def trajectory_similarity(traj1, traj2):
     similarity_score = 1 - (distance / max_distance)
     return similarity_score
 
-def trajectory_generation_rule_based(GT_trajectory, candidate_number=10):
+def trajectory_generation_rule_based(GT_trajectory, candidate_number=10, dim=3):
     """
     生成多个轨迹的函数
     
@@ -91,29 +91,40 @@ def trajectory_generation_rule_based(GT_trajectory, candidate_number=10):
 
     steps = len(GT_trajectory) - 1  # Use the length of GT trajectory minus one for steps
 
+    if dim == 3:
     # 定义多种rule，符合无人机飞行常理，避免与GT yaw 相似，添加转向动作，左转1条，右转1条，上升1条，下降1条
-    rule_sequences = [
-        ["left", "forward", "up", "forward"] * (steps // 4),  # 左转 + 前进 + 上升 + 前进
-        ["right", "forward", "up", "forward"] * (steps // 4), # 右转 + 前进 + 上升 + 前进
-        ["left", "forward", "down", "forward"] * (steps // 4),  # 左转 + 前进 + 下降 + 前进
-        ["right", "forward", "down", "forward"] * (steps // 4), # 右转 + 前进 + 下降 + 前进
-        ["left", "forward"] * (steps // 2),          # 左转 + 前进
-        ["right", "forward"] * (steps // 2),         # 右转 + 前进
-        ["forward", "up"] * (steps // 2),           # 前进 + 上升
-        ["left", "left", "forward", "left"] * (steps // 4),    # 三次左转 + 前进
-        ["right", "right", "forward", "right"] * (steps // 4),  # 三次右转 + 前进
-        ["up", "up", "left", "forward"] * (steps // 4),       # 上升-上升-左转-前进
-        ["up", "up", "right", "forward"] * (steps // 4),       # 上升-上升-右转-前进
-        ["down", "down", "left", "forward"] * (steps // 4),   # 下降-下降-左转-前进
-        ["down", "down", "right", "forward"] * (steps // 4),    # 下降-下降-右转-前进
-        ["forward", "left", "forward", "right"] * (steps // 4),    # 蛇形前进（左-右交替）
-        ["up", "forward", "down", "forward"] * (steps // 4),       # 上下起伏前进
-        ["left", "forward", "right", "forward"] * (steps // 4),    # 左右摆动前进
-        ["up", "forward", "up", "forward"] * (steps // 4),         # 逐步上升式前进
-        ["down", "forward", "down", "forward"] * (steps // 4),     # 逐步下降式前进
-        ["forward", "forward", "left", "up"] * (steps // 4),       # 前进两步左转上升
-        ["forward", "forward", "right", "down"] * (steps // 4)    # 前进两步右转下降
-    ]
+        rule_sequences = [
+            ["left", "forward", "up", "forward"] * (steps // 4),  # 左转 + 前进 + 上升 + 前进
+            ["right", "forward", "up", "forward"] * (steps // 4), # 右转 + 前进 + 上升 + 前进
+            ["left", "forward", "down", "forward"] * (steps // 4),  # 左转 + 前进 + 下降 + 前进
+            ["right", "forward", "down", "forward"] * (steps // 4), # 右转 + 前进 + 下降 + 前进
+            ["left", "forward"] * (steps // 2),          # 左转 + 前进
+            ["right", "forward"] * (steps // 2),         # 右转 + 前进
+            ["forward", "up"] * (steps // 2),           # 前进 + 上升
+            ["left", "left", "forward", "left"] * (steps // 4),    # 三次左转 + 前进
+            ["right", "right", "forward", "right"] * (steps // 4),  # 三次右转 + 前进
+            ["up", "up", "left", "forward"] * (steps // 4),       # 上升-上升-左转-前进
+            ["up", "up", "right", "forward"] * (steps // 4),       # 上升-上升-右转-前进
+            ["down", "down", "left", "forward"] * (steps // 4),   # 下降-下降-左转-前进
+            ["down", "down", "right", "forward"] * (steps // 4),    # 下降-下降-右转-前进
+            ["forward", "left", "forward", "right"] * (steps // 4),    # 蛇形前进（左-右交替）
+            ["up", "forward", "down", "forward"] * (steps // 4),       # 上下起伏前进
+            ["left", "forward", "right", "forward"] * (steps // 4),    # 左右摆动前进
+            ["up", "forward", "up", "forward"] * (steps // 4),         # 逐步上升式前进
+            ["down", "forward", "down", "forward"] * (steps // 4),     # 逐步下降式前进
+            ["forward", "forward", "left", "up"] * (steps // 4),       # 前进两步左转上升
+            ["forward", "forward", "right", "down"] * (steps // 4)    # 前进两步右转下降
+        ]
+    elif dim == 2:
+        rule_sequences = [
+            ["left", "forward"] * (steps // 2),          # 左转 + 前进
+            ["right", "forward"] * (steps // 2),         # 右转 + 前进
+            ["left", "left", "forward", "left"] * (steps // 4),    # 三次左转 + 前进
+            ["right", "right", "forward", "right"] * (steps // 4),  # 三次右转 + 前进
+            ["left", "forward", "right", "forward"] * (steps // 4),    # 左右摆动前进
+        ]
+    else:
+        raise ValueError(f"Invalid dimension: {dim}")
 
     i = 0
     selected_rules = random.sample(rule_sequences, len(rule_sequences))
@@ -222,7 +233,8 @@ if __name__ == "__main__":
     # Generate candidate trajectories
     candidate_trajectoires = trajectory_generation_rule_based(
         GT_traj, 
-        candidate_number=candidate_number
+        candidate_number=candidate_number,
+        dim=2
     )
     
     # Plot the trajectories

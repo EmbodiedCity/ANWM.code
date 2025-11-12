@@ -20,7 +20,7 @@
 #     print("❌ 没找到匹配项:", target)
 import pickle
 
-pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_2d/test/rollout.pkl"
+pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_16/test/navigation_eval_16_2d.pkl"
 
 with open(pkl_path, "rb") as f:
     data = pickle.load(f)

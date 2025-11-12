@@ -21,7 +21,7 @@
 import pickle
 import numpy as np
 
-pkl_path = "/data1/tpz/nwm-main/data/airvln_16/3A3KKYU7QBF7NLUJ5LVEB19F5RQMW4_processed/traj_data.pkl"
+pkl_path = "/data1/tpz/nwm-main/data_splits/airvln_16/test/airvln_16_4_trajectories_2d.pkl"
 
 with open(pkl_path, "rb") as f:
     data = pickle.load(f)
@@ -40,7 +40,7 @@ if isinstance(data, dict):
 elif isinstance(data, list):
     print("\n列表长度:", len(data))
     print("第一个元素类型:", type(data[0]))
-    for i, item in enumerate(data[:75]):
+    for i, item in enumerate(data[:10]):
         print(f"\n第 {i} 个元素内容:\n", item)
     # print("第一个元素内容示例:\n", data[0])
 else:

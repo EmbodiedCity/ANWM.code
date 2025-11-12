@@ -136,6 +136,75 @@ def random_trajectory_v2(gt_traj, pos_std = 1.0, yaw_std = 1.0, clip_tol=1.0, ep
     
     return noise_traj.tolist()
 
+def random_trajectory_v2_2d(gt_traj, pos_std = 1.0, yaw_std = 1.0, clip_tol=1.0, eps=1e-6):
+    """
+    在每步位移的单位方向上添加高斯噪声（沿位移方向），返回加噪轨迹
+    
+    参数:
+        gt_traj: list of (x, y, z, yaw)
+            原始无人机轨迹
+        pos_std: float
+            位置增量噪声标准差（米）
+        yaw_std: float
+            偏航角增量噪声标准差（弧度）
+    
+    返回:
+        noise_traj: list of (x, y, z, yaw)
+    """
+    gt_traj = np.array(gt_traj, dtype=float)
+    noise_traj = [gt_traj[0].copy()]  # 起点不加噪
+    # step_len = 5.0  # 固定水平位移长度
+
+    for i in range(1, len(gt_traj)):
+
+        # 旧版本：对每个维度单独判断是否加噪声
+        delta = gt_traj[i] - gt_traj[i - 1]
+        delta_noisy = delta.copy()
+
+        # 对每个维度单独判断是否加噪声
+        for j in range(4):
+            if j == 2:  # 垂直位移不加噪声
+                continue
+            # if delta[j] != 0:  # 只对非零位移维度加噪声
+            std = pos_std if j < 3 else yaw_std
+            delta_noisy[j] += np.random.normal(0, std)
+
+        # 计算在累积后的 yaw（以当前累积轨迹的最后yaw为基准 + yaw增量）
+        prev_yaw = noise_traj[-1][3]
+        new_yaw = prev_yaw + delta_noisy[3]
+
+        # 目标的水平增量（基于 new_yaw）
+        target_dx = 5 * np.cos(new_yaw)
+        target_dy = 5 * np.sin(new_yaw)
+
+        # 用 clip 限制 dx, dy 在 [target - tol, target + tol] 范围内
+        delta_noisy[0] = np.clip(delta_noisy[0], target_dx - clip_tol, target_dx + clip_tol)
+        delta_noisy[1] = np.clip(delta_noisy[1], target_dy - clip_tol, target_dy + clip_tol)
+
+        pos_delta = delta[:3]
+        pos_norm = np.linalg.norm(pos_delta)
+        if pos_norm < eps: # 仅转向 没有位移
+            delta_noisy[0] = 0.0
+            delta_noisy[1] = 0.0
+            delta_noisy[2] = 0.0
+        if pos_delta[0] == 0 and pos_delta[1] == 0: # 仅垂直位移
+            delta_noisy[0] = 0.0
+            delta_noisy[1] = 0.0
+        if pos_delta[2] == 0: # 仅水平位移
+            delta_noisy[2] = 0.0
+        # 累积得到下一点
+        new_point = noise_traj[-1] + delta_noisy
+        noise_traj.append(new_point)
+    
+    # 确保返回的轨迹起点与(0,0,0,0)对齐
+    noise_traj = np.array(noise_traj, dtype=float)
+    start_offset = noise_traj[0, :].copy()  # 保存起点偏移
+    noise_traj = noise_traj - start_offset  # 将整个轨迹平移到以(0,0,0,0)为起点
+    noise_traj[0, :] = 0.0  # 确保起点精确为(0,0,0,0)
+    
+    return noise_traj.tolist()
+
+
 def random_trajectory(start, steps=6):
     trajectory = [start]
     current_pos = np.array(start[:4], dtype=float)  # (x, y, z, yaw) - 确保为浮点类型
@@ -204,7 +273,7 @@ def trajectory_similarity(traj1, traj2):
     similarity_score = 1 - (distance / max_distance)
     return similarity_score
 
-def trajectory_generation_random(GT_trajectory, candidate_number):
+def trajectory_generation_random(GT_trajectory, candidate_number, dim=3):
     """
     生成多个轨迹的函数
     
@@ -227,7 +296,13 @@ def trajectory_generation_random(GT_trajectory, candidate_number):
         #     (start_pos[0], start_pos[1], start_pos[2], starting_yaw),
         #     steps
         # )
-        trajectory = random_trajectory_v2(GT_trajectory, pos_std = 0.1, yaw_std = 0.1)
+        if dim == 3:
+            trajectory = random_trajectory_v2(GT_trajectory, pos_std = 0.1, yaw_std = 0.1)
+        elif dim == 2:
+            trajectory = random_trajectory_v2_2d(GT_trajectory, pos_std = 0.1, yaw_std = 0.1)
+        else:
+            raise ValueError(f"Invalid dimension: {dim}")
+        
         # Ensure the trajectory is valid (not too similar to GT)
         # Use Soft-DTW to estimate similarity between two trajectories
         if True or 0.5 < trajectory_similarity(trajectory, GT_trajectory) < 0.8:  # Adjust threshold as needed
@@ -344,7 +419,8 @@ if __name__ == "__main__":
     # Generate candidate trajectories
     candidate_trajectoires = trajectory_generation_random(
         GT_traj_3, 
-        candidate_number=candidate_number
+        candidate_number=candidate_number,
+        dim=2
     )
     print(f"GT_traj: {GT_traj_3}")
     for i, traj in enumerate(candidate_trajectoires):
