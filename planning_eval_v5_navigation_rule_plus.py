@@ -706,17 +706,18 @@ class WM_Planning_Evaluator:
             try:
                 panel_ids = topk_idx[:3].tolist()  # Top-3
                 cand_pred_list = [preds[i].detach().cpu() for i in panel_ids]
-                cand_dw_list   = [deltas_world[i].detach().cpu().numpy() for i in panel_ids]
+                cand_dw_list   = [deltas_world[i].detach().cpu().numpy() for i in panel_ids]  # 米单位
                 cand_loss_list = [float(loss[i].item()) for i in panel_ids]
-                goal_xyz = gt_xyz[-1, :3]  # <<< 改为 3D 终点
+                # 将 goal_xyz 从 waypoint 单位转换为米单位（与 cand_dw_list 保持一致）
+                goal_xyz = gt_xyz[-1, :3] * spacing  # waypoint -> 米
                 self.save_single_sample_panel(
                     obs_img_tchw = obs_image[traj, -1],
                     goal_img_tchw = goal_image[traj].squeeze(0),
                     cand_pred_tchw_list = cand_pred_list,
-                    cand_deltas_world_list = cand_dw_list,
+                    cand_deltas_world_list = cand_dw_list,  # 3D meters
                     cand_losses_list = cand_loss_list,
                     out_path = os.path.join(image_plot_dir, f"sample_panel_idx{traj_id}.png"),
-                    goal_xy = goal_xyz,  # <<< 传入 3D
+                    goal_xy = goal_xyz,  # 3D meters
                     labels = [f"P{i+1}" for i in range(len(panel_ids))]
                 )
             except Exception as e:

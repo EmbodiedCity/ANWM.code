@@ -40,7 +40,7 @@ if isinstance(data, dict):
 elif isinstance(data, list):
     print("\n列表长度:", len(data))
     print("第一个元素类型:", type(data[0]))
-    for i, item in enumerate(data[:10]):
+    for i, item in enumerate(data[:5]):
         print(f"\n第 {i} 个元素内容:\n", item)
     # print("第一个元素内容示例:\n", data[0])
 else:

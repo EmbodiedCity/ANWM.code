@@ -37,8 +37,14 @@ def rule_based_trajectory(start, steps=8, rule_sequence=None):
             dy = action[0] * np.sin(last_pos[3])
             current_pos = last_pos + np.array([dx, dy, 0, 0])
         trajectory.append(current_pos)
+        
+    # 确保返回的轨迹起点与(0,0,0,0)对齐
+    trajectory = np.array(trajectory, dtype=float)
+    start_offset = trajectory[0, :].copy()  # 保存起点偏移
+    trajectory = trajectory - start_offset  # 将整个轨迹平移到以(0,0,0,0)为起点
+    trajectory[0, :] = 0.0  # 确保起点精确为(0,0,0,0)
     
-    return trajectory
+    return trajectory.tolist()
 
 def trajectory_similarity(traj1, traj2):
     """
