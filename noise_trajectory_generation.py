@@ -106,12 +106,12 @@ def random_trajectory_v2(gt_traj, pos_std = 1.0, yaw_std = 1.0, clip_tol=1.0, ep
         new_yaw = prev_yaw + delta_noisy[3]
 
         # 目标的水平增量（基于 new_yaw）
-        target_dx = 5 * np.cos(new_yaw)
-        target_dy = 5 * np.sin(new_yaw)
+        # target_dx = 5 * np.cos(new_yaw)
+        # target_dy = 5 * np.sin(new_yaw)
 
         # 用 clip 限制 dx, dy 在 [target - tol, target + tol] 范围内
-        delta_noisy[0] = np.clip(delta_noisy[0], target_dx - clip_tol, target_dx + clip_tol)
-        delta_noisy[1] = np.clip(delta_noisy[1], target_dy - clip_tol, target_dy + clip_tol)
+        # delta_noisy[0] = np.clip(delta_noisy[0], target_dx - clip_tol, target_dx + clip_tol)
+        # delta_noisy[1] = np.clip(delta_noisy[1], target_dy - clip_tol, target_dy + clip_tol)
 
         pos_delta = delta[:3]
         pos_norm = np.linalg.norm(pos_delta)
@@ -125,6 +125,8 @@ def random_trajectory_v2(gt_traj, pos_std = 1.0, yaw_std = 1.0, clip_tol=1.0, ep
         if pos_delta[2] == 0: # 仅水平位移
             delta_noisy[2] = 0.0
         # 累积得到下一点
+        # if pos_std == 0 and yaw_std == 0:
+        #     delta_noisy = delta  # 不加噪声
         new_point = noise_traj[-1] + delta_noisy
         noise_traj.append(new_point)
     
@@ -174,12 +176,12 @@ def random_trajectory_v2_2d(gt_traj, pos_std = 1.0, yaw_std = 1.0, clip_tol=1.0,
         new_yaw = prev_yaw + delta_noisy[3]
 
         # 目标的水平增量（基于 new_yaw）
-        target_dx = 5 * np.cos(new_yaw)
-        target_dy = 5 * np.sin(new_yaw)
+        # target_dx = 5 * np.cos(new_yaw)
+        # target_dy = 5 * np.sin(new_yaw)
 
         # 用 clip 限制 dx, dy 在 [target - tol, target + tol] 范围内
-        delta_noisy[0] = np.clip(delta_noisy[0], target_dx - clip_tol, target_dx + clip_tol)
-        delta_noisy[1] = np.clip(delta_noisy[1], target_dy - clip_tol, target_dy + clip_tol)
+        # delta_noisy[0] = np.clip(delta_noisy[0], target_dx - clip_tol, target_dx + clip_tol)
+        # delta_noisy[1] = np.clip(delta_noisy[1], target_dy - clip_tol, target_dy + clip_tol)
 
         pos_delta = delta[:3]
         pos_norm = np.linalg.norm(pos_delta)
@@ -193,6 +195,8 @@ def random_trajectory_v2_2d(gt_traj, pos_std = 1.0, yaw_std = 1.0, clip_tol=1.0,
         if pos_delta[2] == 0: # 仅水平位移
             delta_noisy[2] = 0.0
         # 累积得到下一点
+        # if pos_std == 0 and yaw_std == 0:
+        #     delta_noisy = delta  # 不加噪声
         new_point = noise_traj[-1] + delta_noisy
         noise_traj.append(new_point)
     
@@ -385,7 +389,7 @@ if __name__ == "__main__":
 
     GT_traj = [
         (0.0, 0.0, 0.0, 1.57), (0.0, 5.0, 0.0, 1.57), (0.0, 10.0, 0.0, 1.57), (0.0, 10.0, 0.0, 1.83), (0.0, 10.0, 0.0, 2.09), (0.0, 10.0, 2.0, 2.09), (-2.5, 14.3, 2.0, 2.09), (-3, 18.6, 2.0, 2.09), (-3, 18.6, 4.0, 2.09) ]
-    GT_traj_4 = [
+    GT_traj_2 = [
         (0.0, 0.0, 0.0, -1.5708),           # start yaw = -pi/2 (facing -y)
         (0.0, 0.0, 2.0, -1.5708),          # up
         (0.0, 0.0, 4.0, -1.5708),          # up

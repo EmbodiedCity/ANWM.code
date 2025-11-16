@@ -529,11 +529,12 @@ class WM_Planning_Evaluator:
                                  obs_img_tchw: torch.Tensor,        # (C,H,W) in [-1,1]
                                  goal_img_tchw: torch.Tensor,       # (C,H,W) in [-1,1]
                                  cand_pred_tchw_list,               # [ (C,H,W) x K ] in [-1,1]
-                                 cand_deltas_world_list,            # [ (T,4) x K ] in meters/rad
+                                 cand_deltas_world_list,            # [ (T,4) x K ] in meters/rad (保留用于其他用途)
                                  cand_losses_list,                  # [float] length=K
+                                 cand_traj_points_list,              # [ (T+1,3) x K ] 绝对坐标轨迹点（米单位）
                                  out_path: str,
                                  goal_xy=None,                      # (x,y) or (x,y,z)
-                                 labels=None):                      # ["P1","P2","P3"]
+                                 labels=None):                       # ["P1","P2","P3"]
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
         import numpy as np
@@ -566,24 +567,61 @@ class WM_Planning_Evaluator:
 
         # 2) Trajectory plot —— 3D 版本
         ax_traj = fig.add_subplot(1, ncols, 3, projection="3d")
-        color_cycle = ["#F4A259", "#E4572E", "#2FBF71", "#4C78A8", "#B279A2"]
+        # 被选中的轨迹（P1，loss最小）使用绿色，与预测图的绿色边框保持一致
+        selected_color = "#2FBF71"  # 绿色
+        other_colors = ["#F4A259", "#E4572E", "#4C78A8", "#B279A2"]  # 其他颜色
 
-        for i, dw in enumerate(cand_deltas_world_list):
-            dw = np.asarray(dw)  # (T, 4)
-            xyz = dw[:, :3].cumsum(axis=0)  # 起点(0,0,0) 累加
-            xs, ys, zs = xyz[:, 0], xyz[:, 1], xyz[:, 2]
-            ax_traj.plot3D(xs, ys, zs, color=color_cycle[i % len(color_cycle)], linewidth=3)
-            if xyz.shape[0] > 0:
-                x0, y0, z0 = xyz[0, 0], xyz[0, 1], xyz[0, 2]
+        for i, traj_points in enumerate(cand_traj_points_list):
+            traj_points = np.asarray(traj_points)  # (T+1, 3) 绝对坐标，米单位
+            xs, ys, zs = traj_points[:, 0], traj_points[:, 1], -traj_points[:, 2]
+            # P1（i==0，被选中的）使用绿色，其他按顺序使用其他颜色
+            if i == 0:
+                traj_color = selected_color
             else:
-                x0 = y0 = z0 = 0.0
-            ax_traj.text(x0, y0, z0, labels[i],
-                         fontsize=9, color=color_cycle[i % len(color_cycle)], weight="bold")
+                traj_color = other_colors[(i-1) % len(other_colors)]
+            ax_traj.plot3D(xs, ys, zs, color=traj_color, linewidth=3)
+            if len(xs) > 0:
+                # 将标签放在轨迹的1/3处，避免起点重叠
+                mid_idx = max(1, len(xs) // 3)
+                x_label, y_label, z_label = xs[mid_idx], ys[mid_idx], zs[mid_idx]
+                # 计算轨迹方向，用于偏移标签
+                if len(xs) > 1:
+                    traj_dir = np.array([xs[-1] - xs[0], ys[-1] - ys[0], zs[-1] - zs[0]])
+                    traj_dir_norm = np.linalg.norm(traj_dir)
+                    if traj_dir_norm > 1e-6:
+                        traj_dir = traj_dir / traj_dir_norm
+                    else:
+                        traj_dir = np.array([1, 0, 0])
+                else:
+                    traj_dir = np.array([1, 0, 0])
+                # 垂直于轨迹方向偏移，避免重叠（不同轨迹偏移不同方向）
+                perp_offset = 0.08 * (i + 1)  # 偏移距离
+                perp_vec = np.cross(traj_dir, np.array([0, 0, 1]))  # 垂直于轨迹和z轴
+                if np.linalg.norm(perp_vec) < 1e-6:
+                    perp_vec = np.cross(traj_dir, np.array([0, 1, 0]))
+                perp_vec = perp_vec / (np.linalg.norm(perp_vec) + 1e-6)
+                x_label += perp_vec[0] * perp_offset
+                y_label += perp_vec[1] * perp_offset
+                z_label += perp_vec[2] * perp_offset
+            else:
+                x_label = y_label = z_label = 0.0
+            # 增大字体，使用更醒目的样式，添加白色描边效果（通过多次绘制实现）
+            label_text = labels[i]
+            # 先绘制白色描边（多次偏移绘制）
+            for dx, dy, dz in [(-0.002, -0.002, -0.002), (-0.002, 0.002, -0.002), 
+                               (0.002, -0.002, -0.002), (0.002, 0.002, -0.002),
+                               (-0.002, -0.002, 0.002), (-0.002, 0.002, 0.002),
+                               (0.002, -0.002, 0.002), (0.002, 0.002, 0.002)]:
+                ax_traj.text(x_label + dx, y_label + dy, z_label + dz, label_text,
+                             fontsize=16, color='white', weight='bold', alpha=0.8)
+            # 再绘制前景文字（使用与轨迹相同的颜色）
+            ax_traj.text(x_label, y_label, z_label, label_text,
+                         fontsize=16, color=traj_color, weight="bold")
 
         # goal_xy 兼容 2D/3D：2D 时 z=0
         if goal_xy is not None:
             gx, gy = float(goal_xy[0]), float(goal_xy[1])
-            gz = float(goal_xy[2]) if (isinstance(goal_xy, (list, tuple, np.ndarray)) and len(goal_xy) >= 3) else 0.0
+            gz = float(-goal_xy[2]) if (isinstance(goal_xy, (list, tuple, np.ndarray)) and len(goal_xy) >= 3) else 0.0
             ax_traj.scatter(gx, gy, gz, c="#2066E0", s=40, depthshade=True)
             ax_traj.text(gx, gy, gz, "Goal", color="#2066E0", fontsize=9)
 
@@ -638,12 +676,19 @@ class WM_Planning_Evaluator:
             traj_id = int(idxs.flatten()[traj].item())
 
             # === 构造 GT 轨迹（含起点）
-            gt_deltas_xyz = gt_actions[traj, :, :3].to('cpu').numpy()  # [T, 3]
-            gt_xyz = np.concatenate([np.zeros((1, 3), dtype=np.float32),
-                                     np.cumsum(gt_deltas_xyz, axis=0).astype(np.float32)], axis=0)  # [T+1, 3]
-            T = gt_xyz.shape[0]
+            # gt_actions 是绝对轨迹点位置（waypoint单位，因为数据集normalize=True），需要转换为米单位
+            spacing = float(data_config[dataset_name]['metric_waypoint_spacing'])
+            gt_xyz_waypoint = gt_actions[traj, :, :3].to('cpu').numpy()  # [T, 3] waypoint单位，绝对位置
+            # 添加起点 (0,0,0)
+            gt_xyz_waypoint = np.concatenate([np.zeros((1, 3), dtype=np.float32), gt_xyz_waypoint], axis=0)  # [T+1, 3] waypoint单位
+            # 转换为米单位（用于生成候选轨迹）
+            gt_xyz_meters = gt_xyz_waypoint * spacing  # [T+1, 3] 米单位
+            T = gt_xyz_meters.shape[0]
             gt_yaw = np.zeros((T,), dtype=np.float32)
-            GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz, gt_yaw)]
+            GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz_meters, gt_yaw)]
+            
+            # 保留 waypoint 单位（用于其他计算）
+            gt_xyz = gt_xyz_waypoint  # [T+1, 3] waypoint单位
 
             # 从pkl文件加载候选轨迹
             candidate_trajectories = self.sampled_trajectories[traj_id]  # [N, T+1, 4]
@@ -708,14 +753,17 @@ class WM_Planning_Evaluator:
                 cand_pred_list = [preds[i].detach().cpu() for i in panel_ids]
                 cand_dw_list   = [deltas_world[i].detach().cpu().numpy() for i in panel_ids]  # 米单位
                 cand_loss_list = [float(loss[i].item()) for i in panel_ids]
-                # 将 goal_xyz 从 waypoint 单位转换为米单位（与 cand_dw_list 保持一致）
-                goal_xyz = gt_xyz[-1, :3] * spacing  # waypoint -> 米
+                # 直接使用 candidate_trajectories 的轨迹点进行可视化（米单位）
+                cand_traj_points_list = [candidate_trajectories[cid, :, :3] for cid in panel_ids]  # [ (T+1,3) x K ] 米单位
+                # goal_xyz 使用 GT 轨迹的最后一个点（米单位，绝对位置）
+                goal_xyz = gt_xyz_meters[-1, :3]  # 米单位，绝对位置
                 self.save_single_sample_panel(
                     obs_img_tchw = obs_image[traj, -1],
                     goal_img_tchw = goal_image[traj].squeeze(0),
                     cand_pred_tchw_list = cand_pred_list,
-                    cand_deltas_world_list = cand_dw_list,  # 3D meters
+                    cand_deltas_world_list = cand_dw_list,  # 3D meters (保留用于其他用途)
                     cand_losses_list = cand_loss_list,
+                    cand_traj_points_list = cand_traj_points_list,  # 直接使用轨迹点
                     out_path = os.path.join(image_plot_dir, f"sample_panel_idx{traj_id}.png"),
                     goal_xy = goal_xyz,  # 3D meters
                     labels = [f"P{i+1}" for i in range(len(panel_ids))]
@@ -1055,7 +1103,16 @@ class WM_Planning_Evaluator:
                 os.makedirs(eval_save_output_dir, exist_ok=True)
 
             curr_data_loader = self.datasets[dataset_name]
+            ### 临时过滤：只处理指定的ID
+            # target_ids = {30, 35, 40, 53, 55, 59, 68, 93}
+            target_ids = {33, 82, 91, 93}
+            ###########################
             for (idxs, obs_image, goal_image, gt_actions, goal_pos, aug_image) in metric_logger.log_every(curr_data_loader, 1, header):
+                ### batchsize=1时，直接检查ID是否在目标列表中
+                traj_id = int(idxs.flatten()[0].item())
+                if traj_id not in target_ids:
+                    continue
+                ###########################
                 obs_image = obs_image[:, -self.num_cond:]
                 with torch.amp.autocast('cuda', enabled=True, dtype=torch.bfloat16):
                     # [SR NEW] 多接收一个 sr_tensor

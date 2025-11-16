@@ -42,8 +42,13 @@ def sample_trajectories(dim=3, input_fps=4, output_fps=1):
     stride = input_fps // output_fps
     print(f"Downsampling from {input_fps}fps to {output_fps}fps with stride={stride}")
 
-    dataset_name, candidate_number = "airvln_16", 5
+    dataset_name, candidate_number = "airvln_16", 3
     dataset = get_dataset_eval(config, dataset_name, predefined_index=True)
+    # 获取 spacing（米/waypoint）- 从 data_config.yaml 加载
+    with open("config/data_config.yaml", "r") as f:
+        data_config = yaml.safe_load(f)
+    spacing = float(data_config[dataset_name]['metric_waypoint_spacing'])
+    
     all_sampled_trajectories = {}
     for i in range(len(dataset)):
         idxs, _, _, gt_actions, _, _ = dataset[i]
@@ -59,14 +64,16 @@ def sample_trajectories(dim=3, input_fps=4, output_fps=1):
             gt_actions_tensor = torch.from_numpy(gt_actions)
         
         # 先基于原始GT轨迹（不降采样）生成候选轨迹
-        # 转换为 numpy
-        gt_deltas_xyz = gt_actions_tensor[:, :3].cpu().numpy()  # [T, 3] - waypoint单位
-        gt_xyz = np.concatenate([np.zeros((1, 3), dtype=np.float32),
-                                np.cumsum(gt_deltas_xyz, axis=0).astype(np.float32)], axis=0)  # [T+1, 3] - waypoint单位
-        gt_yaw = np.zeros((gt_xyz.shape[0],), dtype=np.float32)
-        GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz, gt_yaw)]
+        # gt_actions 是绝对位置（waypoint单位，因为数据集normalize=True）
+        gt_xyz_waypoint = gt_actions_tensor[:, :3].cpu().numpy()  # [T, 3] - waypoint单位，绝对位置
+        # 添加起点 (0,0,0)
+        gt_xyz_waypoint = np.concatenate([np.zeros((1, 3), dtype=np.float32), gt_xyz_waypoint], axis=0)  # [T+1, 3] - waypoint单位
+        # 转换为米单位（用于生成候选轨迹）
+        gt_xyz_meters = gt_xyz_waypoint * spacing  # [T+1, 3] 米单位
+        gt_yaw = np.zeros((gt_xyz_meters.shape[0],), dtype=np.float32)
+        GT_traj = [(float(x), float(y), float(z), float(yaw)) for (x, y, z), yaw in zip(gt_xyz_meters, gt_yaw)]
 
-        # 基于原始GT轨迹生成候选轨迹（不降采样）
+        # 基于原始GT轨迹生成候选轨迹（不降采样，米单位）
         candidate_trajectories = trajectory_generation_random(GT_traj, candidate_number=1, dim=dim) + \
                                 trajectory_generation_rule_based(GT_traj, candidate_number=candidate_number-1, dim=dim)
         candidate_trajectories = np.array(candidate_trajectories, dtype=np.float32)  # [N, T+1, 4] - 原始长度
