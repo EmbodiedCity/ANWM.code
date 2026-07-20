@@ -1,0 +1,13 @@
+trajectory_eval_distance:
+  min_dist_cat: 64
+  max_dist_cat: 64
+trajectory_eval_len_traj_pred: 32
+trajectory_eval_context_size: 16
+eval_context_size: 16
+traj_stride: 80
+
+eval_datasets:
+  sekai_new:
+    data_folder: data/sekai_new
+    test: real/data_splits/sekai_new/test
+    goals_per_obs: 4

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nwm-v5-3"
+version = "0.1.0"
+description = "Navigation World Model v5_3 training and evaluation code"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "accelerate",
+  "diffusers",
+  "matplotlib",
+  "numpy",
+  "opencv-python",
+  "Pillow",
+  "PyYAML",
+  "scipy",
+  "timm",
+  "torch",
+  "torchvision",
+  "tqdm",
+]
+
+[project.optional-dependencies]
+metrics = ["dreamsim", "lpips", "torcheval"]
+real = ["evo", "lpips"]
+
+[tool.setuptools.packages.find]
+include = ["nwm*", "real*"]
+
+[tool.ruff]
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["F"]

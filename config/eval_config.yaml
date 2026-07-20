@@ -1,63 +1,13 @@
-trajectory_eval_distance:
-  min_dist_cat: 64
-  max_dist_cat: 64
-trajectory_eval_len_traj_pred: 32
-trajectory_eval_context_size: 16
 traj_stride: 80
 
-# distance bounds for distance and action and distance predictions 
 eval_distance:
   eval_min_dist_cat: -64
   eval_max_dist_cat: 64
-eval_len_traj_pred: 52
+eval_len_traj_pred: 16
 eval_context_size: 16
 
 eval_datasets:
-  recon:
-    data_folder: data/recon
-    test: data_splits/recon/test/
-    goals_per_obs: 4
-  wuhan:
-    data_folder: data/wuhan
-    test: data_splits/wuhan/test/ 
-    goals_per_obs: 4
-  wuhan_auto:
-    data_folder: data/wuhan_auto
-    test: data_splits/wuhan_auto/test/ 
-    goals_per_obs: 4
-  # tartan_drive:
-  #   data_folder: data/tartan_320
-  #   test: data_splits/tartan_drive/test/
-  #   goals_per_obs: 4
-  # sacson:
-  #   data_folder: data/sacson_320
-  #   test: data_splits/sacson/test
-  #   goals_per_obs: 4
-  # scand:
-  #   data_folder: data/scand_320
-  #   test: data_splits/scand/test
-  #   goals_per_obs: 4
-  # go_stanford:
-  #   data_folder: data/go_stanford
-  #   test: data_splits/go_stanford/test/
-  #   goals_per_obs: 4
-  airvln:
-    data_folder: data/airvln
-    test: data_splits/airvln/test/
-    goals_per_obs: 4
-  airvln_airspace:
-    data_folder: data/airvln_airspace
-    test: data_splits/airvln_airspace/test/
-    goals_per_obs: 4
-  airvln_1episode:
-    data_folder: data/airvln_1episode
-    test: data_splits/airvln_1episode/test/
-    goals_per_obs: 4
   airvln_16:
     data_folder: data/airvln_16
-    test: data_splits/airvln_16/test/
-    goals_per_obs: 4
-  airvln_2d:
-    data_folder: data/airvln_16_long
-    test: data_splits/airvln_16_long/test/
+    test: data_splits/airvln_16/test
     goals_per_obs: 4

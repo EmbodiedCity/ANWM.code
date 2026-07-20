@@ -2,5 +2,5 @@ action_stats:
   min: [-2.5, -4.0, -3.0]
   max: [5.0, 4.0, 3.0]
 
-airvln_16:
-  metric_waypoint_spacing: 3.30
+sekai_new:
+  metric_waypoint_spacing: 0.025

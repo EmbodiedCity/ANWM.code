@@ -1,0 +1,12 @@
+accelerate
+diffusers
+matplotlib
+numpy
+opencv-python
+Pillow
+PyYAML
+scipy
+timm
+torch
+torchvision
+tqdm
