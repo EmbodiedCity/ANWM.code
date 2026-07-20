@@ -48,7 +48,7 @@ class ReleaseIntegrityTest(unittest.TestCase):
         )
 
     def test_sekai_candidates_match_evaluation_index(self):
-        split_dir = ROOT / "real/data_splits/sekai_new/test"
+        split_dir = ROOT / "data/splits/sekai_new/test"
         with (split_dir / "trajectory_candidates.pkl").open("rb") as handle:
             candidates = pickle.load(handle)
         with (split_dir / "navigation_eval.pkl").open("rb") as handle:
@@ -74,6 +74,14 @@ class ReleaseIntegrityTest(unittest.TestCase):
         self.assertEqual(
             Path(config["datasets"]["airvln_16"]["data_folder"]),
             ROOT / "data/airvln_16",
+        )
+        self.assertEqual(
+            Path(config["datasets"]["airvln_16"]["train"]),
+            ROOT / "data/splits/airvln_16/train",
+        )
+        self.assertEqual(
+            Path(config["datasets"]["airvln_16"]["test"]),
+            ROOT / "data/splits/airvln_16/test",
         )
 
 

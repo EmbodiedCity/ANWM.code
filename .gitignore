@@ -10,7 +10,9 @@ dist/
 .ruff_cache/
 .vscode/
 
-/data/
+/data/*
+!/data/splits/
+!/data/splits/**
 /logs/
 /outputs/
 /results/

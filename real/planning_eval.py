@@ -349,7 +349,7 @@ def get_dataset_eval(config, dataset_name, predefined_index=True):
     data_config = config["eval_datasets"][dataset_name]
     if predefined_index:
         predefined_index = str(
-            split_path(dataset_name, "navigation_eval.pkl", root="real/data_splits")
+            split_path(dataset_name, "navigation_eval.pkl", root="data/splits")
         )
     else:
         predefined_index = None
@@ -439,7 +439,7 @@ class WM_Planning_Evaluator:
             candidate_traj_path = split_path(
                 dataset_name,
                 "trajectory_candidates.pkl",
-                root="real/data_splits",
+                root="data/splits",
             )
             with open(candidate_traj_path, "rb") as f:
                 self.sampled_trajectories = pickle.load(f)

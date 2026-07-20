@@ -9,7 +9,7 @@ code.
 
 ```text
 config/                 Sekai data and planning configuration
-data_splits/sekai_new/  released navigation index and candidate trajectories
+data/splits/sekai_new/  released navigation index and candidate trajectories
 dataset.py              Sekai trajectory dataset adapter
 planning_eval.py        real-world planning evaluator
 tools/                   conversion, depth completion, filtering, and sampling
@@ -54,7 +54,7 @@ python real/tools/sample_trajectories_youtube.py --help
 ## Planning evaluation
 
 The evaluator uses the root ANWM checkpoint and the candidate trajectories in
-`real/data_splits/sekai_new/test`:
+`data/splits/sekai_new/test`:
 
 ```bash
 torchrun --nproc_per_node=1 planning_eval.py \

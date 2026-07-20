@@ -9,5 +9,5 @@ eval_context_size: 16
 eval_datasets:
   airvln_16:
     data_folder: data/airvln_16
-    test: data_splits/airvln_16/test
+    test: data/splits/airvln_16/test
     goals_per_obs: 4

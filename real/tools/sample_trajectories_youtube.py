@@ -18,23 +18,23 @@ import numpy as np
 THIS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = THIS_DIR.parents[1]
 ANWM_MAIN_DIR = Path(os.environ.get("ANWM_REPO_ROOT", REPO_ROOT))
-DEFAULT_SPLITS_ROOT = REPO_ROOT / "real" / "data_splits"
+DEFAULT_SPLITS_ROOT = REPO_ROOT / "data" / "splits"
 DEFAULT_PRESET = "sekai_new"
 DEFAULT_PRESETS = {
     "sekai_new": REPO_ROOT / "data" / "sekai_new",
 }
 DEFAULT_TEST_TRAJ_FILES = {
     "sekai_new": REPO_ROOT
-    / "real"
-    / "data_splits"
+    / "data"
+    / "splits"
     / "sekai_new"
     / "test"
     / "traj_names.txt",
 }
 DEFAULT_SOURCE_INDEX_PKLS = {
     "sekai_new": REPO_ROOT
-    / "real"
-    / "data_splits"
+    / "data"
+    / "splits"
     / "sekai_new"
     / "test"
     / "dataset_dist_-64_to_64_n4_len_traj_pred_32.pkl",

@@ -9,5 +9,5 @@ traj_stride: 80
 eval_datasets:
   sekai_new:
     data_folder: data/sekai_new
-    test: real/data_splits/sekai_new/test
+    test: data/splits/sekai_new/test
     goals_per_obs: 4

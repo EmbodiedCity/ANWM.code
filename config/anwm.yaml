@@ -19,6 +19,6 @@ image_size: 224
 datasets:
   airvln_16:
     data_folder: data/airvln_16
-    train: data_splits/airvln_16/train
-    test: data_splits/airvln_16/test
+    train: data/splits/airvln_16/train
+    test: data/splits/airvln_16/test
     goals_per_obs: 4

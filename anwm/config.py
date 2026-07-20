@@ -50,6 +50,6 @@ def load_runtime_config(
 
 
 def split_path(
-    dataset_name: str, filename: str, root: PathLike = "data_splits"
+    dataset_name: str, filename: str, root: PathLike = "data/splits"
 ) -> Path:
     return repo_path(Path(root) / dataset_name / "test" / filename)

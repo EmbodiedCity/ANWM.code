@@ -16,7 +16,7 @@ before this cleanup is preserved on the
 ```text
 anwm/                        reusable model, diffusion, data, and utility code
 config/                      ANWM training and AirVLN evaluation configuration
-data_splits/airvln_16/       released AirVLN split metadata
+data/splits/airvln_16/       released AirVLN split metadata
 train.py                     distributed training entry point
 infer.py                     image prediction entry point
 evaluate.py                  image metric evaluation
@@ -53,7 +53,7 @@ data/airvln_16/<trajectory>/...
 logs/anwm_cdit_airvln/checkpoints/0200000.pth.tar
 ```
 
-Data and checkpoints are ignored by Git. The committed `data_splits` directory
+Data and checkpoints are ignored by Git. The committed `data/splits` directory
 contains trajectory names and evaluation indexes only.
 
 ## Training

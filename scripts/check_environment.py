@@ -74,14 +74,14 @@ def main():
     required_files = [
         "config/anwm.yaml",
         "config/eval_config.yaml",
-        "data_splits/airvln_16/test/rollout_16.pkl",
+        "data/splits/airvln_16/test/rollout_16.pkl",
     ]
     if args.component in ("real", "all"):
         required_files.extend(
             [
                 "real/config/eval_config.yaml",
-                "real/data_splits/sekai_new/test/navigation_eval.pkl",
-                "real/data_splits/sekai_new/test/trajectory_candidates.pkl",
+                "data/splits/sekai_new/test/navigation_eval.pkl",
+                "data/splits/sekai_new/test/trajectory_candidates.pkl",
             ]
         )
         ffmpeg_present = shutil.which("ffmpeg") is not None
