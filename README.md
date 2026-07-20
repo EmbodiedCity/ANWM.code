@@ -16,6 +16,8 @@ before this cleanup is preserved on the
 ```text
 anwm/                        reusable model, diffusion, data, and utility code
 config/                      ANWM training and AirVLN evaluation configuration
+data/README.md               dataset layout and preparation instructions
+data/tools/                  reproducible AirVLN-16 preprocessing
 data/splits/airvln_16/       released AirVLN split metadata
 train.py                     distributed training entry point
 infer.py                     image prediction entry point
@@ -39,7 +41,7 @@ python scripts/check_environment.py --component all --verify-imports
 For development:
 
 ```bash
-python -m pip install -r requirements-dev.txt
+python -m pip install -e ".[metrics,real,dev]"
 ruff check .
 python -m unittest discover -s tests -v
 ```
@@ -54,7 +56,17 @@ logs/anwm_cdit_airvln/checkpoints/0200000.pth.tar
 ```
 
 Data and checkpoints are ignored by Git. The committed `data/splits` directory
-contains trajectory names and evaluation indexes only.
+contains trajectory names and evaluation indexes only. To convert the source
+AirVLN observations into the released ANWM format, run:
+
+```bash
+python data/tools/prepare_airvln16.py \
+  --source-root /path/to/airvln \
+  --output-root data/airvln_16
+```
+
+See [`data/README.md`](data/README.md) for the expected source layout and
+conversion details.
 
 ## Training
 

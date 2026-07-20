@@ -26,6 +26,7 @@ dependencies = [
 [project.optional-dependencies]
 metrics = ["dreamsim", "lpips", "torcheval"]
 real = ["evo", "lpips"]
+dev = ["ruff"]
 
 [tool.setuptools.packages.find]
 include = ["anwm*", "real*"]

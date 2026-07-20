@@ -9,7 +9,7 @@ code.
 
 ```text
 config/                 Sekai data and planning configuration
-data/splits/sekai_new/  released navigation index and candidate trajectories
+../data/splits/sekai_new/ released navigation index and candidate trajectories
 dataset.py              Sekai trajectory dataset adapter
 planning_eval.py        real-world planning evaluator
 tools/                   conversion, depth completion, filtering, and sampling
