@@ -2,8 +2,8 @@ trajectory_eval_distance:
   min_dist_cat: 64
   max_dist_cat: 64
 trajectory_eval_len_traj_pred: 32
-trajectory_eval_context_size: 16
-eval_context_size: 16
+trajectory_eval_context_size: 4
+eval_context_size: 4
 traj_stride: 80
 
 eval_datasets:

@@ -9,7 +9,7 @@ lr: 8e-5
 
 normalize: true
 grad_clip_val: 10.0
-context_size: 16
+context_size: 4
 distance:
   min_dist_cat: -64
   max_dist_cat: 64

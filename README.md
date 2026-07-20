@@ -7,7 +7,7 @@
 **A physics-informed, action-conditioned world model for aerial visual generation and navigation in large-scale 3D environments.**
 
 [![arXiv](https://img.shields.io/badge/arXiv-2512.21887-b31b1b.svg)](https://arxiv.org/abs/2512.21887)
-[![Hugging Face](https://img.shields.io/badge/HuggingFace-Coming%20Soon-yellow.svg)](#dataset)
+[![Hugging Face](https://img.shields.io/badge/HuggingFace-Coming%20Soon-yellow.svg)]()
 
 </div>
 
@@ -25,7 +25,7 @@ Paper: [Aerial World Model](https://arxiv.org/abs/2512.21887).
 
 ## Dataset
 
-Coming soon on Hugging Face (URL TBD).
+Coming soon on [Hugging Face]().
 
 The simulated benchmark is built from [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform), and [OpenUAV](https://github.com/buaa-colalab/TravelUAV) trajectories across more than 40 Unreal Engine environments. Each segment has 48 observations and 47 relative actions. The same flight is recorded from front, left, right, and rear orientations to reduce forward-motion bias.
 
@@ -78,7 +78,7 @@ Diffusers on first use.
 
 ## Data and Checkpoint
 
-Datasets and checkpoints will be released on Hugging Face (URL TBD).
+Datasets and checkpoints will be released on [Hugging Face]().
 
 The repository includes the released split manifests under `data/splits/`.
 Place processed trajectories and the ANWM checkpoint at:
@@ -100,9 +100,9 @@ The paper model is defined by `config/anwm.yaml`:
 | Parameter | Value |
 |---|---:|
 | Backbone | CDiT-XL/2 |
-| Parameters | 1,134,100,256 |
+| Parameters | ~1.1B |
 | Image size | 224 x 224 |
-| Context frames | 16 |
+| Context frames | 4 |
 | Prediction steps | 16 |
 | Goals per observation | 4 |
 | Batch size per GPU | 1 |
@@ -165,15 +165,15 @@ checkpoint used for the reported model is `0200000.pth.tar`.
 
 ## Real-world Planning
 
-Same model, checkpoint ([`config/anwm.yaml`](config/anwm.yaml)), trajectory
-layout (`*.jpg` + `traj_data.pkl`), and `anwm/` core as simulation. The real
-path mainly swaps the **data source**, **depth**, and **eval entry**:
+Real-world evaluation follows the same overall workflow as simulation, but uses
+different data, depth, and entry scripts:
 
 | | Simulation | Real-world |
 |---|---|---|
 | Data | AirVLN-16 | [Sekai](https://github.com/Lixsp11/sekai-codebase) drone-view |
 | Depth | simulator GT | [Pi-Long](https://github.com/DengKaiCQ/Pi-Long) |
 | Eval | [`infer.py`](infer.py) / [`evaluate.py`](evaluate.py) | [`planning_eval.py`](planning_eval.py) |
+| Config | [`config/`](config/) | [`real/config/`](real/config/) |
 
 Key files (other scripts under `real/tools/` are optional):
 
