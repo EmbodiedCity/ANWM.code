@@ -27,5 +27,6 @@ local AirVLN directory before running it. The expected source layout is:
 The generated trajectory folders contain numeric image files and
 `traj_data.pkl`. Place them under `data/airvln_16/` for training and inference.
 
-Sekai preparation remains under `real/tools/`; see
-[`real/README.md`](../real/README.md).
+Sekai preparation and planning are documented in the
+[Real-world Planning](../README.md#real-world-planning) section of the root
+README.

@@ -19,13 +19,13 @@ Highlights:
 
 - **TB-scale pre-training** on action-conditioned world models with 4-DoF UAV trajectories, including large-scale data curation and high-throughput distributed training.
 - **Physics-inspired** Future Frame Projection (**FFP**) that projects historical frames to future viewpoints, injecting coarse geometric priors and stabilizing long-horizon visual generation.
-- **Long-horizon** visual forecasting and stronger navigation success: extending the effective prediction horizon from $<\!10\,\mathrm{m}$ (indoor) to the **hundreds of meters** scale in outdoor open-space environments.
+- **Long-horizon** visual forecasting and stronger navigation success: extending the effective prediction horizon from under 10 m (indoor) to the **hundreds of meters** scale in outdoor open-space environments.
 
 Paper: [Aerial World Model](https://arxiv.org/abs/2512.21887).
 
 ## Dataset
 
-Coming soon on Hugging Face: `<!-- TODO: HF dataset / model URL -->`
+Coming soon on Hugging Face (URL TBD).
 
 The simulated benchmark is built from [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform), and [OpenUAV](https://github.com/buaa-colalab/TravelUAV) trajectories across more than 40 Unreal Engine environments. Each segment has 48 observations and 47 relative actions. The same flight is recorded from front, left, right, and rear orientations to reduce forward-motion bias.
 
@@ -165,16 +165,41 @@ checkpoint used for the reported model is `0200000.pth.tar`.
 
 ## Real-world Planning
 
-Install the Sekai planning dependencies:
+Same model, checkpoint ([`config/anwm.yaml`](config/anwm.yaml)), trajectory
+layout (`*.jpg` + `traj_data.pkl`), and `anwm/` core as simulation. The real
+path mainly swaps the **data source**, **depth**, and **eval entry**:
+
+| | Simulation | Real-world |
+|---|---|---|
+| Data | AirVLN-16 | [Sekai](https://github.com/Lixsp11/sekai-codebase) drone-view |
+| Depth | simulator GT | [Pi-Long](https://github.com/DengKaiCQ/Pi-Long) |
+| Eval | [`infer.py`](infer.py) / [`evaluate.py`](evaluate.py) | [`planning_eval.py`](planning_eval.py) |
+
+Key files (other scripts under `real/tools/` are optional):
+
+| Role | File |
+|---|---|
+| Convert videos → AirVLN-16 | [`real/tools/process_youtube_to_airvln16_format.py`](real/tools/process_youtube_to_airvln16_format.py) |
+| Fill depth with Pi-Long | [`real/tools/fill_depth_pilong.py`](real/tools/fill_depth_pilong.py) |
+| One-shot preprocess | [`real/tools/prepare_dataset.sh`](real/tools/prepare_dataset.sh) |
+| Dataset adapter | [`real/dataset.py`](real/dataset.py) |
+| Planning evaluator | [`real/planning_eval.py`](real/planning_eval.py) |
+| Configs | [`real/config/`](real/config/) |
+| Split + candidates | [`data/splits/sekai_new/`](data/splits/sekai_new/) |
+
+Install deps, preprocess (needs `ffmpeg`; keep Pi-Long under `third_party/Pi-Long`
+or elsewhere), then evaluate. Point `RAW_ROOT` / `OUTPUT_ROOT` at your own
+directories to replace or re-index data.
 
 ```bash
 python -m pip install -e ".[real]"
 python scripts/check_environment.py --component real --verify-imports
-```
 
-Place processed Sekai trajectories under `data/sekai_new`, then run:
+RAW_ROOT=data/sekai_raw \
+OUTPUT_ROOT=data/sekai_new \
+PILONG_DIR=third_party/Pi-Long \
+bash real/tools/prepare_dataset.sh
 
-```bash
 torchrun --standalone --nproc_per_node=1 planning_eval.py \
   --exp config/anwm.yaml \
   --ckp 0200000 \
@@ -183,16 +208,13 @@ torchrun --standalone --nproc_per_node=1 planning_eval.py \
   --num_samples 5
 ```
 
-Sekai preprocessing and configuration remain isolated under `real/`; see
-[`real/README.md`](real/README.md).
-
 ## Repository Layout
 
 ```text
 anwm/             model, diffusion, projection, dataset, and rollout code
 config/           paper training and simulation evaluation configuration
 data/             original preprocessing notebook and released split metadata
-real/             Sekai preprocessing and planning evaluation
+real/             Sekai data adapters, depth fill, and planning evaluation
 train.py          distributed training entry point
 infer.py          visual generation entry point
 evaluate.py       LPIPS, DreamSim, and FID evaluation
@@ -209,3 +231,14 @@ planning_eval.py  real-world trajectory-ranking entry point
 ## Acknowledgements
 
 ANWM builds on [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform), [OpenUAV](https://github.com/buaa-colalab/TravelUAV), [Sekai](https://github.com/Lixsp11/sekai-codebase), [NWM](https://github.com/facebookresearch/nwm), [Matrix-Game](https://github.com/SkyworkAI/Matrix-Game), and [YUME](https://github.com/stdstu12/YUME).
+
+## Citation
+
+```bibtex
+@article{zhang2025anwm,
+  title={Aerial World Model for Long-horizon Visual Generation and Navigation in 3D Space},
+  author={Zhang, Weichen and Tang, Peizhi and Zeng, Xin and Man, Fanhang and Yu, Shiquan and Dai, Zichao and Zhao, Baining and Chen, Hongjin and Shang, Yu and Wu, Wei and Gao, Chen and Chen, Xinlei and Wang, Xin and Li, Yong and Zhu, Wenwu},
+  journal={arXiv preprint arXiv:2512.21887},
+  year={2025}
+}
+```
