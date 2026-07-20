@@ -1,51 +1,31 @@
-# Data preparation
+# Data
 
-The repository tracks preprocessing code and split metadata under `data/`.
-Raw and processed image/depth data remain ignored by Git.
+This directory contains the preprocessing code and released split metadata used
+by ANWM. Raw RGB-D data and generated trajectories are not tracked by Git.
 
 ```text
 data/
-  tools/prepare_airvln16.py    AirVLN scene-16 converter
-  splits/airvln_16/            released ANWM train/test metadata
-  splits/sekai_new/            released Sekai evaluation metadata
-  airvln_16/                   generated AirVLN trajectories (ignored)
-  sekai_new/                   generated Sekai trajectories (ignored)
+  preprocessing/Data_preprocessing_airvln_16.ipynb
+  splits/airvln_16/
+  splits/sekai_new/
+  airvln_16/       processed simulation trajectories (not tracked)
+  sekai_new/       processed real-world trajectories (not tracked)
 ```
 
-## AirVLN-16
-
-The converter replaces the machine-specific
-`Data_preprocessing_airvln_16.ipynb` used during development. It expects this
-source layout:
+`Data_preprocessing_airvln_16.ipynb` is the original AirVLN scene-16 data
+preparation notebook used for the released pipeline. Set its `root_dir` to the
+local AirVLN directory before running it. The expected source layout is:
 
 ```text
-<source-root>/
+<root_dir>/
   waypoints/train.json
   waypoints/val_seen.json
   traj_obs/<trajectory_id>/rgb/rgb_obs_front_<frame>.png
   traj_obs/<trajectory_id>/dep/dep_obs_front_<frame>.npy
 ```
 
-Run it after installing ANWM:
+The generated trajectory folders contain numeric image files and
+`traj_data.pkl`. Place them under `data/airvln_16/` for training and inference.
 
-```bash
-python data/tools/prepare_airvln16.py \
-  --source-root /path/to/airvln \
-  --output-root data/airvln_16
-```
-
-By default, the converter filters `scene_id == 16`, skips the first 11 frames,
-uses 512 x 512 images with a 90-degree horizontal field of view, applies the
-camera-frame transform used for the released checkpoint, and processes only
-trajectories named by `data/splits/airvln_16`. Each output folder contains
-numeric image files and a `traj_data.pkl` with camera intrinsics, position,
-orientation, depth, and pose arrays.
-
-Use `--dry-run` to check annotation coverage before conversion and `--help` for
-all options. The original notebooks and their hard-coded workstation paths are
-not required.
-
-## Sekai
-
-Sekai preparation remains isolated in `real/tools/`. See
-[`real/README.md`](../real/README.md) for the complete pipeline.
+Sekai preparation remains under `real/tools/`; see
+[`real/README.md`](../real/README.md).

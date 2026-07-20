@@ -12,10 +12,10 @@ dist/
 
 /data/*
 !/data/README.md
+!/data/preprocessing/
+!/data/preprocessing/**
 !/data/splits/
 !/data/splits/**
-!/data/tools/
-!/data/tools/**
 /logs/
 /outputs/
 /results/

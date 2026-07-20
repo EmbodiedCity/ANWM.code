@@ -45,7 +45,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--component",
-        choices=("core", "real", "all"),
+        choices=("core", "metrics", "real", "all"),
         default="all",
         help="dependency set to check",
     )
@@ -65,7 +65,7 @@ def main():
     print(f"[{'ok' if not failed else 'unsupported'}] Python: {sys.version.split()[0]}")
 
     modules = list(CORE_MODULES)
-    if args.component == "all":
+    if args.component in ("metrics", "all"):
         modules.extend(METRIC_MODULES)
     if args.component in ("real", "all"):
         modules.extend(REAL_MODULES)
