@@ -21,7 +21,7 @@ def model_forward_wrapper(
     x = curr_obs.to(device)
     y = curr_delta.to(device)
     if x_supervised is None:
-        raise ValueError("x_supervised is required for the v5_3 model")
+        raise ValueError("x_supervised is required for ANWM")
     x_supervised = x_supervised.to(device)
 
     with torch.amp.autocast("cuda", enabled=True, dtype=torch.bfloat16):

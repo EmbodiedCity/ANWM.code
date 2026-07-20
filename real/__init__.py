@@ -1,1 +1,1 @@
-"""Sekai real-world evaluation extension for NWM."""
+"""Sekai real-world evaluation extension for ANWM."""

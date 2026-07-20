@@ -21,12 +21,12 @@ from glob import glob
 from PIL import ImageDraw, ImageFont
 
 # ======== [PANEL END]   extra imports for paper panel ========
-from nwm.config import load_runtime_config, load_yaml, split_path
-from nwm.diffusion import create_diffusion
-import nwm.distributed as dist
-from nwm.model import CDiT_models
-from nwm.rollout import model_forward_wrapper
-from nwm.utils import (
+from anwm.config import load_runtime_config, load_yaml, split_path
+from anwm.diffusion import create_diffusion
+import anwm.distributed as dist
+from anwm.model import CDiT_models
+from anwm.rollout import model_forward_wrapper
+from anwm.utils import (
     calculate_delta_yaw,
     get_action_torch,
     save_planning_pred,
@@ -1641,7 +1641,7 @@ def cli():
 
     # Default Args
     parser.add_argument(
-        "--exp", type=str, default="config/v5_3.yaml", help="experiment config"
+        "--exp", type=str, default="config/anwm.yaml", help="experiment config"
     )
     parser.add_argument("--ckp", type=str, default="0200000", help="checkpoint id")
 

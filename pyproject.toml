@@ -3,9 +3,9 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nwm-v5-3"
+name = "anwm"
 version = "0.1.0"
-description = "Navigation World Model v5_3 training and evaluation code"
+description = "Aerial World Model for Long-horizon Visual Generation and Navigation in 3D Space"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
@@ -28,7 +28,7 @@ metrics = ["dreamsim", "lpips", "torcheval"]
 real = ["evo", "lpips"]
 
 [tool.setuptools.packages.find]
-include = ["nwm*", "real*"]
+include = ["anwm*", "real*"]
 
 [tool.ruff]
 target-version = "py39"

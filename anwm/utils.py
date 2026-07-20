@@ -12,7 +12,7 @@ from torchvision import transforms
 import torchvision.transforms.functional as TF
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 - registers 3D projection on older Matplotlib
 
-from nwm.config import load_yaml
+from anwm.config import load_yaml
 
 
 IMAGE_ASPECT_RATIO = (
@@ -410,7 +410,7 @@ def save_planning_pred(
         preds_save = {
             "obs_image": obs_image[batch_idx],
             "goal_image": goal_image[batch_idx],
-            "nwm_preds": preds[batch_idx],
+            "anwm_preds": preds[batch_idx],
             "deltas": deltas[batch_idx],
             "loss": loss[batch_idx],
             "gt_actions": gt_actions[batch_idx],

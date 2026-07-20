@@ -1,7 +1,7 @@
-# NWM Real-World Extension
+# ANWM Real-World Extension
 
-This directory isolates the Sekai-Real-Drone workflow from the AirVLN-16 NWM
-core. It reuses the released `nwm` model and diffusion package but owns all
+This directory isolates the Sekai-Real-Drone workflow from the AirVLN-16 ANWM
+core. It reuses the released `anwm` model and diffusion package but owns all
 real-world-specific configuration, split metadata, preprocessing, and planning
 code.
 
@@ -53,12 +53,12 @@ python real/tools/sample_trajectories_youtube.py --help
 
 ## Planning evaluation
 
-The evaluator uses the root v5_3 checkpoint and the candidate trajectories in
+The evaluator uses the root ANWM checkpoint and the candidate trajectories in
 `real/data_splits/sekai_new/test`:
 
 ```bash
 torchrun --nproc_per_node=1 planning_eval.py \
-  --exp config/v5_3.yaml \
+  --exp config/anwm.yaml \
   --ckp 0200000 \
   --datasets sekai_new \
   --output_dir outputs/planning

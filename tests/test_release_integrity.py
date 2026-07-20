@@ -7,15 +7,15 @@ from pathlib import Path
 import torch
 import yaml
 
-from nwm.config import load_runtime_config
-from nwm.model import CDiT_models
+from anwm.config import load_runtime_config
+from anwm.model import CDiT_models
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class ReleaseIntegrityTest(unittest.TestCase):
-    def test_v5_3_model_parameter_count(self):
+    def test_anwm_model_parameter_count(self):
         with torch.device("meta"):
             model = CDiT_models["CDiT-XL/2"](
                 context_size=16,
@@ -26,8 +26,8 @@ class ReleaseIntegrityTest(unittest.TestCase):
             sum(parameter.numel() for parameter in model.parameters()), 1_134_100_256
         )
 
-    def test_v5_3_configs_are_consistent(self):
-        model_config = yaml.safe_load((ROOT / "config/v5_3.yaml").read_text())
+    def test_anwm_configs_are_consistent(self):
+        model_config = yaml.safe_load((ROOT / "config/anwm.yaml").read_text())
         eval_config = yaml.safe_load((ROOT / "config/eval_config.yaml").read_text())
         data_config = yaml.safe_load((ROOT / "config/data_config.yaml").read_text())
         real_eval_config = yaml.safe_load(
@@ -37,7 +37,7 @@ class ReleaseIntegrityTest(unittest.TestCase):
             (ROOT / "real/config/data_config.yaml").read_text()
         )
 
-        self.assertEqual(model_config["run_name"], "nwm_cdit_airvln_v5_3")
+        self.assertEqual(model_config["run_name"], "anwm_cdit_airvln")
         self.assertEqual(model_config["context_size"], 16)
         self.assertEqual(eval_config["eval_context_size"], 16)
         self.assertNotIn("sekai_new", data_config)
@@ -66,7 +66,7 @@ class ReleaseIntegrityTest(unittest.TestCase):
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 os.chdir(temp_dir)
-                config = load_runtime_config("config/v5_3.yaml")
+                config = load_runtime_config("config/anwm.yaml")
         finally:
             os.chdir(original_cwd)
 

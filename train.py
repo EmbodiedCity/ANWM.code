@@ -28,13 +28,13 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, ConcatDataset
 from torch.utils.data.distributed import DistributedSampler
-from nwm.config import load_runtime_config
-from nwm.data.airvln import TrainingDataset
-from nwm.diffusion import create_diffusion
-from nwm.distributed import init_distributed
-from nwm.model import CDiT_models
-from nwm.rollout import model_forward_wrapper
-from nwm.utils import transform
+from anwm.config import load_runtime_config
+from anwm.data.airvln import TrainingDataset
+from anwm.diffusion import create_diffusion
+from anwm.distributed import init_distributed
+from anwm.model import CDiT_models
+from anwm.rollout import model_forward_wrapper
+from anwm.utils import transform
 
 #################################################################################
 #                             Training Helper Functions                         #
@@ -537,7 +537,7 @@ def evaluate(
 
 def get_args_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="config/v5_3.yaml")
+    parser.add_argument("--config", type=str, default="config/anwm.yaml")
     parser.add_argument("--epochs", type=int, default=300)
     # parser.add_argument("--global-batch-size", type=int, default=256)
     parser.add_argument("--global-seed", type=int, default=0)

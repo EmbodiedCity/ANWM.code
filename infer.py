@@ -10,14 +10,14 @@ import argparse
 import os
 import numpy as np
 
-from nwm.config import load_runtime_config, split_path
-from nwm.data.airvln import EvalDataset
-from nwm.diffusion import create_diffusion
-from nwm.distributed import init_distributed
-import nwm.distributed as dist
-from nwm.model import CDiT_models
-from nwm.rollout import model_forward_wrapper
-import nwm.utils as misc
+from anwm.config import load_runtime_config, split_path
+from anwm.data.airvln import EvalDataset
+from anwm.diffusion import create_diffusion
+from anwm.distributed import init_distributed
+import anwm.distributed as dist
+from anwm.model import CDiT_models
+from anwm.rollout import model_forward_wrapper
+import anwm.utils as misc
 from PIL import Image
 
 
@@ -355,7 +355,7 @@ if __name__ == "__main__":
         "--output_dir", type=str, default="outputs/inference", help="output directory"
     )
     parser.add_argument(
-        "--exp", type=str, default="config/v5_3.yaml", help="experiment config"
+        "--exp", type=str, default="config/anwm.yaml", help="experiment config"
     )
     parser.add_argument("--ckp", type=str, default="0200000")
     parser.add_argument("--num_sec_eval", type=int, default=5)

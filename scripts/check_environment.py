@@ -72,7 +72,7 @@ def main():
     failed = bool(check_modules(dict.fromkeys(modules), args.verify_imports)) or failed
 
     required_files = [
-        "config/v5_3.yaml",
+        "config/anwm.yaml",
         "config/eval_config.yaml",
         "data_splits/airvln_16/test/rollout_16.pkl",
     ]
@@ -93,7 +93,7 @@ def main():
 
     if args.require_checkpoint:
         failed = (
-            not check_file("logs/nwm_cdit_airvln_v5_3/checkpoints/0200000.pth.tar")
+            not check_file("logs/anwm_cdit_airvln/checkpoints/0200000.pth.tar")
             or failed
         )
 

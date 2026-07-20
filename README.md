@@ -1,9 +1,10 @@
-# NWM v5_3
+# ANWM
 
-This repository contains the minimal Navigation World Model (NWM) v5_3
-training and evaluation pipeline. The core package targets AirVLN-16. The
-optional [`real/`](real/) extension contains the Sekai real-world preprocessing
-and planning workflow as a separate module.
+This repository contains the official training and evaluation pipeline for
+**ANWM: Aerial World Model for Long-horizon Visual Generation and Navigation
+in 3D Space**. The core package targets AirVLN-16. The optional
+[`real/`](real/) extension contains the Sekai real-world preprocessing and
+planning workflow as a separate module.
 
 The release excludes raw datasets, model weights, experiment outputs, older
 model variants, and vendored third-party repositories. The repository state
@@ -13,8 +14,8 @@ before this cleanup is preserved on the
 ## Layout
 
 ```text
-nwm/                         reusable model, diffusion, data, and utility code
-config/                      v5_3 training and AirVLN evaluation configuration
+anwm/                        reusable model, diffusion, data, and utility code
+config/                      ANWM training and AirVLN evaluation configuration
 data_splits/airvln_16/       released AirVLN split metadata
 train.py                     distributed training entry point
 infer.py                     image prediction entry point
@@ -49,7 +50,7 @@ Place external artifacts at these repository-relative paths:
 
 ```text
 data/airvln_16/<trajectory>/...
-logs/nwm_cdit_airvln_v5_3/checkpoints/0200000.pth.tar
+logs/anwm_cdit_airvln/checkpoints/0200000.pth.tar
 ```
 
 Data and checkpoints are ignored by Git. The committed `data_splits` directory
@@ -57,18 +58,18 @@ contains trajectory names and evaluation indexes only.
 
 ## Training
 
-The released v5_3 checkpoint uses 16 context frames, 16 prediction steps, and
+The released ANWM checkpoint uses 16 context frames, 16 prediction steps, and
 the `CDiT-XL/2` model:
 
 ```bash
-torchrun --nproc_per_node=8 train.py --config config/v5_3.yaml
+torchrun --nproc_per_node=8 train.py --config config/anwm.yaml
 ```
 
 ## Image prediction and metrics
 
 ```bash
 torchrun --nproc_per_node=1 infer.py \
-  --exp config/v5_3.yaml \
+  --exp config/anwm.yaml \
   --ckp 0200000 \
   --datasets airvln_16 \
   --eval_type rollout
@@ -80,7 +81,7 @@ Generate ground truth with the same command plus `--gt 1`, then evaluate:
 python evaluate.py \
   --datasets airvln_16 \
   --gt_dir outputs/inference/gt \
-  --exp_dir outputs/inference/v5_3 \
+  --exp_dir outputs/inference/anwm \
   --eval_types rollout
 ```
 
@@ -91,7 +92,7 @@ kept under [`real/`](real/). The compatibility entry point remains:
 
 ```bash
 torchrun --nproc_per_node=1 planning_eval.py \
-  --exp config/v5_3.yaml \
+  --exp config/anwm.yaml \
   --ckp 0200000 \
   --datasets sekai_new \
   --output_dir outputs/planning
@@ -102,7 +103,7 @@ dependencies.
 
 ## Reproducibility notes
 
-- The v5_3 model contains exactly `1,134,100,256` parameters.
+- The ANWM model contains exactly `1,134,100,256` parameters.
 - Runtime paths are resolved from the repository root, independent of the
   caller's current working directory.
 - PyTorch checkpoint files use pickle. Only load checkpoints from a trusted

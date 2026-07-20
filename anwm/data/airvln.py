@@ -15,12 +15,12 @@ from typing import Tuple
 import pickle
 import tqdm
 from torch.utils.data import Dataset
-from nwm.config import load_yaml
-from nwm.projection import (
+from anwm.config import load_yaml
+from anwm.projection import (
     project_to_2d_image_seq2seq,
     reproject_depth_to_other_pose_seq2seq,
 )
-from nwm.utils import (
+from anwm.utils import (
     angle_difference,
     get_data_path,
     get_delta_np,

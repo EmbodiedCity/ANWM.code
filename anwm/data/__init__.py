@@ -1,4 +1,4 @@
-"""Dataset adapters used by NWM."""
+"""Dataset adapters used by ANWM."""
 
 from .airvln import EvalDataset, TrainingDataset
 

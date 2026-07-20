@@ -17,7 +17,7 @@ import numpy as np
 
 THIS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = THIS_DIR.parents[1]
-NWM_MAIN_DIR = Path(os.environ.get("NWM_REPO_ROOT", REPO_ROOT))
+ANWM_MAIN_DIR = Path(os.environ.get("ANWM_REPO_ROOT", REPO_ROOT))
 DEFAULT_SPLITS_ROOT = REPO_ROOT / "real" / "data_splits"
 DEFAULT_PRESET = "sekai_new"
 DEFAULT_PRESETS = {
@@ -191,10 +191,10 @@ def get_traj_length(data_root: Path, traj_name: str) -> int:
     return int(np.asarray(traj_data["point"]).shape[0])
 
 
-def ensure_nwm_main_importable() -> None:
-    nwm_main_str = str(NWM_MAIN_DIR.resolve())
-    if nwm_main_str not in sys.path:
-        sys.path.insert(0, nwm_main_str)
+def ensure_anwm_importable() -> None:
+    anwm_main_str = str(ANWM_MAIN_DIR.resolve())
+    if anwm_main_str not in sys.path:
+        sys.path.insert(0, anwm_main_str)
     os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib-codex")
 
 
@@ -208,9 +208,9 @@ def pushd(path: Path):
         os.chdir(prev_cwd)
 
 
-def import_nwm_main_module(module_name: str):
-    ensure_nwm_main_importable()
-    with pushd(NWM_MAIN_DIR):
+def import_anwm_module(module_name: str):
+    ensure_anwm_importable()
+    with pushd(ANWM_MAIN_DIR):
         return importlib.import_module(module_name)
 
 
@@ -299,7 +299,7 @@ def build_source_index_with_main(
     traj_names: Sequence[str],
     args,
 ) -> Path:
-    dataset_module = import_nwm_main_module("real.dataset")
+    dataset_module = import_anwm_module("real.dataset")
     source_index_path = get_source_index_path(split_dir, args, dataset_name)
     (
         source_min_dist_cat,

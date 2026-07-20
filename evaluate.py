@@ -12,7 +12,7 @@ import json
 from PIL import Image
 
 from torchvision import transforms
-import nwm.distributed as dist
+import anwm.distributed as dist
 
 
 def get_loss_fn(loss_fn_type, secs, device):
@@ -285,7 +285,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--exp_dir",
         type=str,
-        default="outputs/inference/v5_3",
+        default="outputs/inference/anwm",
         help="prediction directory",
     )
     parser.add_argument("--num_sec_eval", type=int, default=5, help="experiment name")

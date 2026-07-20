@@ -872,7 +872,7 @@ def _process_one_clip(
 
 def main() -> int:
     ap = argparse.ArgumentParser(
-        description="Convert Sekai-Real-Drone clips to the trajectory format used by NWM v5_3."
+        description="Convert Sekai-Real-Drone clips to the trajectory format used by ANWM."
     )
     ap.add_argument("--input_root", default="data/sekai_raw")
     ap.add_argument(
