@@ -6,53 +6,35 @@
 
 **A physics-informed, action-conditioned world model for aerial visual generation and navigation in large-scale 3D environments.**
 
+[![arXiv](https://img.shields.io/badge/arXiv-2512.21887-b31b1b.svg)](https://arxiv.org/abs/2512.21887)
+[![Hugging Face](https://img.shields.io/badge/HuggingFace-Coming%20Soon-yellow.svg)](#dataset)
+
 </div>
 
 ## Overview
 
-ANWM predicts future egocentric observations from recent visual history and a
-4-DoF UAV action `(delta x, delta y, delta z, delta yaw)`. During navigation,
-it autoregressively imagines observations along candidate trajectories and
-ranks each path by the LPIPS distance between its predicted endpoint and the
-visual goal.
+**ANWM** (Aerial Navigation World Model) is an action-conditioned world model that predicts future egocentric observations for UAV navigation in large-scale **3D environments**. Conditioned on recent visual history and a 4-DoF UAV action `(delta x, delta y, delta z, delta yaw)`, it autoregressively imagines observations along candidate trajectories and ranks each path by visual similarity to the goal.
 
-ANWM introduces two components for long-horizon aerial generation:
+Highlights:
 
-- **Future Frame Projection (FFP)** projects historical RGB-D observations into
-  the future camera view and provides a physically grounded image prior.
-- **Independent Latent Modulation (ILM)** conditions historical observations
-  and projected future frames separately so that projection holes and depth
-  errors do not dominate generation.
+- **TB-scale pre-training** on action-conditioned world models with 4-DoF UAV trajectories, including large-scale data curation and high-throughput distributed training.
+- **Physics-inspired** Future Frame Projection (**FFP**) that projects historical frames to future viewpoints, injecting coarse geometric priors and stabilizing long-horizon visual generation.
+- **Long-horizon** visual forecasting and stronger navigation success: extending the effective prediction horizon from $<\!10\,\mathrm{m}$ (indoor) to the **hundreds of meters** scale in outdoor open-space environments.
 
-## Method
-
-FFP back-projects historical depth into 3D, transforms visible points to the
-future camera pose, projects them onto the image plane, and resolves overlapping
-points by depth. The resulting coarse future view is encoded alongside the
-visual history. ANWM uses independent modulation and shared-weight
-cross-attention branches to combine these two conditioning sources in a
-Conditional Diffusion Transformer.
-
-The model supports forward/backward, left/right, up/down, and yaw motion. For
-navigation, candidate trajectories are supplied by an external planner; ANWM
-imagines each trajectory and selects the endpoint most similar to the goal.
+Paper: [Aerial World Model](https://arxiv.org/abs/2512.21887).
 
 ## Dataset
 
-The simulated benchmark is built from AerialVLN, OpenFly, and OpenUAV
-trajectories across more than 40 Unreal Engine environments. Each segment has
-48 observations and 47 relative actions. The same flight is recorded from
-front, left, right, and rear orientations to reduce forward-motion bias.
+Coming soon on Hugging Face: `<!-- TODO: HF dataset / model URL -->`
+
+The simulated benchmark is built from [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform), and [OpenUAV](https://github.com/buaa-colalab/TravelUAV) trajectories across more than 40 Unreal Engine environments. Each segment has 48 observations and 47 relative actions. The same flight is recorded from front, left, right, and rear orientations to reduce forward-motion bias.
 
 | Split | Trajectory segments | Frames per segment | Actions per segment |
 |---|---:|---:|---:|
 | Train | 350K | 48 | 47 |
 | Test | 2.2K | 48 | 47 |
 
-The test set contains 1.1K planar and 1.1K 3D trajectories. Horizontal speed is
-5 m/s, vertical speed is 2 m/s, yaw speed is 15 deg/s, and the average
-trajectory length is approximately 80.7 m. Real-world evaluation uses the
-drone-view subset of Sekai with estimated depth.
+The test set contains 1.1K planar and 1.1K 3D trajectories. Horizontal speed is 5 m/s, vertical speed is 2 m/s, yaw speed is 15 deg/s, and the average trajectory length is approximately 80.7 m. Real-world evaluation uses the drone-view subset of [Sekai](https://github.com/Lixsp11/sekai-codebase) with estimated depth.
 
 ## Main Results
 
@@ -95,6 +77,8 @@ The Stable Diffusion VAE `stabilityai/sd-vae-ft-ema` is downloaded by
 Diffusers on first use.
 
 ## Data and Checkpoint
+
+Datasets and checkpoints will be released on Hugging Face (URL TBD).
 
 The repository includes the released split manifests under `data/splits/`.
 Place processed trajectories and the ANWM checkpoint at:
@@ -224,4 +208,4 @@ planning_eval.py  real-world trajectory-ranking entry point
 
 ## Acknowledgements
 
-ANWM builds on AerialVLN, OpenFly, OpenUAV, Sekai, NWM, Matrix-Game, and YUME.
+ANWM builds on [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform), [OpenUAV](https://github.com/buaa-colalab/TravelUAV), [Sekai](https://github.com/Lixsp11/sekai-codebase), [NWM](https://github.com/facebookresearch/nwm), [Matrix-Game](https://github.com/SkyworkAI/Matrix-Game), and [YUME](https://github.com/stdstu12/YUME).
