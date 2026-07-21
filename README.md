@@ -1,8 +1,6 @@
 <div align="center">
 
-# ANWM
-
-## Aerial World Model for Long-horizon Visual Generation and Navigation in 3D Space
+# ANWM: Aerial World Model for Long-horizon Visual Generation and Navigation in 3D Space
 
 **A physics-informed, action-conditioned world model for aerial visual generation and navigation in large-scale 3D environments.**
 
