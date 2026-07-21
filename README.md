@@ -19,13 +19,11 @@ Highlights:
 - **Physics-inspired** Future Frame Projection (**FFP**) that projects historical frames to future viewpoints, injecting coarse geometric priors and stabilizing long-horizon visual generation.
 - **Long-horizon** visual forecasting and stronger navigation success: extending the effective prediction horizon from under 10 m (indoor) to the **hundreds of meters** scale in outdoor open-space environments.
 
-Paper: [Aerial World Model](https://arxiv.org/abs/2512.21887).
-
 ## Dataset
 
 Coming soon on [Hugging Face]().
 
-The simulated benchmark is built from [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform), and [OpenUAV](https://github.com/buaa-colalab/TravelUAV) trajectories across more than 40 Unreal Engine environments. Each segment has 48 observations and 47 relative actions. The same flight is recorded from front, left, right, and rear orientations to reduce forward-motion bias.
+The simulated benchmark is built from [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform) trajectories.
 
 | Split | Trajectory segments | Frames per segment | Actions per segment |
 |---|---:|---:|---:|
@@ -33,30 +31,6 @@ The simulated benchmark is built from [AerialVLN](https://github.com/AirVLN/AirV
 | Test | 2.2K | 48 | 47 |
 
 The test set contains 1.1K planar and 1.1K 3D trajectories. Horizontal speed is 5 m/s, vertical speed is 2 m/s, yaw speed is 15 deg/s, and the average trajectory length is approximately 80.7 m. Real-world evaluation uses the drone-view subset of [Sekai](https://github.com/Lixsp11/sekai-codebase) with estimated depth.
-
-## Main Results
-
-### 32-second visual generation
-
-| Setting | Method | LPIPS (lower) | DreamSim (lower) | FID (lower) |
-|---|---|---:|---:|---:|
-| 2D simulation | NWM | 0.524 | 0.400 | 61.0 |
-| 2D simulation | **ANWM** | **0.433** | **0.294** | **32.5** |
-| 3D simulation | NWM | 0.535 | 0.377 | 47.6 |
-| 3D simulation | **ANWM** | **0.389** | **0.271** | **36.1** |
-| 3D real world | NWM | 0.388 | 0.229 | 149.6 |
-| 3D real world | **ANWM** | **0.371** | **0.176** | **138.9** |
-
-### Visual navigation
-
-| Setting | Method | ATE (lower) | RPE (lower) | SR (higher) | NE (lower) |
-|---|---|---:|---:|---:|---:|
-| 2D simulation | NWM | 7.72 | 0.89 | 63.0 | 12.71 |
-| 2D simulation | **ANWM** | **6.30** | **0.78** | **73.0** | **10.30** |
-| 3D simulation | NWM | 8.52 | **1.03** | 58.0 | 14.51 |
-| 3D simulation | **ANWM** | **8.13** | 1.06 | **60.0** | **14.12** |
-| 3D real world | NWM | 17.13 | 3.79 | 28.0 | 27.02 |
-| 3D real world | **ANWM** | **15.56** | **3.51** | **33.0** | **24.41** |
 
 ## Installation
 
@@ -91,24 +65,6 @@ The original AirVLN-16 preparation code is provided at
 notebook to the local AirVLN directory. The notebook writes trajectory folders
 containing numeric image files and `traj_data.pkl`.
 
-## Released Configuration
-
-The paper model is defined by `config/anwm.yaml`:
-
-| Parameter | Value |
-|---|---:|
-| Backbone | CDiT-XL/2 |
-| Parameters | ~1.1B |
-| Image size | 224 x 224 |
-| Context frames | 4 |
-| Prediction steps | 16 |
-| Goals per observation | 4 |
-| Batch size per GPU | 1 |
-| Learning rate | 8e-5 |
-| Gradient clipping | 10.0 |
-| Training diffusion steps | 1000 |
-| Inference sampling steps | 250 |
-| Released checkpoint | 200,000 steps |
 
 ## Inference
 
@@ -219,6 +175,26 @@ evaluate.py       LPIPS, DreamSim, and FID evaluation
 planning_eval.py  real-world trajectory-ranking entry point
 ```
 
+## Released Configuration
+
+The paper model is defined by `config/anwm.yaml`:
+
+| Parameter | Value |
+|---|---:|
+| Backbone | CDiT-XL/2 |
+| Parameters | ~1.1B |
+| Image size | 224 x 224 |
+| Context frames | 4 |
+| Prediction steps | 16 |
+| Goals per observation | 4 |
+| Batch size per GPU | 1 |
+| Learning rate | 8e-5 |
+| Gradient clipping | 10.0 |
+| Training diffusion steps | 1000 |
+| Inference sampling steps | 250 |
+| Released checkpoint | 200,000 steps |
+
+
 ## Limitations
 
 - Generation may drift or collapse as trajectories approach 200 m.
@@ -228,7 +204,7 @@ planning_eval.py  real-world trajectory-ranking entry point
 
 ## Acknowledgements
 
-ANWM builds on [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform), [OpenUAV](https://github.com/buaa-colalab/TravelUAV), [Sekai](https://github.com/Lixsp11/sekai-codebase), [NWM](https://github.com/facebookresearch/nwm), [Matrix-Game](https://github.com/SkyworkAI/Matrix-Game), and [YUME](https://github.com/stdstu12/YUME).
+We sincerely thank the following projects for their excellent work: [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform), [OpenUAV](https://github.com/buaa-colalab/TravelUAV), [Sekai](https://github.com/Lixsp11/sekai-codebase), [NWM](https://github.com/facebookresearch/nwm), [Matrix-Game](https://github.com/SkyworkAI/Matrix-Game), and [YUME](https://github.com/stdstu12/YUME).
 
 ## Citation
 
