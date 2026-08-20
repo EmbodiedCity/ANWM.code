@@ -5,7 +5,8 @@
 **A physics-informed, action-conditioned world model for aerial visual generation and navigation in large-scale 3D environments.**
 
 [![arXiv](https://img.shields.io/badge/arXiv-2512.21887-b31b1b.svg)](https://arxiv.org/abs/2512.21887)
-[![Hugging Face](https://img.shields.io/badge/HuggingFace-Coming%20Soon-yellow.svg)]()
+[![Hugging Face](https://img.shields.io/badge/HuggingFace-Dataset-yellow.svg)](https://huggingface.co/datasets/EmbodiedCity/ANWM-Dataset)
+[![Hugging Face](https://img.shields.io/badge/HuggingFace-Model-yellow.svg)](https://huggingface.co/EmbodiedCity/ANWM)
 
 </div>
 
@@ -21,7 +22,7 @@ Highlights:
 
 ## Dataset
 
-Coming soon on [Hugging Face]().
+Available on [Hugging Face](https://huggingface.co/datasets/EmbodiedCity/ANWM-Dataset).
 
 The simulated benchmark is built from [AerialVLN](https://github.com/AirVLN/AirVLN), [OpenFly](https://github.com/SHAILAB-IPEC/OpenFly-Platform) trajectories.
 
@@ -50,7 +51,20 @@ Diffusers on first use.
 
 ## Data and Checkpoint
 
-Datasets and checkpoints will be released on [Hugging Face]().
+Download the dataset from [Hugging Face](https://huggingface.co/datasets/EmbodiedCity/ANWM-Dataset) and extract it into `data/airvln_16/`:
+
+```bash
+huggingface-cli download EmbodiedCity/ANWM-Dataset --repo-type dataset --local-dir data/airvln_16_shards
+mkdir -p data/airvln_16
+for f in data/airvln_16_shards/airvln_16-*.tar; do tar -xf "$f" -C data/airvln_16; done
+```
+
+Download the released checkpoint from [Hugging Face](https://huggingface.co/EmbodiedCity/ANWM) into the path expected by `infer.py`:
+
+```bash
+huggingface-cli download EmbodiedCity/ANWM 0200000.pth.tar \
+  --local-dir logs/anwm_cdit_airvln/checkpoints
+```
 
 The repository includes the released split manifests under `data/splits/`.
 Place processed trajectories and the ANWM checkpoint at:
